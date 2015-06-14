@@ -1,0 +1,19 @@
+Package: hyfo
+Type: Package
+Title: Hydrology and forecasting tools for data analysis and visualization.
+Version: 1.0.0
+Date: 2015-06-03
+Author: Yuanchao Xu
+Maintainer: Yuanchao Xu <xuyuanchao37@gmail.com>
+Description: More about what it does (maybe more than one line)
+License: GPL-2
+Imports: ggplot2,
+    xlsx,
+    reshape2,
+    zoo,
+    rgdal,
+    plyr,
+    moments,
+    lmom
+Suggests: ecomsUDG.Raccess,
+    downscaleR
