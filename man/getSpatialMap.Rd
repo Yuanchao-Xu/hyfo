@@ -5,7 +5,7 @@
 \title{Get spatial map of the input dataset, and a matrix representing the raster map will be returned.}
 \usage{
 getSpatialMap(dataset, catchment = NULL, points = NULL, method = NULL,
-  outputData = TRUE, plotScale = "identity")
+  outputData = TRUE, info = T, ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using
@@ -19,7 +19,10 @@ getSpatialMap(dataset, catchment = NULL, points = NULL, method = NULL,
 
 \item{outputData}{A boolean showing whether the raster matrix will be returned, default is T.}
 
-\item{plotScale}{A string showing the plot scale, e.g., "identity" or "sqrt"}
+\item{info}{A boolean showing whether the information of the map, e.g., max, mean ..., default is T.}
+
+\item{...}{arguments which will be passed to \code{scale_fill_gradientn()}, including \code{trans},
+\code{limits}, \code{breaks}, see \code{scale_fill_gradientn()} for more details.}
 }
 \value{
 A matrix representing the raster map is returned, and the map is plotted.

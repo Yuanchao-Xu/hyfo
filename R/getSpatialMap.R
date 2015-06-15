@@ -6,12 +6,14 @@
 #' @param points A shape file showing other information, e.g., location of the gauging stations.
 #' @param method A string showing different calculating method for the map.
 #' @param outputData A boolean showing whether the raster matrix will be returned, default is T.
-#' @param plotScale A string showing the plot scale, e.g., "identity" or "sqrt"
+#' @param info A boolean showing whether the information of the map, e.g., max, mean ..., default is T.
+#' @param ... arguments which will be passed to \code{scale_fill_gradientn()}, including \code{trans}, 
+#' \code{limits}, \code{breaks}, see \code{scale_fill_gradientn()} for more details.
 #' @return A matrix representing the raster map is returned, and the map is plotted.
 #' @export
 #' @import ggplot2 rgdal
 getSpatialMap <- function(dataset, catchment = NULL,points = NULL, method = NULL, outputData = TRUE, 
-                          plotScale = 'identity'){
+                          info = T, ...){
   message('used for showing the spatial map for parameters like precipitation.
           different method are provided for analysing the parameters
           catchment needs shape file
@@ -74,16 +76,20 @@ getSpatialMap <- function(dataset, catchment = NULL,points = NULL, method = NULL
     stop (paste('no method called',wrongMethod))
   }
   
+  if (info == T) {
+    plotMax <- round(max(data_new,na.rm=TRUE),2)
+    plotMin <- round(min(data_new,na.rm=TRUE),2)
+    plotMean <- round(mean(data_new,na.rm=TRUE),2)
+    plotMedian <- round(median(data_new,na.rm=T),2)
+    word <- paste('\n\n', paste('Max','=',plotMax), ',', paste('Min','=',plotMin), ',',
+                  paste('Mean','=',plotMean), ',', paste('Median', '=', plotMedian))
+  }else{
+    word <- NULL
+  }
+    
+  x_word <- paste('Longitude', word)
   
-  zlim <- NULL
-  if(method == 'winter'| method == 'spring' | method == 'autumn'| method == 'summer') zlim = c(0,730)
   
-  plotMax <- round(max(data_new,na.rm=TRUE),2)
-  plotMin <- round(min(data_new,na.rm=TRUE),2)
-  plotMean <- round(mean(data_new,na.rm=TRUE),2)
-  plotMedian <- round(median(data_new,na.rm=T),2)
-  word <- paste(paste('Max',' = ',plotMax),'\n',paste('Min',' = ',plotMin),'\n',
-                paste('Mean',' = ',plotMean),'\n',paste('Median',' = ',plotMedian))
   
   #set names for the matrix, in order to be better converted later in ggplot.
   colnames(data_new) <- round(lon,2)
@@ -100,27 +106,26 @@ getSpatialMap <- function(dataset, catchment = NULL,points = NULL, method = NULL
   #in other words, all the parameters in aes(), they have to come from the main dataset. Otherwise, just put them
   #outside aes() as normal parameters.
   
-  data_ggplot <- reshape2::melt(data_new,na.rm = T)
-  colnames(data_ggplot) <- c('lat','lon','value')
+  data_ggplot <- reshape2::melt(data_new, na.rm = T)
+  colnames(data_ggplot) <- c('lat', 'lon', 'value')
   theme_set(theme_bw())
   mainLayer <- ggplot(data = data_ggplot)+ 
     geom_tile(aes(x=lon,y=lat,fill = value))+
-    scale_fill_gradientn(colours = c('yellow','orange','red'),
-                         na.value='transparent',trans=plotScale)+#usually scale = 'sqrt'
-    geom_map(data = world_map,map=world_map,aes(map_id=region),fill='transparent',color='black')+
-    guides(fill=guide_colorbar(title='Rainfall (mm)',barheight = 10))+
-    xlab('Longitude')+
+    scale_fill_gradientn(colours = c('yellow', 'orange', 'red'), na.value = 'transparent', ...)+#usually scale = 'sqrt'
+    geom_map(data = world_map, map = world_map, aes(map_id = region), fill='transparent', color='black')+
+    guides(fill = guide_colorbar(title='Rainfall (mm)', barheight = 15))+
+    xlab(x_word)+
     ylab('Latitude')+
     ggtitle(title)+
-    theme(plot.title=element_text(size=20,face='bold'),
+    theme(plot.title=element_text(size=20, face='bold'),
           axis.title.x=element_text(size = 18),
-          axis.title.y = element_text(size = 18))+
+          axis.title.y = element_text(size = 18))
 #     geom_rect(xmin=min(lon)+0.72*(max(lon)-min(lon)),
 #               xmax=min(lon)+0.99*(max(lon)-min(lon)),
 #               ymin=min(lat)+0.02*(max(lat)-min(lat)),
 #               ymax=min(lat)+0.28*(max(lat)-min(lat)),
 #               fill='white',colour='black')+
-    annotate('text', x = min(lon), y = min(lat), label=word, hjust = 0, vjust = -1)
+#   annotate('text', x = min(lon), y = min(lat), label=word, hjust = 0, vjust = -1)
   
   printLayer <- mainLayer
   
@@ -130,7 +135,7 @@ getSpatialMap <- function(dataset, catchment = NULL,points = NULL, method = NULL
     a@data$id <- rownames(a@data)
     b <- fortify(a,region='id')
     c <- plyr::join(b,a@data,by='id')
-    catchmentLayer <- geom_polygon(data=c,aes(long,lat,group=group),color='black',fill='transparent')
+    catchmentLayer <- geom_polygon(data=c, aes(long,lat,group=group), color='black', fill='transparent')
     
     printLayer <- printLayer + catchmentLayer
   }
