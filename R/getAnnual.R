@@ -1,7 +1,8 @@
 #' Get annual rainfall of different rainfall time series
 #' 
 #' @param datalist A list containing different time series of different rainfall gauges
-#' @return The annual rainfall and the number of missing data of each year and each rainfall gauge
+#' @return The annual rainfall and the number of missing data of each year and each rainfall gauge, which 
+#' will also be plotted.
 # @examples
 # str(datalist)
 # List of 5
@@ -47,6 +48,7 @@
 #' http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
 #' http://www4.gipuzkoa.net/oohh/web/esp/02.asp
 #' @export
+#' @import ggplot2 reshape2
 getAnnual <- function(datalist){
   
   data <- lapply(datalist, FUN = getAnnual_dataframe)
@@ -54,6 +56,14 @@ getAnnual <- function(datalist){
   data <- do.call('rbind',data)
   
   rownames(data) <- NULL
+  
+  plotData <- melt(data, var.id = c('yearUnique','name'))
+  
+  mainLayer <- ggplot(plotData)+
+    geom_bar(aes(x = as.Date(yearUnique,format = '%Y'), y = value , fill = name), stat = 'identity')+
+    facet_grid(variable ~ name, scales = 'free')
+  print (mainLayer)
+  
   return (data)
 }
 

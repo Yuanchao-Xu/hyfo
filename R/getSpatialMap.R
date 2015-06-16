@@ -12,7 +12,7 @@
 #' @return A matrix representing the raster map is returned, and the map is plotted.
 #' @export
 #' @import ggplot2 rgdal
-getSpatialMap <- function(dataset, catchment = NULL,points = NULL, method = NULL, outputData = TRUE, 
+getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NULL, outputData = TRUE, 
                           info = T, ...){
   message('used for showing the spatial map for parameters like precipitation.
           different method are provided for analysing the parameters
@@ -95,7 +95,7 @@ getSpatialMap <- function(dataset, catchment = NULL,points = NULL, method = NULL
   colnames(data_new) <- round(lon,2)
   rownames(data_new) <- round(lat,2)
   
-  world_map <- ggplot2::map_data('world')
+  world_map <- map_data('world')
   
   
   #ggplot
@@ -111,9 +111,11 @@ getSpatialMap <- function(dataset, catchment = NULL,points = NULL, method = NULL
   theme_set(theme_bw())
   mainLayer <- ggplot(data = data_ggplot)+ 
     geom_tile(aes(x=lon,y=lat,fill = value))+
-    scale_fill_gradientn(colours = c('yellow', 'orange', 'red'), na.value = 'transparent', ...)+#usually scale = 'sqrt'
+    #scale_fill_gradient(high = 'red', low = 'yellow')+
+    scale_fill_gradientn(colours = c('yellow', 'orange', 'red'), na.value = 'transparent',
+                         guide = guide_colorbar(title='Rainfall (mm)', barheight = 15), ...)+#usually scale = 'sqrt'
     geom_map(data = world_map, map = world_map, aes(map_id = region), fill='transparent', color='black')+
-    guides(fill = guide_colorbar(title='Rainfall (mm)', barheight = 15))+
+#    guides(fill = guide_colorbar(title='Rainfall (mm)', barheight = 15))+
     xlab(x_word)+
     ylab('Latitude')+
     ggtitle(title)+

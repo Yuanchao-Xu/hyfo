@@ -10,7 +10,8 @@ getAnnual(datalist)
 \item{datalist}{A list containing different time series of different rainfall gauges}
 }
 \value{
-The annual rainfall and the number of missing data of each year and each rainfall gauge
+The annual rainfall and the number of missing data of each year and each rainfall gauge, which
+will also be plotted.
 }
 \description{
 Get annual rainfall of different rainfall time series

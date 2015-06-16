@@ -1,11 +1,11 @@
 {
     "contents" : "Package: hyfo\nType: Package\nTitle: Hydrology and forecasting tools for data analysis and visualization.\nVersion: 1.0.0\nDate: 2015-06-03\nAuthor: Yuanchao Xu\nMaintainer: Yuanchao Xu <xuyuanchao37@gmail.com>\nDescription: More about what it does (maybe more than one line)\nLicense: GPL-2\nImports: ggplot2,\n    xlsx,\n    reshape2,\n    zoo,\n    rgdal,\n    plyr,\n    moments,\n    lmom\nSuggests: ecomsUDG.Raccess,\n    downscaleR\n",
-    "created" : 1434238490619.000,
+    "created" : 1434493888391.000,
     "dirty" : false,
     "encoding" : "ASCII",
     "folds" : "",
     "hash" : "3848680521",
-    "id" : "9A6444D8",
+    "id" : "3F618C4C",
     "lastKnownWriteTime" : 1434028224,
     "path" : "~/hyfo/DESCRIPTION",
     "project_path" : "DESCRIPTION",
