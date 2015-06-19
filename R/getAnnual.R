@@ -1,8 +1,14 @@
 #' Get annual rainfall of different rainfall time series
 #' 
-#' @param datalist A list containing different time series of different rainfall gauges
+#' @param datalist A list containing different time series of different rainfall gauges.
+#' @param method A string showing the output method.
+#' @param minRecords A number showing the minimum accept record number, e.g. for a normal 
+#' year(365 days), if \code{minRecords = 360}, it means if a year has less than 360 records
+#' of a year, it will be ignored in the mean annual value calculation. Only valid 
+#' when \code{method = "mean"}.
+#' @param ... \code{title, x, y} showing the title and x and y axis of the plot.
 #' @return The annual rainfall and the number of missing data of each year and each rainfall gauge, which 
-#' will also be plotted.
+#' will also be plotted. If method "mean" is seleted, the mean annual rainfall will be returned.
 # @examples
 # str(datalist)
 # List of 5
@@ -48,8 +54,8 @@
 #' http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
 #' http://www4.gipuzkoa.net/oohh/web/esp/02.asp
 #' @export
-#' @import ggplot2 reshape2
-getAnnual <- function(datalist){
+#' @import ggplot2 reshape2 stats
+getAnnual <- function(datalist, method = 'series', minRecords = 355, ...){
   
   data <- lapply(datalist, FUN = getAnnual_dataframe)
   
@@ -57,69 +63,46 @@ getAnnual <- function(datalist){
   
   rownames(data) <- NULL
   
-  plotData <- melt(data, var.id = c('yearUnique','name'))
+  theme_set(theme_bw())
   
-  mainLayer <- ggplot(plotData)+
-    geom_bar(aes(x = as.Date(yearUnique,format = '%Y'), y = value , fill = name), stat = 'identity')+
-    facet_grid(variable ~ name, scales = 'free')
-  print (mainLayer)
+  if (method == 'mean'){
+    validData <- data[data$recordNum >= minRecords,]
+    data <- aggregate(validData$AnnualPreci, list(validData$Name), mean)
+    colnames(data) <- c('Name','AnnualPreci')
+    
+    mainLayer <- ggplot(data)+
+      geom_bar(aes(x = Name, y = AnnualPreci, fill = Name), stat = 'identity')+
+      labs(empty = NULL, ...)#in order to pass "...", arguments shouldn't be empty.
+    print (mainLayer)
+    
+    return (data)
+    
+  }else{
+    
+    plotData <- subset(data, select = -recordNum)
+    plotData <- melt(plotData, var.id = c('Year', 'Name'))
+    
+    mainLayer <- ggplot(plotData)+
+      geom_bar(aes(x = as.Date(Year, format = '%Y'), y = value , fill = Name), 
+               stat = 'identity')+
+      facet_grid(variable ~ Name, scales = 'free')+
+      xlab('Year')+
+      ylab(NULL)+
+      labs(empty = NULL, ...)#in order to pass "...", arguments shouldn't be empty.
   
-  return (data)
+    print (mainLayer)
+
+    return (data)
+  }
+  
 }
-
-
-#' Get mean annual rainfall of different rainfall time series
-#' 
-#' @param datalist A list containing different time series of different rainfall gauges
-#' @return The mean annual rainfall of each year and each rainfall gauge
-# @examples
-# str(datalist)
-# List of 5
-# $ AAA:'data.frame':  5602 obs. of  2 variables:
-#  ..$ Date: Factor w/ 5602 levels "1999-10-28","1999-10-29",..: 1 2 3 4 5 6 7 8 9 10 ...
-# ..$ AAA : num [1:5602] 0 0 0.4 0 0.2 46.6 1.8 0 0 31.2 ...
-# $ BBB:'data.frame':  5977 obs. of  2 variables:
-#   ..$ Date: Date[1:5977], format: "1999-01-01" "1999-01-02" "1999-01-03" ...
-# ..$ BBB : num [1:5977] 0 1.4 0 0 0 0 0 19.7 42.9 4.7 ...
-# $ CCC:'data.frame':  5977 obs. of  2 variables:
-#   ..$ Date: Date[1:5977], format: "1999-01-01" "1999-01-02" "1999-01-03" ...
-# ..$ CCC : num [1:5977] 0 0 0 0 0 0 0 11 28.6 6.2 ...
-# $ DDD:'data.frame':	6307 obs. of  2 variables:
-#   ..$ Date: Factor w/ 6307 levels "1998-01-01","1998-01-02",..: 1 2 3 4 5 6 7 8 9 10 ...
-# ..$ DDD : num [1:6307] NA NA NA NA NA NA NA NA NA NA ...
-# $ EEE:'data.frame':	5977 obs. of  2 variables:
-#   ..$ Date: Date[1:5977], format: "1999-01-01" "1999-01-02" "1999-01-03" ...
-# ..$ EEE : num [1:5977] 0 0 0 0 0 0 0 16.2 30 9 ...
-# 
-# a <- getAnnual_mean(datalist)
-# a
-#   name    meanV
-# 1  AAA 2017.300
-# 2  BBB 2373.287
-# 3  CCC 2145.075
-# 4  DDD 1680.593
-# 5  EEE 1928.640
-
-#' @references
-#' Data source:
-#' http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
-#' http://www4.gipuzkoa.net/oohh/web/esp/02.asp
-#' @export
-getAnnual_mean <- function(datalist){
-  data <- lapply(datalist, FUN = getAnnual_dataframe, output = 'mean')
-  data <- do.call('rbind',data)
-  rownames(data) <- NULL
-  
-  return (data)
-}
-
 
 
 
 #' Get annual rainfall of the input time series.
 #' 
 #' @param dataset A dataframe containing one time series, e.g., rainfall from one gauging station.
-#' @param output A string showing what kind of output is, e.g. 'series' or 'mean'
+#' the time should follow the format : "1990-1-1"
 #' @return The annual rainfall of each year of the input station.
 # @examples
 # 
@@ -169,37 +152,23 @@ getAnnual_mean <- function(datalist){
 #' http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
 #' http://www4.gipuzkoa.net/oohh/web/esp/02.asp
 #' @export
-getAnnual_dataframe <- function(dataset, output = 'series'){
+getAnnual_dataframe <- function(dataset){
   Date <- as.Date(dataset[,1])
   year <- format(Date,'%Y')
   yearUnique <- unique(year)
   calcuNum <- c(1: length(yearUnique))
   
-  NANum <- length(which(is.na(dataset[,2])))
   
   annualPreci <- tapply(dataset[,2], INDEX = year, FUN = sum, na.rm = T)
+  recordNum <- tapply(dataset[,2], INDEX = year, function(x) length(which(!is.na(x))))
   NANum <- tapply(dataset[,2], INDEX = year, function(x) length(which(is.na(x))))
+
+
+  name <- rep(colnames(dataset)[2],length(calcuNum))
+  output <- data.frame(Year = yearUnique, Name = name, AnnualPreci = annualPreci,
+                        recordNum, NANum)
+  return (output)
   
-  
-  firstYearN <- length(which(year == year[1]))
-  if (firstYearN < 360) calcuNum[1] <- NA 
-  
-  lastYearN <- length(which(year == year[length(year)]))
-  if (lastYearN < 360) calcuNum[length(yearUnique)] <- NA
-  
-  calcuNum[which(NANum > 10)] <- NA
-  
-  meanV <- mean(annualPreci[which(!is.na(calcuNum))])
-  
-  if (output == 'mean'){
-    name <- colnames(dataset)[2]
-    output <- data.frame(name,meanV)
-    return (output)
-  }else if(output == 'series'){
-    name <- rep(colnames(dataset)[2],length(calcuNum))
-    output <- data.frame(yearUnique,name,annualPreci,NANum)
-    return (output)
-  }
   
 }
 

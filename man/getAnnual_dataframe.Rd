@@ -4,12 +4,11 @@
 \alias{getAnnual_dataframe}
 \title{Get annual rainfall of the input time series.}
 \usage{
-getAnnual_dataframe(dataset, output = "series")
+getAnnual_dataframe(dataset)
 }
 \arguments{
-\item{dataset}{A dataframe containing one time series, e.g., rainfall from one gauging station.}
-
-\item{output}{A string showing what kind of output is, e.g. 'series' or 'mean'}
+\item{dataset}{A dataframe containing one time series, e.g., rainfall from one gauging station.
+the time should follow the format : "1990-1-1"}
 }
 \value{
 The annual rainfall of each year of the input station.
