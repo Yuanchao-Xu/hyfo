@@ -5,14 +5,15 @@
 #' @param catchment A catchment file geting from \code{shp2cat()} in the package, if a catchment is available for background.
 #' @param points A shape file showing other information, e.g., location of the gauging stations.
 #' @param method A string showing different calculating method for the map.
-#' @param outputData A boolean showing whether the raster matrix will be returned, default is T.
+#' @param gg A boolean showing whether the returned result can be directly applied to ggplot, else only
+#' raster matrix will be returned, default value is F.
 #' @param info A boolean showing whether the information of the map, e.g., max, mean ..., default is T.
 #' @param ... arguments which will be passed to \code{scale_fill_gradientn()}, including \code{trans}, 
 #' \code{limits}, \code{breaks}, see \code{scale_fill_gradientn()} for more details.
 #' @return A matrix representing the raster map is returned, and the map is plotted.
 #' @export
 #' @import ggplot2 rgdal
-getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NULL, outputData = TRUE, 
+getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NULL, gg = F, 
                           info = T, ...){
   message('used for showing the spatial map for parameters like precipitation.
           different method are provided for analysing the parameters
@@ -150,6 +151,11 @@ getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NUL
   
   print (printLayer)
   
-  if(outputData == TRUE) return(data_new)
+  if(gg == T) {
+    return (data_ggplot)
+  }else{
+    return(data_new)
+  }
+    
 }
 

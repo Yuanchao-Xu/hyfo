@@ -88,10 +88,11 @@ getAnnual <- function(datalist, method = 'series', minRecords = 355, ...){
       facet_grid(variable ~ Name, scales = 'free')+
       xlab('Year')+
       ylab(NULL)+
-      labs(empty = NULL, ...)#in order to pass "...", arguments shouldn't be empty.
-  
+      labs(empty = NULL, ...)+#in order to pass "...", arguments shouldn't be empty.
+      theme(plot.title = element_text(size = 20, face = 'bold', vjust = 1))
+#      grid.arrange(mainLayer, ncol = 4)
     print (mainLayer)
-
+    
     return (data)
   }
   
