@@ -5,7 +5,7 @@
 \title{Get spatial map of the input dataset, and a matrix representing the raster map will be returned.}
 \usage{
 getSpatialMap(dataset, catchment = NULL, points = NULL, method = NULL,
-  outputData = TRUE, info = T, ...)
+  gg = F, info = T, scale = "identity", ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using
@@ -17,11 +17,14 @@ getSpatialMap(dataset, catchment = NULL, points = NULL, method = NULL,
 
 \item{method}{A string showing different calculating method for the map.}
 
-\item{outputData}{A boolean showing whether the raster matrix will be returned, default is T.}
+\item{gg}{A boolean showing whether the returned result can be directly applied to ggplot, else only
+raster matrix will be returned, default value is F.}
 
 \item{info}{A boolean showing whether the information of the map, e.g., max, mean ..., default is T.}
 
-\item{...}{arguments which will be passed to \code{scale_fill_gradientn()}, including \code{trans},
+\item{scale}{A string showing the plot scale, 'identity' or 'sqrt'.}
+
+\item{...}{\code{title, x, y} showing the title and x and y axis of the plot, default is about precipitation.
 \code{limits}, \code{breaks}, see \code{scale_fill_gradientn()} for more details.}
 }
 \value{

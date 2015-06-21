@@ -8,13 +8,14 @@
 #' @param gg A boolean showing whether the returned result can be directly applied to ggplot, else only
 #' raster matrix will be returned, default value is F.
 #' @param info A boolean showing whether the information of the map, e.g., max, mean ..., default is T.
-#' @param ... arguments which will be passed to \code{scale_fill_gradientn()}, including \code{trans}, 
+#' @param scale A string showing the plot scale, 'identity' or 'sqrt'.
+#' @param ... \code{title, x, y} showing the title and x and y axis of the plot, default is about precipitation.
 #' \code{limits}, \code{breaks}, see \code{scale_fill_gradientn()} for more details.
 #' @return A matrix representing the raster map is returned, and the map is plotted.
 #' @export
 #' @import ggplot2 rgdal
 getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NULL, gg = F, 
-                          info = T, ...){
+                          info = T, scale = 'identity', ...){
   message('used for showing the spatial map for parameters like precipitation.
           different method are provided for analysing the parameters
           catchment needs shape file
@@ -67,11 +68,14 @@ getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NUL
     
   }else if(method == 'mean'){
     #sum value of the dataset, this procedure is to get the mean value
-    data_new <- apply(data, MARGIN = c(2,3), FUN = mean)  
+    data_new <- apply(data, MARGIN = c(2,3), FUN = mean)
+    title <- 'Mean Daily Precipitation (mm / day)'
   }else if(method == 'max'){
-    data_new <- apply(data, MARGIN = c(2,3), FUN = max)   
+    data_new <- apply(data, MARGIN = c(2,3), FUN = max)
+    title <- 'Max Daily Precipitation (mm / day)'
   }else if(method == 'min'){
     data_new <- apply(data, MARGIN = c(2,3), FUN = min)
+    title <- 'Min Daily Precipitation (mm / day)'
   }else{
     wrongMethod <- method
     stop (paste('no method called',wrongMethod))
@@ -107,19 +111,20 @@ getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NUL
   #in other words, all the parameters in aes(), they have to come from the main dataset. Otherwise, just put them
   #outside aes() as normal parameters.
   
-  data_ggplot <- reshape2::melt(data_new, na.rm = T)
+  data_ggplot <- melt(data_new, na.rm = T)
   colnames(data_ggplot) <- c('lat', 'lon', 'value')
   theme_set(theme_bw())
   mainLayer <- ggplot(data = data_ggplot)+ 
     geom_tile(aes(x=lon,y=lat,fill = value))+
     #scale_fill_gradient(high = 'red', low = 'yellow')+
     scale_fill_gradientn(colours = c('yellow', 'orange', 'red'), na.value = 'transparent',
-                         guide = guide_colorbar(title='Rainfall (mm)', barheight = 15), ...)+#usually scale = 'sqrt'
+                         guide = guide_colorbar(title='Rainfall (mm)', barheight = 15), trans = scale)+#usually scale = 'sqrt'
     geom_map(data = world_map, map = world_map, aes(map_id = region), fill='transparent', color='black')+
 #    guides(fill = guide_colorbar(title='Rainfall (mm)', barheight = 15))+
     xlab(x_word)+
     ylab('Latitude')+
     ggtitle(title)+
+    labs(empty = NULL, ...)+#in order to pass "...", arguments shouldn't be empty.
     theme(plot.title=element_text(size=20, face='bold'),
           axis.title.x=element_text(size = 18),
           axis.title.y = element_text(size = 18))
@@ -152,10 +157,12 @@ getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NUL
   print (printLayer)
   
   if(gg == T) {
-    return (data_ggplot)
+    data_ggplot$Name <- rep(title, dim(data_ggplot)[1])
+    return (printLayer)
   }else{
     return(data_new)
   }
     
 }
+
 
