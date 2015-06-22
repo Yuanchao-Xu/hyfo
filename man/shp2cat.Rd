@@ -2,16 +2,17 @@
 % Please edit documentation in R/shp2cat.R
 \name{shp2cat}
 \alias{shp2cat}
-\title{Get a catchment object from selected shape file.
-Run the function, and a window will open up to choose shape file.}
+\title{Get a catchment object from selected shape file.}
 \usage{
-shp2cat()
+shp2cat(filePath)
+}
+\arguments{
+\item{filePath}{A string representing the path of the shape file.}
 }
 \value{
 A catchment object can be used in \code{getSpatialMap()}.
 }
 \description{
 Get a catchment object from selected shape file.
-Run the function, and a window will open up to choose shape file.
 }
 

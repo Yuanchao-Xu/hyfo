@@ -4,27 +4,13 @@
 \alias{getSpatialMap}
 \title{Get spatial map of the input dataset, and a matrix representing the raster map will be returned.}
 \usage{
-getSpatialMap(dataset, catchment = NULL, points = NULL, method = NULL,
-  output = "data", info = T, scale = "identity", ...)
+getSpatialMap(dataset, method = NULL, ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using
 \code{library(ecomsUDG.Raccess)}.}
 
-\item{catchment}{A catchment file geting from \code{shp2cat()} in the package, if a catchment is available for background.}
-
-\item{points}{A shape file showing other information, e.g., location of the gauging stations.}
-
 \item{method}{A string showing different calculating method for the map.}
-
-\item{output}{A string showing the type of the output, if \code{output = 'ggplot'}, the returned
-data can be used in ggplot and \code{getSpatialMap_comb()}; if \code{output = 'plot'}, the returned data is the plot containing all
-layers' information, and can be plot directly or used in grid.arrange; if not set, the raster matrix data
-will be returned.}
-
-\item{info}{A boolean showing whether the information of the map, e.g., max, mean ..., default is T.}
-
-\item{scale}{A string showing the plot scale, 'identity' or 'sqrt'.}
 
 \item{...}{\code{title, y} showing the title and x and y axis of the plot, default is about precipitation.
 \code{limits}, \code{breaks}, see \code{scale_fill_gradientn()} for more details.}

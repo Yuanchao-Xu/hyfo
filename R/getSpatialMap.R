@@ -2,18 +2,8 @@
 #' 
 #' @param dataset A list containing different information, should be the result of reading netcdf file using
 #' \code{library(ecomsUDG.Raccess)}.
-#' @param catchment A catchment file geting from \code{shp2cat()} in the package, if a catchment is available for background.
-#' @param points A dataframe, showing other information, e.g., location of the gauging stations. The 
-#' the data.frame should be with columes "name, lon, lat, z, value".
 #' @param method A string showing different calculating method for the map.
-#' @param output A string showing the type of the output, if \code{output = 'ggplot'}, the returned 
-#' data can be used in ggplot and \code{getSpatialMap_comb()}; if \code{output = 'plot'}, the returned data is the plot containing all 
-#' layers' information, and can be plot directly or used in grid.arrange; if not set, the raster matrix data
-#' will be returned.
-#' @param info A boolean showing whether the information of the map, e.g., max, mean ..., default is T.
-#' @param scale A string showing the plot scale, 'identity' or 'sqrt'.
-#' @param ... \code{title, y} showing the title and x and y axis of the plot, default is about precipitation.
-#' \code{limits}, \code{breaks}, see \code{scale_fill_gradientn()} for more details.
+#' @inheritParams getSpatialMap_mat
 #' @return A matrix representing the raster map is returned, and the map is plotted.
 #' @export
 getSpatialMap <- function(dataset, method = NULL, ...){
@@ -100,6 +90,7 @@ getSpatialMap <- function(dataset, method = NULL, ...){
 #' Get spatial map of the input dataset, and a matrix representing the raster map will be returned.
 #' 
 #' @param matrix A matrix raster, should be the result of \code{getSpatialMap()}.
+#' @param title A string showing the title of the plot, defaut is NULL.
 #' @param catchment A catchment file geting from \code{shp2cat()} in the package, if a catchment is available for background.
 #' @param points A dataframe, showing other information, e.g., location of the gauging stations. The 
 #' the data.frame should be with columes "name, lon, lat, z, value".
@@ -117,13 +108,13 @@ getSpatialMap <- function(dataset, method = NULL, ...){
 getSpatialMap_mat <- function(matrix, title = NULL, catchment = NULL, points = NULL, output = 'data', 
                               info = T, scale = 'identity', ...){
   #check input
-  checkWord <- c('name', 'lon', 'lat', 'z', 'value')
+  checkWord <- c('lon', 'lat', 'z', 'value')
   if (is.null(attributes(matrix)$dimnames)){
     stop ('Input matrix is incorrect, check help to know how to get the matrix.')
   }else if (!is.null(catchment) & class(catchment) != "SpatialPolygonsDataFrame"){
     stop ('Catchment format is incorrect, check help to get more details. ')
-  }else if (any(is.na(match(checkWord, attributes(points)$names)))){
-    stop ('Points should be a dataframe with colnames "name, lon, lat, z, value".')
+  }else if (!is.null(points) & any(is.na(match(checkWord, attributes(points)$names)))){
+    stop ('Points should be a dataframe with colnames "lon, lat, z, value".')
   }
   
   #ggplot
