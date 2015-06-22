@@ -3,7 +3,8 @@
 #' @param dataset A list containing different information, should be the result of reading netcdf file using
 #' \code{library(ecomsUDG.Raccess)}.
 #' @param method A string showing different calculating method for the map.
-#' @inheritParams getSpatialMap_mat
+#' @param ... Check \code{?getSpatialMap_mat} for details, e.g., x, y, title, catchment, 
+#' points, output,
 #' @return A matrix representing the raster map is returned, and the map is plotted.
 #' @export
 getSpatialMap <- function(dataset, method = NULL, ...){

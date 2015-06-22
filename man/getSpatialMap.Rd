@@ -12,7 +12,8 @@ getSpatialMap(dataset, method = NULL, ...)
 
 \item{method}{A string showing different calculating method for the map.}
 
-\item{...}{\code{title, y} showing the title and x and y axis of the plot, default is about precipitation.}
+\item{...}{Check \code{?getSpatialMap_mat} for details, e.g., x, y, title, catchment,
+points, output,}
 }
 \value{
 A matrix representing the raster map is returned, and the map is plotted.
