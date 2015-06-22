@@ -1,4 +1,4 @@
-#' Get spatial map of the input dataset, and a matrix representing the raster map will be returned.
+#' Get spatial map of the input dataset.
 #' 
 #' @param dataset A list containing different information, should be the result of reading netcdf file using
 #' \code{library(ecomsUDG.Raccess)}.
