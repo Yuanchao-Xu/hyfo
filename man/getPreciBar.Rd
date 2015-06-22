@@ -4,17 +4,23 @@
 \alias{getPreciBar}
 \title{get mean rainfall bar plot of the input dataset}
 \usage{
-getPreciBar(dataset, method, outputData = T, plotRange = T)
+getPreciBar(dataset, method, output = "data", plotRange = T, ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using
 \code{library(ecomsUDG.Raccess)}.}
 
-\item{method}{A string showing the calculating method of the input time series, e.g., "meanMonthly"}
+\item{method}{A string showing the calculating method of the input time series, including: "meanMonthly",
+"annual", and one umber from 1 to 12 representing the month.}
 
-\item{outputData}{A boolean showing whether the result will be returned, default is T.}
+\item{output}{A string showing the type of the output, if \code{output = 'ggplot'}, the returned
+data can be used in ggplot and \code{getPreciBar_comb()}; if \code{output = 'plot'}, the returned data is the plot containing all
+layers' information, and can be plot directly or used in grid.arrange; if not set, the data
+will be returned.}
 
 \item{plotRange}{A boolean showing whether the range will be plotted.}
+
+\item{...}{\code{title, x, y} showing the title and x and y axis of the plot.}
 }
 \value{
 The calculated mean value of the input time series and the plot of the result.
