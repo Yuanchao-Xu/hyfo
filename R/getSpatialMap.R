@@ -3,7 +3,8 @@
 #' @param dataset A list containing different information, should be the result of reading netcdf file using
 #' \code{library(ecomsUDG.Raccess)}.
 #' @param catchment A catchment file geting from \code{shp2cat()} in the package, if a catchment is available for background.
-#' @param points A shape file showing other information, e.g., location of the gauging stations.
+#' @param points A dataframe, showing other information, e.g., location of the gauging stations. The 
+#' the data.frame should be with columes "name, lon, lat, z, value".
 #' @param method A string showing different calculating method for the map.
 #' @param output A string showing the type of the output, if \code{output = 'ggplot'}, the returned 
 #' data can be used in ggplot and \code{getSpatialMap_comb()}; if \code{output = 'plot'}, the returned data is the plot containing all 
@@ -15,14 +16,15 @@
 #' \code{limits}, \code{breaks}, see \code{scale_fill_gradientn()} for more details.
 #' @return A matrix representing the raster map is returned, and the map is plotted.
 #' @export
-#' @import ggplot2 rgdal plyr
-getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NULL, output = 'data', 
-                          info = T, scale = 'identity', ...){
-  message('used for showing the spatial map for parameters like precipitation.
-          different method are provided for analysing the parameters
-          catchment needs shape file
-          points needs data.frame, with colume "name, lon, lat, z, value" in data.frame()
-          method = NULL means no method calculated on the cell')
+getSpatialMap <- function(dataset, method = NULL, ...){
+
+  #check input dataset
+  checkWord <- c('Data', 'xyCoords', 'Dates')
+  if(any(is.na(match(checkWord, attributes(dataset)$names)))){
+    stop ('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
+          check help for details.')
+  }
+  
   
   #range of the dataset just loaded 
   lon <- dataset$xyCoords$x
@@ -33,6 +35,7 @@ getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NUL
   data <- dataset$Data
   
   if (is.null(method)){
+    warning ('You should shoose a method, unless input is a matrix directly to be plotted.')
     #in case the dataset is ready to plot and no need to calculate
   }else if(method == 'meanAnnual'){
     #mean value of the annual precipitation over the period of the data 
@@ -82,28 +85,46 @@ getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NUL
     wrongMethod <- method
     stop (paste('no method called',wrongMethod))
   }
-  
-  if (info == T) {
-    plotMax <- round(max(data_new,na.rm=TRUE),2)
-    plotMin <- round(min(data_new,na.rm=TRUE),2)
-    plotMean <- round(mean(data_new,na.rm=TRUE),2)
-    plotMedian <- round(median(data_new,na.rm=T),2)
-    word <- paste('\n\n', paste('Max', '=', plotMax), ',', paste('Min', '=', plotMin), ',',
-                  paste('Mean', '=', plotMean), ',', paste('Median', '=', plotMedian))
-  }else{
-    word <- NULL
-  }
-    
-  x_word <- paste('Longitude', word)
-  
-  
-  
-  #set names for the matrix, in order to be better converted later in ggplot.
+  #this is to give attributes to the matrix and better be melted in ggplot.
   colnames(data_new) <- round(lon,2)
   rownames(data_new) <- round(lat,2)
   
-  world_map <- map_data('world')
-  
+  output <- getSpatialMap_mat(data_new, title, ...)
+  return (output)
+}
+
+
+
+
+
+#' Get spatial map of the input dataset, and a matrix representing the raster map will be returned.
+#' 
+#' @param matrix A matrix raster, should be the result of \code{getSpatialMap()}.
+#' @param catchment A catchment file geting from \code{shp2cat()} in the package, if a catchment is available for background.
+#' @param points A dataframe, showing other information, e.g., location of the gauging stations. The 
+#' the data.frame should be with columes "name, lon, lat, z, value".
+#' @param output A string showing the type of the output, if \code{output = 'ggplot'}, the returned 
+#' data can be used in ggplot and \code{getSpatialMap_comb()}; if \code{output = 'plot'}, the returned data is the plot containing all 
+#' layers' information, and can be plot directly or used in grid.arrange; if not set, the raster matrix data
+#' will be returned.
+#' @param info A boolean showing whether the information of the map, e.g., max, mean ..., default is T.
+#' @param scale A string showing the plot scale, 'identity' or 'sqrt'.
+#' @param ... \code{title, y} showing the title and x and y axis of the plot, default is about precipitation.
+#' \code{limits}, \code{breaks}, see \code{scale_fill_gradientn()} for more details.
+#' @return A matrix representing the raster map is returned, and the map is plotted.
+#' @export
+#' @import ggplot2 rgdal plyr
+getSpatialMap_mat <- function(matrix, title = NULL, catchment = NULL, points = NULL, output = 'data', 
+                              info = T, scale = 'identity', ...){
+  #check input
+  checkWord <- c('name', 'lon', 'lat', 'z', 'value')
+  if (is.null(attributes(matrix)$dimnames)){
+    stop ('Input matrix is incorrect, check help to know how to get the matrix.')
+  }else if (!is.null(catchment) & class(catchment) != "SpatialPolygonsDataFrame"){
+    stop ('Catchment format is incorrect, check help to get more details. ')
+  }else if (any(is.na(match(checkWord, attributes(points)$names)))){
+    stop ('Points should be a dataframe with colnames "name, lon, lat, z, value".')
+  }
   
   #ggplot
   #for the aes option in ggplot, it's independent from any other command through all ggplot, and aes() function
@@ -113,7 +134,21 @@ getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NUL
   #in other words, all the parameters in aes(), they have to come from the main dataset. Otherwise, just put them
   #outside aes() as normal parameters.
   
-  data_ggplot <- melt(data_new, na.rm = T)
+  if (info == T) {
+    plotMax <- round(max(matrix,na.rm=TRUE),2)
+    plotMin <- round(min(matrix,na.rm=TRUE),2)
+    plotMean <- round(mean(matrix,na.rm=TRUE),2)
+    plotMedian <- round(median(matrix,na.rm=T),2)
+    word <- paste('\n\n', paste('Max', '=', plotMax), ',', paste('Min', '=', plotMin), ',',
+                  paste('Mean', '=', plotMean), ',', paste('Median', '=', plotMedian))
+  }else{
+    word <- NULL
+  }
+  
+  x_word <- paste('Longitude', word)
+  world_map <- map_data('world')
+  
+  data_ggplot <- melt(matrix, na.rm = T)
   colnames(data_ggplot) <- c('lat', 'lon', 'value')
   theme_set(theme_bw())
   mainLayer <- ggplot(data = data_ggplot)+ 
@@ -122,20 +157,20 @@ getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NUL
     scale_fill_gradientn(colours = c('yellow', 'orange', 'red'), na.value = 'transparent',
                          guide = guide_colorbar(title='Rainfall (mm)', barheight = 15), trans = scale)+#usually scale = 'sqrt'
     geom_map(data = world_map, map = world_map, aes(map_id = region), fill='transparent', color='black')+
-#    guides(fill = guide_colorbar(title='Rainfall (mm)', barheight = 15))+
+    #    guides(fill = guide_colorbar(title='Rainfall (mm)', barheight = 15))+
     xlab(x_word)+
     ylab('Latitude')+
     ggtitle(title)+
     labs(empty = NULL, ...)+#in order to pass "...", arguments shouldn't be empty.
-    theme(plot.title=element_text(size=20, face='bold'),
-          axis.title.x=element_text(size = 18),
+    theme(plot.title = element_text(size = 20, face = 'bold'),
+          axis.title.x = element_text(size = 18),
           axis.title.y = element_text(size = 18))
-#     geom_rect(xmin=min(lon)+0.72*(max(lon)-min(lon)),
-#               xmax=min(lon)+0.99*(max(lon)-min(lon)),
-#               ymin=min(lat)+0.02*(max(lat)-min(lat)),
-#               ymax=min(lat)+0.28*(max(lat)-min(lat)),
-#               fill='white',colour='black')+
-#   annotate('text', x = min(lon), y = min(lat), label=word, hjust = 0, vjust = -1)
+  #     geom_rect(xmin=min(lon)+0.72*(max(lon)-min(lon)),
+  #               xmax=min(lon)+0.99*(max(lon)-min(lon)),
+  #               ymin=min(lat)+0.02*(max(lat)-min(lat)),
+  #               ymax=min(lat)+0.28*(max(lat)-min(lat)),
+  #               fill='white',colour='black')+
+  #   annotate('text', x = min(lon), y = min(lat), label=word, hjust = 0, vjust = -1)
   
   printLayer <- mainLayer
   
@@ -149,7 +184,7 @@ getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NUL
     
     printLayer <- printLayer + catchmentLayer
   }
-  
+  #plot points
   if(is.null(points) == FALSE){
     pointLayer <- geom_point(data = points,aes(x = lon, y = lat, size = value, colour = z))
     
@@ -159,15 +194,15 @@ getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NUL
   print (printLayer)
   
   if(output == 'ggplot') {
-    
+    data_ggplot$Name <- rep(title, dim(data_ggplot)[1])
     return (data_ggplot)
   }else if (output == 'plot'){
     return(printLayer)
   }else{
-    return(data_new)
+    return(matrix)
   }
-    
 }
+
 
 #' Combine maps together
 #' @param ... different maps generated by \code{getSpatialMap(, output = 'ggplot')}
@@ -176,8 +211,9 @@ getSpatialMap <- function(dataset, catchment = NULL, points = NULL, method = NUL
 #' @return A combined map.
 #' @export
 #' @import ggplot2
-getSpatialMap_comb <- function(..., list = NULL, nrow = 1)
-{
+getSpatialMap_comb <- function(..., list = NULL, nrow = 1){
+  
+  
   if (!is.null(list)){
     data_ggplot <- do.call('rbind', list)
   }else{
@@ -196,3 +232,4 @@ getSpatialMap_comb <- function(..., list = NULL, nrow = 1)
     facet_wrap(~ Name, nrow = nrow)
   print (mainLayer)
 }
+

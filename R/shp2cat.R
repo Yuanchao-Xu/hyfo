@@ -1,11 +1,10 @@
 #' Get a catchment object from selected shape file.
-#' Run the function, and a window will open up to choose shape file.
+#' @param filePath A string representing the path of the shape file.
 #' @return A catchment object can be used in \code{getSpatialMap()}.
 #' @export
 #' @import rgdal
-shp2cat <- function(){
+shp2cat <- function(filePath){
   
-  filePath <- file.choose()
   catName <- tail(strsplit(filePath,'\\\\')[[1]],1)#needs to be four \, caused by some window system problem
   catName1 <- strsplit(catName,'\\.')[[1]][1]
   catName2 <- paste('\\\\',catName, sep = '')
