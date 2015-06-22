@@ -101,7 +101,6 @@ getSpatialMap <- function(dataset, method = NULL, ...){
 #' @param info A boolean showing whether the information of the map, e.g., max, mean ..., default is T.
 #' @param scale A string showing the plot scale, 'identity' or 'sqrt'.
 #' @param ... \code{title, y} showing the title and x and y axis of the plot, default is about precipitation.
-#' \code{limits}, \code{breaks}, see \code{scale_fill_gradientn()} for more details.
 #' @return A matrix representing the raster map is returned, and the map is plotted.
 #' @export
 #' @import ggplot2 rgdal plyr

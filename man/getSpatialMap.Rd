@@ -2,7 +2,7 @@
 % Please edit documentation in R/getSpatialMap.R
 \name{getSpatialMap}
 \alias{getSpatialMap}
-\title{Get spatial map of the input dataset, and a matrix representing the raster map will be returned.}
+\title{Get spatial map of the input dataset.}
 \usage{
 getSpatialMap(dataset, method = NULL, ...)
 }
@@ -12,13 +12,12 @@ getSpatialMap(dataset, method = NULL, ...)
 
 \item{method}{A string showing different calculating method for the map.}
 
-\item{...}{\code{title, y} showing the title and x and y axis of the plot, default is about precipitation.
-\code{limits}, \code{breaks}, see \code{scale_fill_gradientn()} for more details.}
+\item{...}{\code{title, y} showing the title and x and y axis of the plot, default is about precipitation.}
 }
 \value{
 A matrix representing the raster map is returned, and the map is plotted.
 }
 \description{
-Get spatial map of the input dataset, and a matrix representing the raster map will be returned.
+Get spatial map of the input dataset.
 }
 

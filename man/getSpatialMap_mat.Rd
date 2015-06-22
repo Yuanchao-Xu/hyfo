@@ -26,8 +26,7 @@ will be returned.}
 
 \item{scale}{A string showing the plot scale, 'identity' or 'sqrt'.}
 
-\item{...}{\code{title, y} showing the title and x and y axis of the plot, default is about precipitation.
-\code{limits}, \code{breaks}, see \code{scale_fill_gradientn()} for more details.}
+\item{...}{\code{title, y} showing the title and x and y axis of the plot, default is about precipitation.}
 }
 \value{
 A matrix representing the raster map is returned, and the map is plotted.
