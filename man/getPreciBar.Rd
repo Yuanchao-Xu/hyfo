@@ -4,11 +4,11 @@
 \alias{getPreciBar}
 \title{get mean rainfall bar plot of the input dataset}
 \usage{
-getPreciBar(dataset, method, output = "data", plotRange = T, ...)
+getPreciBar(dataset, method, output = "data", plotRange = TRUE, ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using
-\code{library(ecomsUDG.Raccess)}.}
+\code{library(ecomsUDG.Raccess)}, e.g., \code{loadGridData{ecomsUDG.Raccess}}}
 
 \item{method}{A string showing the calculating method of the input time series, including: "meanMonthly",
 "annual", and one umber from 1 to 12 representing the month.}
@@ -27,5 +27,10 @@ The calculated mean value of the input time series and the plot of the result.
 }
 \description{
 get mean rainfall bar plot of the input dataset
+}
+\examples{
+data(gridData)# the result of \\code{loadGridData{ecomsUDG.Raccess}}
+b1 <- getPreciBar(gridData, method = 'annual')
+b2 <- getPreciBar(gridData, method = 'meanMonthly')
 }
 

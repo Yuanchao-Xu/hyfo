@@ -5,23 +5,40 @@
 \title{Get mean rainfall data, e.g. mean annual rainfall, mean monthly rainfall and mean winter rainfall.}
 \usage{
 getMeanPreci(inputTS, method = NULL, yearIndex = NULL, monthIndex = NULL,
-  fullResults = FALSE)
+  fullResults = FALSE, omitNA = FALSE)
 }
 \arguments{
-\item{inputTS}{A time series with only data.}
+\item{inputTS}{A time series with only data column (1 column).}
 
-\item{method}{A string showing the method used to calculate mean value, e.g., "meanAnnualPreci".}
+\item{method}{A string showing the method used to calculate mean value, e.g., "meanAnnualPreci".
+more information please refer to details.}
 
-\item{yearIndex}{A list showing the year index of the time series.}
+\item{yearIndex}{A numeric list showing the year index of the time series.}
 
-\item{monthIndex}{A list showing the month index of the time series.}
+\item{monthIndex}{A numeric list showing the month index of the time series.}
 
-\item{fullResults}{A boolean showing whether the full results are shown.}
+\item{fullResults}{A boolean showing whether the full results are shown, default is FALSE. If
+FALSE, only mean value will be returned, if TRUE, the sequence of values will be returned.}
+
+\item{omitNA}{in the calculation, whether NA is omitted, default is FALSE.}
 }
 \value{
 The mean value of the input time series or the full results before calculating mean.
 }
 \description{
 Get mean rainfall data, e.g. mean annual rainfall, mean monthly rainfall and mean winter rainfall.
+}
+\details{
+there are following methods to be selected, "meanAnnualPreci", "winter", "spring", "autumn", "summer".
+}
+\examples{
+data(datalist)
+TS  <- datalist[[1]]
+year = as.numeric(format(TS[, 1], '\%Y'))
+month = as.numeric(format(TS[, 1], '\%m'))
+
+a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month)
+a <- getMeanPreci(TS[, 2], method = 'winter', yearIndex = year, monthIndex = month, omitNA = TRUE,
+fullResults = TRUE)
 }
 

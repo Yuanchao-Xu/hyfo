@@ -23,4 +23,10 @@ The collected data from different files in the folder.
 \description{
 Collect data from different csv files.
 }
+\examples{
+#use internal data as an example.
+file <- system.file("extdata", "1999.csv", package = "hyfo")
+folder <- strsplit(file, '1999')[[1]][1]
+a <- collectData(folder, fileType = 'csv', range = c(10, 20, 1,2))
+}
 

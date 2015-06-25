@@ -1,0 +1,66 @@
+---
+title: "hyfo easy start"
+author: "Yuanchao Xu"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{hyfo easy start}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+`hyfo` is designed for hydrology and forecasting anaylasis, containing a number of tools including data extration, data processing and data visulization. There are two main functions in the package:
+
+1. Hydrology
+* Providing tools from raw data extration to model input data.
+* e.g., data extraction from file, precipitation gap filler, annual precipitation calculation.
+
+2. Forecasting
+* Providing tools from forecasting data visulization and analysis.
+* e.g., get spatial maps, data analysis and bias analysis.
+
+## Vignette Info
+
+Note that the functions end with `_anarbe` are the functions designed specially for some case in Spain, those
+functions may not be applied to all the cases.
+
+## Hydrology
+
+### collectData
+
+
+
+The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
+
+    output: 
+      rmarkdown::html_vignette:
+        css: mystyles.css
+
+## Figures
+
+The figure sizes have been customised so that you can easily put two images side-by-side. 
+
+```{r, fig.show='hold'}
+plot(1:10)
+plot(10:1)
+```
+
+You can enable figure captions by `fig_caption: yes` in YAML:
+
+    output:
+      rmarkdown::html_vignette:
+        fig_caption: yes
+
+Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+
+## More Examples
+
+You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(mtcars, 10))
+```
+
+Also a quote using `>`:
+
+> "He who gives up [code] safety for [code] speed deserves neither."
+([via](https://twitter.com/hadleywickham/status/504368538874703872))

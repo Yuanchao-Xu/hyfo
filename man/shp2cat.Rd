@@ -15,4 +15,9 @@ A catchment object can be used in \code{getSpatialMap()}.
 \description{
 Get a catchment object from selected shape file.
 }
+\examples{
+#open internal file
+file <- system.file("extdata", "testCat.shp", package = "hyfo")
+catchment <- shp2cat(file)
+}
 

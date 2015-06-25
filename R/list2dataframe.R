@@ -1,44 +1,29 @@
-#' Convert a list of different time series to a dataframe 
+#' Convert a list of different time series to a dataframe. Usually the list is the output of
+#' \code{extractPeriod}
+#' NOTE: Since it's dataframe, so the dataframes in the input datalist should have the same 
+#' date, if not, please use  \code{extractPeriod} to process.
 #'
 #' @param datalist A list containing different time series, each sub list has to have the same length.
 #' @return The converted dataframe
-# @examples
-# str(a)
-# List of 5
-# $ AAA:'data.frame':  5602 obs. of  2 variables:
-#   ..$ Date: Date[1:5602], format: "1999-10-28" "1999-10-29" "1999-10-30" ...
-# ..$ AAA : num [1:5602] 0 0 0.4 0 0.2 46.6 1.8 0 0 31.2 ...
-# $ BBB:'data.frame':	5602 obs. of  2 variables:
-#   ..$ Date: Date[1:5602], format: "1999-10-28" "1999-10-29" "1999-10-30" ...
-# ..$ BBB : num [1:5602] 0 0 2.1 0 0.1 48 0 0 8.3 25.6 ...
-# $ CCC:'data.frame':	5602 obs. of  2 variables:
-#   ..$ Date: Date[1:5602], format: "1999-10-28" "1999-10-29" "1999-10-30" ...
-# ..$ CCC : num [1:5602] 0 0 1.6 0 0 46.5 0 0 9.2 27.1 ...
-# $ DDD:'data.frame':	5602 obs. of  2 variables:
-#   ..$ Date: Date[1:5602], format: "1999-10-28" "1999-10-29" "1999-10-30" ...
-# ..$ DDD : num [1:5602] 0 0 1.1 0.3 0 29.9 1.1 0.1 0 25.8 ...
-# $ EEE:'data.frame':	5602 obs. of  2 variables:
-#   ..$ Date: Date[1:5602], format: "1999-10-28" "1999-10-29" "1999-10-30" ...
-# ..$ EEE : num [1:5602] 0 0 0 0 0 36.2 0 0 10.2 24.1 ...
-# 
-# a1 <-  list2Dataframe(a)
-# str(a1)
-# 'data.frame':  5602 obs. of  6 variables:
-# $ Date: Date, format: "1999-10-28" "1999-10-29" "1999-10-30" "1999-10-31" ...
-# $ AAA : num  0 0 0.4 0 0.2 46.6 1.8 0 0 31.2 ...
-# $ BBB : num  0 0 2.1 0 0.1 48 0 0 8.3 25.6 ...
-# $ CCC : num  0 0 1.6 0 0 46.5 0 0 9.2 27.1 ...
-# $ DDD : num  0 0 1.1 0.3 0 29.9 1.1 0.1 0 25.8 ...
-# $ EEE : num  0 0 0 0 0 36.2 0 0 10.2 24.1 ...
+#' 
+#' @examples
+#' # open file attached in the package.
+#' file <- system.file("extdata", "dl.txt", package = "hyfo")
+#' datalist <- dget(file) # read list file.
+#' datalist_new <- extractPeriod(datalist, commonPeriod = TRUE)
+#' 
+#' dataframe <- list2Dataframe(datalist_new)
+#' 
 #' @export
 list2Dataframe <- function(datalist){
-  message('Applies to datalist, in which every list containing Date column and value column.
-          and all the sublists are in the same period of time. ExtracPeriod() can do that')
   
-  data <- lapply(datalist, function(x) x[,2])
-  Date <- datalist[[1]][,1]
+  data <- lapply(datalist, function(x) x[, 2])
+  names <- lapply(datalist, function(x) colnames(x)[2])
+  names <- do.call('cbind', names)
+  Date <- datalist[[1]][, 1]
   data <- data.frame(data)
-  data <- data.frame(cbind(Date,data))
+  colnames(data) <- names
+  data <- data.frame(cbind(Date, data))
   
   return (data)
 }

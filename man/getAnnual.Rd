@@ -4,30 +4,32 @@
 \alias{getAnnual}
 \title{Get annual rainfall of different rainfall time series}
 \usage{
-getAnnual(datalist, method = "series", minRecords = 355, ...)
+getAnnual(datalist, output = "series", minRecords = 355, ...)
 }
 \arguments{
 \item{datalist}{A list containing different time series of different rainfall gauges.}
 
-\item{method}{A string showing the output method.}
+\item{output}{A string showing the output output.}
 
 \item{minRecords}{A number showing the minimum accept record number, e.g. for a normal
 year(365 days), if \code{minRecords = 360}, it means if a year has less than 360 records
 of a year, it will be ignored in the mean annual value calculation. Only valid
-when \code{method = "mean"}.}
+when \code{output = "mean"}, default is 355.}
 
 \item{...}{\code{title, x, y} showing the title and x and y axis of the plot.}
 }
 \value{
 The annual rainfall and the number of missing data of each year and each rainfall gauge, which
-will also be plotted. If method "mean" is seleted, the mean annual rainfall will be returned.
+will also be plotted. If output "mean" is seleted, the mean annual rainfall will be returned.
 }
 \description{
 Get annual rainfall of different rainfall time series
 }
-\references{
-Data source:
-http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
-http://www4.gipuzkoa.net/oohh/web/esp/02.asp
+\examples{
+data(datalist)
+a <- getAnnual(datalist)
+#set minRecords to control the calculation of annual rainfall.
+b <- getAnnual(datalist, output = 'mean', minRecords = 350)
+c <- getAnnual(datalist, output = 'mean', minRecords = 365)
 }
 

@@ -16,9 +16,8 @@ The annual rainfall of each year of the input station.
 \description{
 Get annual rainfall of the input time series.
 }
-\references{
-Data source:
-http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
-http://www4.gipuzkoa.net/oohh/web/esp/02.asp
+\examples{
+data(datalist)
+getAnnual_dataframe(datalist[[1]])
 }
 

@@ -1,15 +1,15 @@
 
-readData_folder <- function(folderName,keyword){
+readData_folder <- function(folderName, keyword){
   
-  folderName <- paste(folderName,keyword,sep='\\')
+  folderName <- paste(folderName, keyword, sep = '\\')
   
-  fileNames <- list.files(folderName,pattern='*.csv',full.names=T)
+  fileNames <- list.files(folderName, pattern = '*.csv', full.names = TRUE)
   
   if (length(fileNames)==0){
-    fileNames <- list.files(folderName,pattern='.TXT',full.names=T)
+    fileNames <- list.files(folderName, pattern = '.TXT', full.names = TRUE)
     if(length(fileNames)==0) stop ('Wrong keyword, initial has to be Upper-case')
     
-    data <- collectData_txt_anarbe(folderName,rangeWord = c('D?a       ',-1,'M?x.      ',-5))
+    data <- collectData_txt_anarbe(folderName, rangeWord = c('D?a       ', -1, 'M?x.      ', -5))
     rownames(data) <- NULL
   }else {
     data <- collectData_csv_anarbe(folderName)
@@ -27,14 +27,14 @@ readData <- function(keyword){
            new file is a list based file and needs to be read by dget()')
   
   folderName <- choose.dir()
-  fileNames <- list.files(folderName,full.names=T)
-  data <- lapply(fileNames, FUN=readData_folder, keyword=keyword)
+  fileNames <- list.files(folderName, full.names = TRUE)
+  data <- lapply(fileNames, FUN = readData_folder, keyword = keyword)
   
-  names <- sapply(c(1:length(data)),function(x) colnames(data[[x]])[2])
+  names <- sapply(c(1:length(data)), function(x) colnames(data[[x]])[2])
   names(data) <- names
   
-  fileName <- file.choose(new=T)
-  dput(data,file=fileName)
+  fileName <- file.choose(new = TRUE)
+  dput(data, file = fileName)
   
   return (data)
 }

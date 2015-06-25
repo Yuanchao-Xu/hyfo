@@ -3,9 +3,12 @@
 \name{collectData_txt_anarbe}
 \alias{collectData_txt_anarbe}
 \title{collect data from different txt.}
+\source{
+http://www4.gipuzkoa.net/oohh/web/esp/02.asp
+}
 \usage{
-collectData_txt_anarbe(folderName, output = T, rangeWord = c("Ene       ",
-  -1, "Total     ", -6))
+collectData_txt_anarbe(folderName, output = TRUE,
+  rangeWord = c("Ene       ", -1, "Total     ", -6))
 }
 \arguments{
 \item{folderName}{A string showing the folder path.}
@@ -20,5 +23,14 @@ The collected data from different txt files.
 }
 \description{
 collect data from different txt.
+}
+\examples{
+#use internal data as an example.
+file <- system.file("extdata", "1999.csv", package = "hyfo")
+folder <- strsplit(file, '1999')[[1]][1]
+a <- collectData_txt_anarbe(folder)
+}
+\references{
+http://www4.gipuzkoa.net/oohh/web/esp/02.asp
 }
 

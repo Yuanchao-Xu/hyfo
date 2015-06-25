@@ -1,7 +1,7 @@
 #' get mean rainfall bar plot of the input dataset
 #' 
 #' @param dataset A list containing different information, should be the result of reading netcdf file using
-#' \code{library(ecomsUDG.Raccess)}.
+#' \code{library(ecomsUDG.Raccess)}, e.g., \code{loadGridData{ecomsUDG.Raccess}}
 #' @param method A string showing the calculating method of the input time series, including: "meanMonthly",
 #' "annual", and one umber from 1 to 12 representing the month.
 #' @param output A string showing the type of the output, if \code{output = 'ggplot'}, the returned 
@@ -10,27 +10,32 @@
 #' will be returned.
 #' @param plotRange A boolean showing whether the range will be plotted.
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot.
+#' @examples
+#' data(gridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
+#' b1 <- getPreciBar(gridData, method = 'annual')
+#' b2 <- getPreciBar(gridData, method = 'meanMonthly')
+#' 
 #' @return The calculated mean value of the input time series and the plot of the result.
 #' @export
-getPreciBar <- function(dataset, method, output = 'data', plotRange = T, ...){
+getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...){
   
   data <- dataset$Data
   startTime <- as.POSIXlt(dataset$Dates$start, tz = 'GMT')
   yearIndex <- startTime$year + 1900
-  monthIndex <-startTime$mon + 1
-  TS <- apply(data, MARGIN = 1,FUN = mean, na.rm = TRUE) 
+  monthIndex <- startTime$mon + 1
+  TS <- apply(data, MARGIN = 1, FUN = mean, na.rm = TRUE) 
   
   
   if (method == 'meanMonthly'){
     
-    monthlypreci <- tapply(TS, INDEX = list(yearIndex,monthIndex),FUN = sum, na.rm = TRUE)
+    monthlypreci <- tapply(TS, INDEX = list(yearIndex, monthIndex), FUN = sum, na.rm = TRUE)
     meanMonthlyPreci <- apply(monthlypreci, MARGIN = 2, FUN = mean, na.rm = TRUE)
     
     title <- 'Mean Monthly Precipitation'
     xlab <- 'Month'
     
     plotPreci <- data.frame(Index = month.abb[1:12], Preci = meanMonthlyPreci)
-    plotPreci$Index <- factor(plotPreci$Index,levels = plotPreci$Index,ordered=T)
+    plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
     
     if(plotRange){
       maxValue <- apply(monthlypreci, MARGIN = 2, FUN = max, na.rm = TRUE)
@@ -39,7 +44,7 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = T, ...){
       plotPreci$maxValue <- maxValue
       plotPreci$minValue <- minValue
       
-      ylim <- c(0,max(maxValue,na.rm = TRUE) * 1.1)
+      ylim <- c(0,max(maxValue, na.rm = TRUE) * 1.1)
       
     }else{
       ylim <- c(0,max(meanMonthlyPreci, na.rm = TRUE) * 1.1)
@@ -52,14 +57,14 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = T, ...){
     xlab <- 'Year'
     plotName <- names(annualPreci)
     
-    plotPreci <- data.frame(Index = names(annualPreci),Preci = annualPreci)
-    plotPreci$Index <- factor(plotPreci$Index,levels = plotPreci$Index,ordered=T)
+    plotPreci <- data.frame(Index = names(annualPreci), Preci = annualPreci)
+    plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
     
-    ylim <- c(0,max(annualPreci,na.rm = TRUE) * 1.1)
+    ylim <- c(0, max(annualPreci, na.rm = TRUE) * 1.1)
     
   }else if (is.numeric(method)){
     month <- method
-    monthlyPreci <- tapply(TS, INDEX = list(yearIndex,monthIndex),FUN = sum)[,month]
+    monthlyPreci <- tapply(TS, INDEX = list(yearIndex, monthIndex), FUN = sum)[, month]
     
     plotPreci <- data.frame(Index = names(monthlyPreci), Preci = monthlyPreci)
     plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = T)
@@ -73,11 +78,11 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = T, ...){
   }
   
   
-  xlim <- c(0,length(rownames(plotPreci))) 
+  xlim <- c(0, length(rownames(plotPreci))) 
   meanValue <- round(mean(plotPreci$Preci, na.rm = TRUE), 2)
-  medianValue <- round(median(plotPreci$Preci,na.rm = T), 2)
-  plotMean <- paste('Mean',' = ', meanValue)
-  plotMedian <- paste('Median',' = ', medianValue)
+  medianValue <- round(median(plotPreci$Preci,na.rm = TRUE), 2)
+  plotMean <- paste('Mean', ' = ', meanValue)
+  plotMedian <- paste('Median', ' = ', medianValue)
   
   plotMax <- round(max(plotPreci$Preci, na.rm = TRUE), 2)
   plotMin <- round(min(plotPreci$Preci, na.rm = TRUE), 2)
@@ -102,7 +107,7 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = T, ...){
     geom_text(x = min(xlim) + 0.3 * (max(xlim) - min(xlim)), y = meanValue + 3, vjust = 0, label = 'mean')+
     geom_hline(yintercept = medianValue, colour = 'red')+
     geom_text(x = min(xlim) + 0.6 * (max(xlim) - min(xlim)), y = medianValue + 3, vjust = 0,
-              label = 'median', colour='red')
+              label = 'median', colour = 'red')
   
   
   if(plotRange){
@@ -110,7 +115,7 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = T, ...){
       warning ('There is no plotRange for this method')
       print(mainLayer)
     }else{
-      rangeLayer <- geom_errorbar(aes(x = Index,ymax = maxValue, ymin = minValue), width = 0.3)
+      rangeLayer <- geom_errorbar(aes(x = Index, ymax = maxValue, ymin = minValue), width = 0.3)
       print(mainLayer + rangeLayer)
     }
     
@@ -130,10 +135,28 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = T, ...){
 
 
 #' Combine bars together
-#' @param ... different barplots generated by \code{getPreciBar(, output = 'ggplot')}
+#' @param ... different barplots generated by \code{getPreciBar(, output = 'ggplot')}, refer to details.
+#' @details
+#' ..., representing different ouput generated by \code{getPreciBar(, output = 'ggplot')}, they 
+#' have to be of the same type, e.g., 
+#' 1. Jan precipitation of different years, Feb precipitation of different years, and... 
+#' They are both monthly precipitation, and they share x axis.
+#' 
+#' 2. Mean monthly precipitation of different dataset. e.g., long term mean monthly precipitation
+#' and short term mean monthly precipitation. They are both mean monthly precipitation.
+#' 
 #' @param nrow A number showing the number of rows.
 #' @param list If input is a list containing different ggplot data, use l\code{list = inputlist}.
 #' @return A combined barplot.
+#' @examples
+#' 
+#' data(gridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
+#' #output type of getPreciBar() has to be 'ggplot'.
+#' b1 <- getPreciBar(gridData, method = 2, output = 'ggplot')
+#' b2 <- getPreciBar(gridData, method = 3, output = 'ggplot')
+#' 
+#' getPreciBar_comb(b1, b2)
+#' 
 #' @export
 #' @import ggplot2
 getPreciBar_comb <- function(..., list = NULL, nrow = 1){
@@ -145,12 +168,12 @@ getPreciBar_comb <- function(..., list = NULL, nrow = 1){
     data_ggplot <- do.call('rbind', bars)
   }
 
-  data_ggplot$Name <- factor(data_ggplot$Name, levels = data_ggplot$Name, ordered = T)
+  data_ggplot$Name <- factor(data_ggplot$Name, levels = data_ggplot$Name, ordered = TRUE)
   
   theme_set(theme_bw())
   mainLayer <- ggplot(data_ggplot)+
-    geom_bar(aes(x = Index, y = Preci), stat = 'identity', colour = 'black', fill = 'lightblue', width = .6)+
-    facet_wrap(~Name, nrow = nrow)
+    geom_bar(aes(x = Index, y = Preci, fill = Name), stat = 'identity', colour = 'black', width = .6)+
+    facet_wrap( ~ Name, nrow = nrow)
   
   print (mainLayer)
 }

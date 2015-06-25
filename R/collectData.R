@@ -6,6 +6,13 @@
 #' @param sheetIndex A number showing the sheetIndex in the excel file, if fileType is excel,
 #' sheetIndex has to be provided, default is 1.
 #' @return The collected data from different files in the folder.
+#' @examples
+#' 
+#' #use internal data as an example.
+#' file <- system.file("extdata", "1999.csv", package = "hyfo")
+#' folder <- strsplit(file, '1999')[[1]][1]
+#' a <- collectData(folder, fileType = 'csv', range = c(10, 20, 1,2))
+#' 
 #' @export
 collectData <- function(folderName, fileType = NULL, range = NULL, sheetIndex = 1){
   message ('All the files in the folder should have the same format')
@@ -17,24 +24,24 @@ collectData <- function(folderName, fileType = NULL, range = NULL, sheetIndex = 
   }
   
   if (fileType == 'csv') {
-    fileNames <- list.files(folderName, pattern = '*.csv', full.names = T)
-    if (fileNames) stop ('No csv file in the folder.')
+    fileNames <- list.files(folderName, pattern = '*.csv', full.names = TRUE)
+    if (length(fileNames) == 0) stop ('No csv file in the folder.')
     
     data <- lapply(fileNames, readCsv, range = range)
     data <- do.call('rbind', data)
   }else if (fileType == 'txt'){
-    fileNames <- list.files(folderName, pattern = '*.txt', full.names = T)
+    fileNames <- list.files(folderName, pattern = '*.txt', full.names = TRUE)
     if (length(fileNames) == 0){
-      fileNames <- list.files(folderName, pattern = '*.TXT', full.names = T)
+      fileNames <- list.files(folderName, pattern = '*.TXT', full.names = TRUE)
     }
     if (length(fileNames) == 0) stop ('No text file in the folder.')
     message ('For txt file, only startRow and endRow will be considered.')
     data <- lapply(fileNames, readTxt, range = range)
     data <- unlist(data)
   }else if (fileType == 'excel'){
-    fileNames <- list.files(folderName, pattern = '*.xlsx', full.names = T)
+    fileNames <- list.files(folderName, pattern = '*.xlsx', full.names = TRUE)
     if (length(fileNames) == 0){
-      fileNames <- list.files(folderName, pattern = '*.xls', full.names = T)
+      fileNames <- list.files(folderName, pattern = '*.xls', full.names = TRUE)
     }
     if (length(fileNames) == 0) stop ('No excel in the folder.')
     data <- lapply(fileNames, readExcel, range = range, sheetIndex = sheetIndex)
@@ -69,7 +76,7 @@ readTxt <- function(fileName, range){
 
 readCsv <- function(fileName, range){
   
-  data <- read.csv(fileName, skip = range[1] - 1, header = F)
+  data <- read.csv(fileName, skip = range[1] - 1, header = FALSE)
   data <- data[1:(range[2] - range[1] + 1), range[3]:range[4]]
   
   return (data)

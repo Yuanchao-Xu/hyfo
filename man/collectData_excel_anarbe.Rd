@@ -4,7 +4,7 @@
 \alias{collectData_excel_anarbe}
 \title{Collect data from different excel files}
 \usage{
-collectData_excel_anarbe(folderName, keyword = NULL, output = T)
+collectData_excel_anarbe(folderName, keyword = NULL, output = TRUE)
 }
 \arguments{
 \item{folderName}{A string showing the folder path.}

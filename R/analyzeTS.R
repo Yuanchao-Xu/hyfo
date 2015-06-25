@@ -1,3 +1,4 @@
+
 #' get L moment analysis of the input distribution
 #' 
 #' @param dis A distribution, for hydrology usually a time series with only data column without time.
@@ -9,14 +10,14 @@
 #' @import moments
 getLMom <- function(dis){
   
-  LMom <- lmom::samlmu(dis,nmom=4,ratios=T)
+  LMom <- lmom::samlmu(dis, nmom = 4, ratios = TRUE)
   
   mean <- LMom[1]
   LCV <- LMom[2]/LMom[1]
   Lskew <- LMom[3]
   Lkur <- LMom[4]
   
-  output <- data.frame(mean=mean,Lcv=LCV,Lskew=Lskew,Lkur = Lkur)
+  output <- data.frame(mean = mean, Lcv = LCV, Lskew = Lskew, Lkur = Lkur)
   return (output)
 }
 
@@ -29,10 +30,10 @@ getLMom <- function(dis){
 #' getMoment(dis)
 #' @export
 getMoment <- function(dis) {
-  mean <- mean(dis,na.rm=T)
-  variance <- var(dis,na.rm=T)
-  skewness <- skewness(dis,na.rm=T)
-  kurtosis <- kurtosis(dis,na.rm=T)
+  mean <- mean(dis, na.rm = TRUE)
+  variance <- var(dis, na.rm = TRUE)
+  skewness <- skewness(dis, na.rm = TRUE)
+  kurtosis <- kurtosis(dis, na.rm = TRUE)
   
   output <- data.frame(mean=mean, Variance = variance, Skewness = skewness, Kurtosis = kurtosis)
   

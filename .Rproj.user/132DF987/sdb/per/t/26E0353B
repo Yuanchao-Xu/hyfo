@@ -1,0 +1,16 @@
+{
+    "contents" : "---\ntitle: \"hyfo easy start\"\nauthor: \"Yuanchao Xu\"\ndate: \"`r Sys.Date()`\"\noutput: rmarkdown::html_vignette\nvignette: >\n  %\\VignetteIndexEntry{hyfo easy start}\n  %\\VignetteEngine{knitr::rmarkdown}\n  %\\VignetteEncoding{UTF-8}\n---\n`hyfo` is designed for hydrology and forecasting anaylasis, containing a number of tools including data extration, data processing and data visulization. There are two main functions in the package:\n\n1. Hydrology\n* Providing tools from raw data extration to model input data.\n* e.g., data extraction from file, precipitation gap filler, annual precipitation calculation.\n\n2. Forecasting\n* Providing tools from forecasting data visulization and analysis.\n* e.g., get spatial maps, data analysis and bias analysis.\n\n## Vignette Info\n\nNote that the functions end with `_anarbe` are the functions designed specially for some case in Spain, those\nfunctions may not be applied to all the cases.\n\n## Hydrology\n\n### collectData\n\n\n\nThe `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:\n\n    output: \n      rmarkdown::html_vignette:\n        css: mystyles.css\n\n## Figures\n\nThe figure sizes have been customised so that you can easily put two images side-by-side. \n\n```{r, fig.show='hold'}\nplot(1:10)\nplot(10:1)\n```\n\nYou can enable figure captions by `fig_caption: yes` in YAML:\n\n    output:\n      rmarkdown::html_vignette:\n        fig_caption: yes\n\nThen you can use the chunk option `fig.cap = \"Your figure caption.\"` in **knitr**.\n\n## More Examples\n\nYou can write math expressions, e.g. $Y = X\\beta + \\epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.\n\n```{r, echo=FALSE, results='asis'}\nknitr::kable(head(mtcars, 10))\n```\n\nAlso a quote using `>`:\n\n> \"He who gives up [code] safety for [code] speed deserves neither.\"\n([via](https://twitter.com/hadleywickham/status/504368538874703872))\n",
+    "created" : 1435009561991.000,
+    "dirty" : false,
+    "encoding" : "ASCII",
+    "folds" : "",
+    "hash" : "1549493647",
+    "id" : "26E0353B",
+    "lastKnownWriteTime" : 1435012782,
+    "path" : "~/hyfo/vignettes/hyfo.Rmd",
+    "project_path" : "vignettes/hyfo.Rmd",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_markdown"
+}

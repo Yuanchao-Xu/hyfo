@@ -2,10 +2,11 @@
 % Please edit documentation in R/extractPeriod.R
 \name{extractPeriod}
 \alias{extractPeriod}
-\title{Extract common period or certain period from a list of different dataframes of time series.}
+\title{Extract common period or certain period from a list of different dataframes of time series.
+NOTE: all the dates in the datalist should follow the format in ?as.Date{base}.}
 \usage{
 extractPeriod(datalist, startDate = NULL, endDate = NULL,
-  commonPeriod = F)
+  commonPeriod = FALSE)
 }
 \arguments{
 \item{datalist}{A list of different dataframes of time series .}
@@ -22,6 +23,31 @@ A list with all the time series inside containing the same period.
 }
 \description{
 Extract common period or certain period from a list of different dataframes of time series.
+NOTE: all the dates in the datalist should follow the format in ?as.Date{base}.
+}
+\examples{
+# generate timeseries datalist. Each data frame consists of a Date and a value.
+AAA <- data.frame(Date = seq(as.Date('1990-10-28'),as.Date('1997-4-1'),1),
+AAA = sample(1:100,length(seq(as.Date('1990-10-28'),as.Date('1997-4-1'),1)), repl = TRUE))
+
+BBB <- data.frame(Date = seq(as.Date('1993-3-28'),as.Date('1999-1-1'),1),
+BBB = sample(1:100,length(seq(as.Date('1993-3-28'),as.Date('1999-1-1'),1)), repl = TRUE))
+
+CCC <- data.frame(Date = seq(as.Date('1988-2-2'),as.Date('1996-1-1'),1),
+CCC = sample(1:100,length(seq(as.Date('1988-2-2'),as.Date('1996-1-1'),1)), repl = TRUE))
+
+datalist <- list(AAA, BBB, CCC)# dput() and dget() can be used to save and load list file.
+
+datalist_com <- extractPeriod(datalist, commonPeriod = TRUE)
+
+#datalist_com is the extracted datalist.
+str(datalist_com)
+
+# if startDate and endDate is provided, the record between them will be extracted.
+# make sure startDate is later than any startDate in each dataframe and endDate is
+# earlier than any endDate in each dataframe.
+
+datalist_com1 <- extractPeriod(datalist, startDate = '1994-1-1', endDate = '1995-10-1')
 }
 \references{
 Data source:

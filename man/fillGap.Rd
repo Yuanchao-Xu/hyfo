@@ -17,17 +17,44 @@ The filled dataframe
 \description{
 Fill gaps in the rainfall time series.
 }
+\details{
+the gap filler follows the rules below:
+ 1. The correlation coefficient of every two columns (except time column) is calculated.
+the correlation coefficient calculation can be based on 'daily', 'monthly', 'annual',
+in each case, the daily data, the monthly mean daily data and annual mean daily data of
+each column will be taken in the correlation calculation.
+
+Then the correlation matrix is got, then based on the matrix, for each column,
+the 1st, 2nd, 3rd,... correlated column will be got. So if there is missing value in the
+column, it will get data from orderly 1st, 2nd, 3rd column.
+
+ 2. The  simple linear regress is calculated between every two columns. When generating the
+ linear coefficient, the incept should be force to 0. i.e. y = a*x + b should be forec to
+ y = a*x.
+
+ 3. Gap filling. E.g., on a certain date, there is a missing value in column A, then the
+ correlation order is column B, column C, column D, which means A should take values from
+ B firstly, if B is also missing data, then C, then D.
+
+ Assuming finally value from column C is taken. Then according to step 2, A = a*C, then the
+ final value filled in column A is missing_in_A = a*value_in_C, a is the linear coeffcient.
+}
 \examples{
 b <- read.table(text = '        Date  AAA  BBB  CCC  DDD  EEE
 49 1999-12-15 24.8 21.4 25.6 35.0 17.4
 50 1999-12-16   NA  0.6  1.5  6.3  2.5
-51 1999-12-17   NA 16.3 20.3  2.6 19.2
-52 1999-12-18   NA  1.6 18.4  6.3  0.0
-53 1999-12-19   NA 36.4 12.5 26.8 24.9
+51 1999-12-17   NA 16.3 20.3  NA 19.2
+52 1999-12-18   13  1.6 NA  6.3  0.0
+53 1999-12-19   10 36.4 12.5 26.8 24.9
 54 1999-12-20   NA  0.0  0.0  0.2  0.0
 55 1999-12-21  0.2  0.0  0.0  0.0  0.0
 56 1999-12-22  0.0  0.0  0.0  0.0  0.0')
 
-b1 <- fillGap(b)
+b1 <- fillGap(b) # if corPeriod is missing, 'daily' is taken as default.
+
+data(datalist)
+a <- extractPeriod(datalist, commonPeriod = TRUE)
+a1 <- list2Dataframe(a)
+a2 <- fillGap(a1)
 }
 

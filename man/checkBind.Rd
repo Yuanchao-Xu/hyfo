@@ -22,5 +22,9 @@ check if the data is available for \code{rbind()} or \code{cbind()}
 data <- list(c(1,1,1),c(2,2,2))
 bind <- 'rbind'
 checkBind(data,bind)
+
+data(datalist)
+checkBind(datalist, 'rbind')
+#
 }
 

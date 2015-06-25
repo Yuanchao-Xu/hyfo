@@ -19,4 +19,12 @@ A combined map.
 \description{
 Combine maps together
 }
+\examples{
+data(gridData)# the result of \\code{loadGridData{ecomsUDG.Raccess}}
+#The output should be 'ggplot'
+a1 <- getSpatialMap(gridData, method = 'summer', output = 'ggplot')
+a2 <- getSpatialMap(gridData, method = 'winter', output = 'ggplot')
+
+getSpatialMap_comb(a1, a2)
+}
 

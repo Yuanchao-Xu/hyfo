@@ -2,7 +2,10 @@
 % Please edit documentation in R/list2dataframe.R
 \name{list2Dataframe}
 \alias{list2Dataframe}
-\title{Convert a list of different time series to a dataframe}
+\title{Convert a list of different time series to a dataframe. Usually the list is the output of
+\code{extractPeriod}
+NOTE: Since it's dataframe, so the dataframes in the input datalist should have the same
+date, if not, please use  \code{extractPeriod} to process.}
 \usage{
 list2Dataframe(datalist)
 }
@@ -13,6 +16,17 @@ list2Dataframe(datalist)
 The converted dataframe
 }
 \description{
-Convert a list of different time series to a dataframe
+Convert a list of different time series to a dataframe. Usually the list is the output of
+\code{extractPeriod}
+NOTE: Since it's dataframe, so the dataframes in the input datalist should have the same
+date, if not, please use  \code{extractPeriod} to process.
+}
+\examples{
+# open file attached in the package.
+file <- system.file("extdata", "dl.txt", package = "hyfo")
+datalist <- dget(file) # read list file.
+datalist_new <- extractPeriod(datalist, commonPeriod = TRUE)
+
+dataframe <- list2Dataframe(datalist_new)
 }
 

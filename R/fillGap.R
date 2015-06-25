@@ -3,59 +3,55 @@
 #' @param dataset A dataframe with first column the time, the rest columns are rainfall data of different gauges
 #' @param corPeriod A string showing the period used in the correlation computing, e.g. daily, monthly, annual.
 #' @return The filled dataframe
+#' @details
+#' the gap filler follows the rules below:
+#'  1. The correlation coefficient of every two columns (except time column) is calculated.
+#' the correlation coefficient calculation can be based on 'daily', 'monthly', 'annual',
+#' in each case, the daily data, the monthly mean daily data and annual mean daily data of 
+#' each column will be taken in the correlation calculation.
+#' 
+#' Then the correlation matrix is got, then based on the matrix, for each column, 
+#' the 1st, 2nd, 3rd,... correlated column will be got. So if there is missing value in the
+#' column, it will get data from orderly 1st, 2nd, 3rd column.
+#' 
+#'  2. The  simple linear regress is calculated between every two columns. When generating the
+#'  linear coefficient, the incept should be force to 0. i.e. y = a*x + b should be forec to 
+#'  y = a*x.
+#'  
+#'  3. Gap filling. E.g., on a certain date, there is a missing value in column A, then the
+#'  correlation order is column B, column C, column D, which means A should take values from
+#'  B firstly, if B is also missing data, then C, then D.
+#'  
+#'  Assuming finally value from column C is taken. Then according to step 2, A = a*C, then the
+#'  final value filled in column A is missing_in_A = a*value_in_C, a is the linear coeffcient.
+#' 
 #' @examples
 #' b <- read.table(text = '        Date  AAA  BBB  CCC  DDD  EEE
 #' 49 1999-12-15 24.8 21.4 25.6 35.0 17.4
 #' 50 1999-12-16   NA  0.6  1.5  6.3  2.5
-#' 51 1999-12-17   NA 16.3 20.3  2.6 19.2
-#' 52 1999-12-18   NA  1.6 18.4  6.3  0.0
-#' 53 1999-12-19   NA 36.4 12.5 26.8 24.9
+#' 51 1999-12-17   NA 16.3 20.3  NA 19.2
+#' 52 1999-12-18   13  1.6 NA  6.3  0.0
+#' 53 1999-12-19   10 36.4 12.5 26.8 24.9
 #' 54 1999-12-20   NA  0.0  0.0  0.2  0.0
 #' 55 1999-12-21  0.2  0.0  0.0  0.0  0.0
 #' 56 1999-12-22  0.0  0.0  0.0  0.0  0.0')
 #' 
-#' b1 <- fillGap(b)
+#' b1 <- fillGap(b) # if corPeriod is missing, 'daily' is taken as default.
 #' 
-# Correlation Coefficient
-# AAA       BBB       CCC       DDD       EEE
-# AAA 1.0000000 0.9999754 0.9999754 0.9999754 0.9999754
-# BBB 0.9999754 1.0000000 1.0000000 1.0000000 1.0000000
-# CCC 0.9999754 1.0000000 1.0000000 1.0000000 1.0000000
-# DDD 0.9999754 1.0000000 1.0000000 1.0000000 1.0000000
-# EEE 0.9999754 1.0000000 1.0000000 1.0000000 1.0000000
-# 
-# Correlation Order
-# 1     2     3     4    
-# AAA "BBB" "DDD" "EEE" "CCC"
-# BBB "CCC" "DDD" "EEE" "AAA"
-# CCC "CCC" "DDD" "EEE" "AAA"
-# DDD "CCC" "DDD" "EEE" "AAA"
-# EEE "CCC" "DDD" "EEE" "AAA"
-# 
-# Linear Coeficients
-# 1         2         3         4
-# AAA 1.1588785 0.7085714 1.4252874 0.9687500
-# BBB 0.8718832 0.8774724 1.2277330 0.8628471
-# CCC 1.0000000 0.6943610 0.8863647 1.0321909
-# DDD 0.9006973 1.0000000 1.0341615 1.4111985
-# EEE 0.7351823 0.6612678 1.0000000 0.7015673
-# 
-# b1
-#         Date        AAA  BBB  CCC  DDD  EEE
-# 1 1999-12-15 24.8000000 21.4 25.6 35.0 17.4
-# 2 1999-12-16  0.6953271  0.6  1.5  6.3  2.5
-# 3 1999-12-17 18.8897196 16.3 20.3  2.6 19.2
-# 4 1999-12-18  1.8542056  1.6 18.4  6.3  0.0
-# 5 1999-12-19 42.1831776 36.4 12.5 26.8 24.9
-# 6 1999-12-20  0.0000000  0.0  0.0  0.2  0.0
-# 7 1999-12-21  0.2000000  0.0  0.0  0.0  0.0
-# 8 1999-12-22  0.0000000  0.0  0.0  0.0  0.0
+#' data(datalist)
+#' a <- extractPeriod(datalist, commonPeriod = TRUE)
+#' a1 <- list2Dataframe(a)
+#' a2 <- fillGap(a1)
+#' 
+#' 
 #' @export
-fillGap <- function(dataset,corPeriod = 'daily'){
-  message('Fill gaps. First column should be the Date')
+fillGap <- function(dataset, corPeriod = 'daily'){
   
-  Date <- as.Date(dataset[,1])
-  data <- data.frame(dataset[,2:dim(dataset)[2]])
+  if (!grepl('-|/', dataset[1, 1])) {
+    stop ('First column is not date or Wrong Date formate, check the format in ?as.Date{base}')
+  }
+  Date <- as.Date(dataset[, 1])
+  data <- data.frame(dataset[, 2:dim(dataset)[2]])
   names <- colnames(data)
   
   corN <- fillGap_cor(data, corPeriod = corPeriod, Date = Date)
@@ -63,7 +59,7 @@ fillGap <- function(dataset,corPeriod = 'daily'){
   print(corN)
   
   corOrder <- apply(corN, MARGIN = 1, FUN = function(x) order(-x))
-  corOrder <- corOrder[2:dim(corOrder)[1],]
+  corOrder <- corOrder[2:dim(corOrder)[1], ]
   corOrderName <- t(apply(corOrder, MARGIN = 2, FUN = function(x) names[x]))
   
   cat ('\nCorrelation Order\n')
@@ -93,23 +89,23 @@ fillGap <- function(dataset,corPeriod = 'daily'){
 #' @param mon A list showing the mon index of the time series.
 #' @return the monthly rainfall matrix of the rainfall time series.
 #' @export
-monthlyPreci <- function(TS,year,mon){
+monthlyPreci <- function(TS, year, mon){
   
-  monTS <- tapply(TS, INDEX = list(year, mon), FUN = sum, na.rm = T)
+  monTS <- tapply(TS, INDEX = list(year, mon), FUN = mean, na.rm = TRUE)
   output <- t(monTS)
-  dim(output) <- c(dim(monTS)[1] * dim(monTS)[2],1)
+  dim(output) <- c(dim(monTS)[1] * dim(monTS)[2], 1)
   return (output)
 }
 
 
 fillGap_column <- function(i, data, corOrder, lmCoef){
-  TS <- data[,i] # extract target column
+  TS <- data[, i] # extract target column
   l <- dim(data)[2] # length
   
   for (j in 1:l){
     if (!any(is.na(TS))) break
     NAindex <- which(is.na(TS))
-    TS[NAindex] <- lmCoef[j,i] * data[NAindex,corOrder[j,i]]
+    TS[NAindex] <- lmCoef[j, i] * data[NAindex, corOrder[j, i]]
     
     if (j == l) stop ('Error: One time consists of all NA values')
   }
@@ -118,10 +114,11 @@ fillGap_column <- function(i, data, corOrder, lmCoef){
 }
 
 
-fillGap_cor <- function(data, corPeriod = 'monthly', Date){
+#' @import stats
+fillGap_cor <- function(data, corPeriod = 'daily', Date){
   
   names <- colnames(data)
-  year <- format(Date,'%Y')
+  year <- format(Date, '%Y')
   
   if (corPeriod == 'monthly'){
     #based on monthly rainfall
@@ -130,7 +127,7 @@ fillGap_cor <- function(data, corPeriod = 'monthly', Date){
     corData <- do.call('cbind', monthlyPreci)
   }else if (corPeriod == 'yearly'){
     year <- format(Date, '%Y')
-    annualPreci <- lapply(data, FUN = function(x) tapply(x, INDEX = year, FUN = sum, na.rm = T))
+    annualPreci <- lapply(data, FUN = function(x) tapply(x, INDEX = year, FUN = mean, na.rm = TRUE))
     corData <- do.call('cbind', annualPreci)
   }else if (corPeriod == 'daily'){
     corData <- data
@@ -150,15 +147,15 @@ fillGap_cor <- function(data, corPeriod = 'monthly', Date){
 fillGap_lmCoef <- function(data, corOrder){
   l <- dim(data)[2]
   m <- diag(l)# m is the coeficients matrix
-  m[lower.tri(m)] <- combn(data, 2, function(x) coef(lm(x[,2] ~ x[,1] + 0)))
+  m[lower.tri(m)] <- combn(data, 2, function(x) coef(lm(x[, 2] ~ x[, 1] + 0)))
   tm <- t(m)
   
-  tm[lower.tri(tm)] <- combn(data, 2, function(x) coef(lm(x[,1] ~ x[,2] + 0)))
+  tm[lower.tri(tm)] <- combn(data, 2, function(x) coef(lm(x[, 1] ~ x[, 2] + 0)))
   
   m <- t(tm)
   
-  lmCoef <- lapply(1 : l, function(x) m[x,corOrder[,x]])
-  lmCoef <- do.call('rbind',lmCoef)
+  lmCoef <- lapply(1 : l, function(x) m[x,corOrder[, x]])
+  lmCoef <- do.call('rbind', lmCoef)
   rownames(lmCoef) <- colnames(data)
   
   return(t(lmCoef))

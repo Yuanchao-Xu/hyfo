@@ -5,10 +5,11 @@
 \title{Get spatial map of the input dataset, and a matrix representing the raster map will be returned.}
 \usage{
 getSpatialMap_mat(matrix, title = NULL, catchment = NULL, points = NULL,
-  output = "data", info = T, scale = "identity", ...)
+  output = "data", info = TRUE, scale = "identity", ...)
 }
 \arguments{
-\item{matrix}{A matrix raster, should be the result of \code{getSpatialMap()}.}
+\item{matrix}{A matrix raster, should be the result of \code{getSpatialMap()}, output should be default
+or 'data'}
 
 \item{title}{A string showing the title of the plot, defaut is NULL.}
 
@@ -33,5 +34,21 @@ A matrix representing the raster map is returned, and the map is plotted.
 }
 \description{
 Get spatial map of the input dataset, and a matrix representing the raster map will be returned.
+}
+\examples{
+data(gridData)# the result of \\code{loadGridData{ecomsUDG.Raccess}}
+#the output type of has to be default or 'data'.
+a1 <- getSpatialMap(gridData, method = 'mean')
+a2 <- getSpatialMap(gridData, method = 'max')
+a3 <- getSpatialMap(gridData, method = 'winter')
+a4 <- getSpatialMap(gridData, method = 'summer')
+#For example, if we want to investigate the difference between mean value and max.
+
+a5 <- a2 - a1
+getSpatialMap_mat(a4)
+
+#Or to investigate the difference between winter value and summer value.
+a6 <- a3 - a4
+getSpatialMap_mat(a6)
 }
 

@@ -3,8 +3,11 @@
 \name{collectData_csv_anarbe}
 \alias{collectData_csv_anarbe}
 \title{Collect data from the gauging stations in spain, catchement Anarbe}
+\source{
+http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
+}
 \usage{
-collectData_csv_anarbe(folderName, output = T)
+collectData_csv_anarbe(folderName, output = TRUE)
 }
 \arguments{
 \item{folderName}{A string showing the path of the folder holding different csv files.}
@@ -16,5 +19,14 @@ The collected data from different csv files.
 }
 \description{
 Collect data from the gauging stations in spain, catchement Anarbe
+}
+\examples{
+#use internal data as an example.
+file <- system.file("extdata", "1999.csv", package = "hyfo")
+folder <- strsplit(file, '1999')[[1]][1]
+a <- collectData_csv_anarbe(folder)
+}
+\references{
+http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
 }
 
