@@ -1,14 +1,16 @@
 ---
-title: "hyfo easy start"
+title: "hyfo Easy Start"
 author: "Yuanchao Xu"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette
+
 vignette: >
   %\VignetteIndexEntry{hyfo easy start}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  %\VignetteEncoding{ASCII}
 ---
-`hyfo` is designed for hydrology and forecasting anaylasis, containing a number of tools including data extration, data processing and data visulization. There are two main functions in the package:
+##### hyfo is designed for hydrology and forecasting anaylasis, containing a number of tools including data extration, data processing and data visulization. There are two main parts in the package:
 
 1. Hydrology
 * Providing tools from raw data extration to model input data.
@@ -18,28 +20,111 @@ vignette: >
 * Providing tools from forecasting data visulization and analysis.
 * e.g., get spatial maps, data analysis and bias analysis.
 
-## Vignette Info
+## Note
 
-Note that the functions end with `_anarbe` are the functions designed specially for some case in Spain, those
-functions may not be applied to all the cases.
+* For the forecasting tools part, `hyfo` mainly focuses on the post processing of the gridData derived from forecasts or other sources. The input is a list file, usually a result from  `loadGridData{ecomsUDG.Raccess}` or `loadECOMS{ecomsUDG.Raccess}`. Pacakage`{ecomsUDG.Raccess}`is designed for getting access to different dataset, and also can load grid file (like netcdf file) directly.
 
-## Hydrology
+* The functions end with `_anarbe` are the functions designed specially for some case in Spain, those functions mostly are about data collection of the anarbe catchment, which will be introduced in the end fo this mannual.
 
-### collectData
+## 1. Hydrology
+
+If you are an experienced R user, and know how to read data in R, deal with dataframe, generate date and list, please start from next charpter, "1.2 Rainfall Analysis"
+
+### 1.1 Data Preparation
+
+#### 1.1.1 Frome File
+
+`hyfo` does provide a common tool for collecting data from different type of files, including "txt", 
+
+"csv" and "excel", which has to be assigned to the argument `fileType`.
+
+Now let's use internal data as an example.
+```{r, fig.show='hold'}
+
+library(hyfo)#load the package.
+
+file <- system.file("extdata", "1999.csv", package = "hyfo")
+folder <- strsplit(file, '1999')[[1]][1] # get the folder containing different csv (or other type) files.
+
+# Extract and combine content from different files and in each file, the extracted zone is from row 10 to row 20, #Column 1 to column2.
+a <- collectData(folder, fileType = 'csv', range = c(10, 20, 1,2))
+str(a)
+```
+
+`a` cannot be directly inputed in `hyfo`, it still needs some process.
+
+```{r, fig.show = 'hold', fig.height = 4, fig.width = 7}
+# Check the date to see if it follows the format in ?as.Date(), if not, use as.Date to convert. 
+a <- data.frame(a)
+#get date
+date <- a[, 1]
+
+# The original format is d/m/year, convert to formal format.
+date <- as.Date(date, format = '%d/%m/%Y')
+a[, 1] <- date
+
+# Now a has become `a` time series dataframe, which is the atom element of the analysis. `hyfo` deals with list #containing different time series dataframe. In this example, there is only one dataframe, and more examples please #refer to the following chapter.
+
+datalist <- list(a)
+# Use getAnnual as an example, here since `a` is not a complete time series, the result is only base on the input.
+# GetAnnual will be introduced in the next chapter.
+getAnnual(datalist)
+
+
+```
+
+
+#### 1.1.2 Mannually
+
+Following example shows a simple way to generate dataframe with start date, end date, and the value. Here in the example, `sample()` is used to generate random values, while in real case it will be a vector containing time series values.
+
+```{r, fig.show = 'hold', fig.height = 4, fig.width = 7}
+
+# Generate timeseries datalist. Each data frame consists of a Date and a value.
+AAA <- data.frame(
+  Date = seq(as.Date('1990-10-28'), as.Date('1997-4-1'), 1), # Date column
+  AAA = sample(1:10, length(seq(as.Date('1990-10-28'), # value column
+                                as.Date('1997-4-1'), 1)), repl = TRUE))
+
+BBB <- data.frame(
+  Date = seq(as.Date('1993-3-28'), as.Date('1999-1-1'),1), 
+  BBB = sample(1:10, length(seq(as.Date('1993-3-28'), 
+                                as.Date('1999-1-1'),1)), repl = TRUE))
+
+CCC <- data.frame(
+  Date = seq(as.Date('1988-2-2'), as.Date('1996-1-1'),1), 
+  CCC = sample(1:10, length(seq(as.Date('1988-2-2'), 
+                                as.Date('1996-1-1'),1)), repl = TRUE)) 
+
+datalist <- list(AAA, BBB, CCC)# dput() and dget() can be used to save and load list file.
+
+b <- getAnnual(datalist)
+```
+
+
+### 1.2 Rainfall Analysis.
+
+
+Assuming we have three gauging stations named "AAA", "BBB", "CCC", the precipitation information can be get by the following:
+
+
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+#datalist is provided by the package as a test. it's a list containing different time series.
+data(testdl)
+b <- getAnnual(testdl)
+```
 
 
 
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
 
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
+
+
 
 ## Figures
 
 The figure sizes have been customised so that you can easily put two images side-by-side. 
 
-```{r, fig.show='hold'}
+```{r, fig.show='hold', size=10}
 plot(1:10)
 plot(10:1)
 ```

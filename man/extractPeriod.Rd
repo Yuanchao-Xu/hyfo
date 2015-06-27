@@ -26,32 +26,34 @@ Extract common period or certain period from a list of different dataframes of t
 NOTE: all the dates in the datalist should follow the format in ?as.Date{base}.
 }
 \examples{
-# generate timeseries datalist. Each data frame consists of a Date and a value.
-AAA <- data.frame(Date = seq(as.Date('1990-10-28'),as.Date('1997-4-1'),1),
+# Generate timeseries datalist. Each data frame consists of a Date and a value.
+
+AAA <- data.frame(
+# date column
+Date = seq(as.Date('1990-10-28'),as.Date('1997-4-1'),1),
+ # value column
 AAA = sample(1:100,length(seq(as.Date('1990-10-28'),as.Date('1997-4-1'),1)), repl = TRUE))
 
-BBB <- data.frame(Date = seq(as.Date('1993-3-28'),as.Date('1999-1-1'),1),
+BBB <- data.frame(
+Date = seq(as.Date('1993-3-28'),as.Date('1999-1-1'),1),
 BBB = sample(1:100,length(seq(as.Date('1993-3-28'),as.Date('1999-1-1'),1)), repl = TRUE))
 
-CCC <- data.frame(Date = seq(as.Date('1988-2-2'),as.Date('1996-1-1'),1),
+CCC <- data.frame(
+Date = seq(as.Date('1988-2-2'),as.Date('1996-1-1'),1),
 CCC = sample(1:100,length(seq(as.Date('1988-2-2'),as.Date('1996-1-1'),1)), repl = TRUE))
 
-datalist <- list(AAA, BBB, CCC)# dput() and dget() can be used to save and load list file.
+list <- list(AAA, BBB, CCC)# dput() and dget() can be used to save and load list file.
 
-datalist_com <- extractPeriod(datalist, commonPeriod = TRUE)
+list_com <- extractPeriod(list, commonPeriod = TRUE)
 
-#datalist_com is the extracted datalist.
-str(datalist_com)
+# list_com is the extracted datalist.
+str(list_com)
 
-# if startDate and endDate is provided, the record between them will be extracted.
+# If startDate and endDate is provided, the record between them will be extracted.
 # make sure startDate is later than any startDate in each dataframe and endDate is
 # earlier than any endDate in each dataframe.
 
-datalist_com1 <- extractPeriod(datalist, startDate = '1994-1-1', endDate = '1995-10-1')
-}
-\references{
-Data source:
-http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
-http://www4.gipuzkoa.net/oohh/web/esp/02.asp
+data(testdl)
+datalist_com1 <- extractPeriod(testdl, startDate = '1994-1-1', endDate = '1995-10-1')
 }
 

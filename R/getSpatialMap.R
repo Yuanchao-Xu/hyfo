@@ -8,16 +8,17 @@
 #' @return A matrix representing the raster map is returned, and the map is plotted.
 #' @examples
 #' 
-#' data(gridData) # the result of \code {loadGridData{ecomsUDG.Raccess}}
-#' getSpatialMap(gridData, method = 'meanAnnual')
-#' getSpatialMap(gridData, method = 'winter')
+#' #gridData provided in the package is the result of \code {loadGridData{ecomsUDG.Raccess}}
+#' data(tgridData)
+#' getSpatialMap(tgridData, method = 'meanAnnual')
+#' getSpatialMap(tgridData, method = 'winter')
 #' 
-#' data(testCat)
-#' getSpatialMap(gridData, method = 'winter', catchment = testCat)
+#' 
+#' getSpatialMap(tgridData, method = 'winter', catchment = testCat)
 #' 
 #' file <- system.file("extdata", "points.txt", package = "hyfo")
 #' points <- read.table(file, header = TRUE, sep = ',' )
-#' getSpatialMap(gridData, method = 'winter', catchment = testCat, points = points)
+#' getSpatialMap(tgridData, method = 'winter', catchment = testCat, points = points)
 #' 
 #' @export
 getSpatialMap <- function(dataset, method = NULL, ...){
@@ -118,12 +119,12 @@ getSpatialMap <- function(dataset, method = NULL, ...){
 #' @param ... \code{title, y} showing the title and x and y axis of the plot, default is about precipitation.
 #' @return A matrix representing the raster map is returned, and the map is plotted.
 #' @examples
-#' data(gridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
+#' data(tgridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
 #' #the output type of has to be default or 'data'.
-#' a1 <- getSpatialMap(gridData, method = 'mean')
-#' a2 <- getSpatialMap(gridData, method = 'max')
-#' a3 <- getSpatialMap(gridData, method = 'winter')
-#' a4 <- getSpatialMap(gridData, method = 'summer')
+#' a1 <- getSpatialMap(tgridData, method = 'mean')
+#' a2 <- getSpatialMap(tgridData, method = 'max')
+#' a3 <- getSpatialMap(tgridData, method = 'winter')
+#' a4 <- getSpatialMap(tgridData, method = 'summer')
 #' #For example, if we want to investigate the difference between mean value and max.
 #' 
 #' a5 <- a2 - a1
@@ -134,7 +135,7 @@ getSpatialMap <- function(dataset, method = NULL, ...){
 #' getSpatialMap_mat(a6)
 #' 
 #' @export
-#' @import ggplot2 rgdal plyr
+#' @import ggplot2 rgdal plyr maps
 getSpatialMap_mat <- function(matrix, title = NULL, catchment = NULL, points = NULL, output = 'data', 
                               info = TRUE, scale = 'identity', ...){
   #check input
@@ -172,7 +173,10 @@ getSpatialMap_mat <- function(matrix, title = NULL, catchment = NULL, points = N
   data_ggplot <- melt(matrix, na.rm = T)
   colnames(data_ggplot) <- c('lat', 'lon', 'value')
   theme_set(theme_bw())
-  mainLayer <- ggplot(data = data_ggplot)+ 
+  
+  mainLayer <- with(data_ggplot, {
+    
+    ggplot(data = data_ggplot)+
     geom_tile(aes(x = lon, y = lat, fill = value))+
     #scale_fill_gradient(high = 'red', low = 'yellow')+
     scale_fill_gradientn(colours = c('yellow', 'orange', 'red'), na.value = 'transparent',
@@ -186,12 +190,14 @@ getSpatialMap_mat <- function(matrix, title = NULL, catchment = NULL, points = N
     theme(plot.title = element_text(size = 20, face = 'bold'),
           axis.title.x = element_text(size = 18),
           axis.title.y = element_text(size = 18))
-  #     geom_rect(xmin=min(lon)+0.72*(max(lon)-min(lon)),
-  #               xmax=min(lon)+0.99*(max(lon)-min(lon)),
-  #               ymin=min(lat)+0.02*(max(lat)-min(lat)),
-  #               ymax=min(lat)+0.28*(max(lat)-min(lat)),
-  #               fill='white',colour='black')+
-  #   annotate('text', x = min(lon), y = min(lat), label=word, hjust = 0, vjust = -1)
+#   geom_rect(xmin=min(lon)+0.72*(max(lon)-min(lon)),
+#             xmax=min(lon)+0.99*(max(lon)-min(lon)),
+#             ymin=min(lat)+0.02*(max(lat)-min(lat)),
+#             ymax=min(lat)+0.28*(max(lat)-min(lat)),
+#             fill='white',colour='black')+
+#   annotate('text', x = min(lon), y = min(lat), label=word, hjust = 0, vjust = -1)
+  
+  })
   
   printLayer <- mainLayer
   
@@ -201,14 +207,19 @@ getSpatialMap_mat <- function(matrix, title = NULL, catchment = NULL, points = N
     a@data$id <- rownames(a@data)
     b <- fortify(a, region = 'id')
     c <- join(b, a@data, by = 'id')
-    catchmentLayer <- geom_polygon(data = c, aes(long, lat, group = group), color = 'black', 
+    catchmentLayer <- with(c, {
+      geom_polygon(data = c, aes(long, lat, group = group), color = 'black', 
                                    fill = 'transparent')
+    })
+      
     
     printLayer <- printLayer + catchmentLayer
   }
   #plot points
   if(is.null(points) == FALSE){
-    pointLayer <- geom_point(data = points,aes(x = lon, y = lat, size = value, colour = z))
+    pointLayer <- with(points, {
+      geom_point(data = points,aes(x = lon, y = lat, size = value, colour = z))
+    })
     
     printLayer <- printLayer + pointLayer
   }
@@ -232,15 +243,15 @@ getSpatialMap_mat <- function(matrix, title = NULL, catchment = NULL, points = N
 #' @param list If input is a list containing different ggplot data, use l\code{list = inputlist}.
 #' @return A combined map.
 #' @examples
-#' data(gridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
+#' data(tgridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
 #' #The output should be 'ggplot'
-#' a1 <- getSpatialMap(gridData, method = 'summer', output = 'ggplot')
-#' a2 <- getSpatialMap(gridData, method = 'winter', output = 'ggplot')
+#' a1 <- getSpatialMap(tgridData, method = 'summer', output = 'ggplot')
+#' a2 <- getSpatialMap(tgridData, method = 'winter', output = 'ggplot')
 #' 
 #' getSpatialMap_comb(a1, a2)
 #' 
 #' @export
-#' @import ggplot2
+#' @import ggplot2 maps
 getSpatialMap_comb <- function(..., list = NULL, nrow = 1){
   
   
@@ -254,12 +265,15 @@ getSpatialMap_comb <- function(..., list = NULL, nrow = 1){
   
   world_map <- map_data('world')
   theme_set(theme_bw())
-  mainLayer <- ggplot(data = data_ggplot)+ 
+  mainLayer <- with(data_ggplot, {
+    ggplot(data = data_ggplot)+ 
     geom_tile(aes(x = lon, y = lat, fill = value))+
     #scale_fill_gradient(high = 'red', low = 'yellow')+
     scale_fill_gradientn(colours = c('yellow', 'orange', 'red'), na.value = 'transparent')+#usually scale = 'sqrt'
     geom_map(data = world_map, map = world_map, aes(map_id = region), fill = 'transparent', color = 'black')+
     facet_wrap(~ Name, nrow = nrow)
+  })
+  
   print (mainLayer)
 }
 

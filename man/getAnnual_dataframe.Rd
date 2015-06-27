@@ -17,7 +17,7 @@ The annual rainfall of each year of the input station.
 Get annual rainfall of the input time series.
 }
 \examples{
-data(datalist)
-getAnnual_dataframe(datalist[[1]])
+data(testdl)
+getAnnual_dataframe(testdl[[1]])
 }
 

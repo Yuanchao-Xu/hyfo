@@ -26,10 +26,11 @@ will also be plotted. If output "mean" is seleted, the mean annual rainfall will
 Get annual rainfall of different rainfall time series
 }
 \examples{
-data(datalist)
-a <- getAnnual(datalist)
+#datalist is provided by the package as a test.
+data(testdl)
+a <- getAnnual(testdl)
 #set minRecords to control the calculation of annual rainfall.
-b <- getAnnual(datalist, output = 'mean', minRecords = 350)
-c <- getAnnual(datalist, output = 'mean', minRecords = 365)
+b <- getAnnual(testdl, output = 'mean', minRecords = 350)
+c <- getAnnual(testdl, output = 'mean', minRecords = 365)
 }
 

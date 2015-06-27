@@ -52,8 +52,8 @@ b <- read.table(text = '        Date  AAA  BBB  CCC  DDD  EEE
 
 b1 <- fillGap(b) # if corPeriod is missing, 'daily' is taken as default.
 
-data(datalist)
-a <- extractPeriod(datalist, commonPeriod = TRUE)
+data(testdl)
+a <- extractPeriod(testdl, commonPeriod = TRUE)
 a1 <- list2Dataframe(a)
 a2 <- fillGap(a1)
 }

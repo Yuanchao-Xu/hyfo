@@ -36,12 +36,12 @@ A matrix representing the raster map is returned, and the map is plotted.
 Get spatial map of the input dataset, and a matrix representing the raster map will be returned.
 }
 \examples{
-data(gridData)# the result of \\code{loadGridData{ecomsUDG.Raccess}}
+data(tgridData)# the result of \\code{loadGridData{ecomsUDG.Raccess}}
 #the output type of has to be default or 'data'.
-a1 <- getSpatialMap(gridData, method = 'mean')
-a2 <- getSpatialMap(gridData, method = 'max')
-a3 <- getSpatialMap(gridData, method = 'winter')
-a4 <- getSpatialMap(gridData, method = 'summer')
+a1 <- getSpatialMap(tgridData, method = 'mean')
+a2 <- getSpatialMap(tgridData, method = 'max')
+a3 <- getSpatialMap(tgridData, method = 'winter')
+a4 <- getSpatialMap(tgridData, method = 'summer')
 #For example, if we want to investigate the difference between mean value and max.
 
 a5 <- a2 - a1

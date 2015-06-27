@@ -32,8 +32,8 @@ Get mean rainfall data, e.g. mean annual rainfall, mean monthly rainfall and mea
 there are following methods to be selected, "meanAnnualPreci", "winter", "spring", "autumn", "summer".
 }
 \examples{
-data(datalist)
-TS  <- datalist[[1]]
+data(testdl)
+TS  <- testdl[[1]]
 year = as.numeric(format(TS[, 1], '\%Y'))
 month = as.numeric(format(TS[, 1], '\%m'))
 

@@ -15,7 +15,8 @@ Imports: ggplot2 (>= 1.0.1),
     rgdal (>= 0.9-3),
     plyr (>= 1.8.3),
     moments,
-    lmom
+    lmom,
+    maps
 Suggests: ecomsUDG.Raccess,
     downscaleR,
     gridExtra,

@@ -10,11 +10,12 @@
 #' @return The annual rainfall and the number of missing data of each year and each rainfall gauge, which 
 #' will also be plotted. If output "mean" is seleted, the mean annual rainfall will be returned.
 #' @examples
-#' data(datalist)
-#' a <- getAnnual(datalist)
+#' #datalist is provided by the package as a test.
+#' data(testdl)
+#' a <- getAnnual(testdl)
 #' #set minRecords to control the calculation of annual rainfall.
-#' b <- getAnnual(datalist, output = 'mean', minRecords = 350)
-#' c <- getAnnual(datalist, output = 'mean', minRecords = 365)
+#' b <- getAnnual(testdl, output = 'mean', minRecords = 350)
+#' c <- getAnnual(testdl, output = 'mean', minRecords = 365)
 #' 
 #' @export
 #' @import ggplot2 reshape2 stats
@@ -27,22 +28,30 @@ getAnnual <- function(datalist, output = 'series', minRecords = 355, ...){
   
   if (output == 'mean'){
     validData <- data[data$recordNum >= minRecords,]
+ 
     data <- aggregate(validData$AnnualPreci, list(validData$Name), mean)
     colnames(data) <- c('Name', 'AnnualPreci')
     
-    mainLayer <- ggplot(data)+
+    mainLayer <- with(data, {
+      ggplot(data)+
       geom_bar(aes(x = Name, y = AnnualPreci, fill = Name), stat = 'identity')+
       labs(empty = NULL, ...)#in order to pass "...", arguments shouldn't be empty.
-    print (mainLayer)
+      
+    })
     
+    print (mainLayer)
     return (data)
     
   }else{
     
-    plotData <- subset(data, select = -recordNum)
+    plotData <- with(data, {
+      subset(data, select = -recordNum)
+    })
+      
     plotData <- melt(plotData, var.id = c('Year', 'Name'))
     
-    mainLayer <- ggplot(plotData)+
+    mainLayer <- with(plotData, {
+      ggplot(plotData)+
       geom_bar(aes(x = as.Date(Year, format = '%Y'), y = value , fill = Name), 
                stat = 'identity')+
       facet_grid(variable ~ Name, scales = 'free')+
@@ -50,9 +59,12 @@ getAnnual <- function(datalist, output = 'series', minRecords = 355, ...){
       ylab(NULL)+
       labs(empty = NULL, ...)+#in order to pass "...", arguments shouldn't be empty.
       theme(plot.title = element_text(size = 20, face = 'bold', vjust = 1))
-    #      grid.arrange(mainLayer, ncol = 4)
-    print (mainLayer)
+      #      grid.arrange(mainLayer, ncol = 4)
+        
+    })
     
+    
+    print (mainLayer)
     return (data)
   }  
 }
@@ -65,14 +77,15 @@ getAnnual <- function(datalist, output = 'series', minRecords = 355, ...){
 #' the time should follow the format : "1990-1-1"
 #' @return The annual rainfall of each year of the input station.
 #' @examples
-#' data(datalist)
-#' getAnnual_dataframe(datalist[[1]])
+#' data(testdl)
+#' getAnnual_dataframe(testdl[[1]])
 #' 
 #' @export
 getAnnual_dataframe <- function(dataset){
   
   if (!grepl('-|/', dataset[1, 1])) {
-    stop ('First column is not date or Wrong Date formate, check the format in ?as.Date{base}')
+    stop ('First column is not date or Wrong Date formate, check the format in ?as.Date{base},
+          and use as.Date to convert.')
   }
   Date <- as.Date(dataset[, 1])
   year <- format(Date, '%Y')

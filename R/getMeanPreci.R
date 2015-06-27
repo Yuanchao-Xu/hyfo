@@ -12,8 +12,8 @@
 #' there are following methods to be selected, "meanAnnualPreci", "winter", "spring", "autumn", "summer".
 #' @return The mean value of the input time series or the full results before calculating mean.
 #' @examples
-#' data(datalist)
-#' TS  <- datalist[[1]]
+#' data(testdl)
+#' TS  <- testdl[[1]]
 #' year = as.numeric(format(TS[, 1], '%Y'))
 #' month = as.numeric(format(TS[, 1], '%m'))
 #' 

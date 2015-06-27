@@ -22,15 +22,16 @@ A matrix representing the raster map is returned, and the map is plotted.
 Get spatial map of the input dataset.
 }
 \examples{
-data(gridData) # the result of \\code {loadGridData{ecomsUDG.Raccess}}
-getSpatialMap(gridData, method = 'meanAnnual')
-getSpatialMap(gridData, method = 'winter')
+#gridData provided in the package is the result of \\code {loadGridData{ecomsUDG.Raccess}}
+data(tgridData)
+getSpatialMap(tgridData, method = 'meanAnnual')
+getSpatialMap(tgridData, method = 'winter')
 
-data(testCat)
-getSpatialMap(gridData, method = 'winter', catchment = testCat)
+
+getSpatialMap(tgridData, method = 'winter', catchment = testCat)
 
 file <- system.file("extdata", "points.txt", package = "hyfo")
 points <- read.table(file, header = TRUE, sep = ',' )
-getSpatialMap(gridData, method = 'winter', catchment = testCat, points = points)
+getSpatialMap(tgridData, method = 'winter', catchment = testCat, points = points)
 }
 

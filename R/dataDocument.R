@@ -1,4 +1,4 @@
-#' datalist
+#' testdl
 #'
 #'A list containing different precipitation time series.
 #'
@@ -10,10 +10,16 @@
 #'   \item{CCC}{CCC, a dataframe containing a date column and a value column.}
 #'   ...
 #' }
-"datalist"
+#' @references
+#' http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
+#' http://www4.gipuzkoa.net/oohh/web/esp/02.asp
+#' @source
+#' http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
+#' http://www4.gipuzkoa.net/oohh/web/esp/02.asp
+"testdl"
 
 
-#' gridData
+#' tgridData
 #'
 #'A list containing different information getting from grid data file, e.g., netcdf file.
 #'
@@ -32,7 +38,7 @@
 #' (http://www.meteo.unican.es/datasets/spain02), 10.1002/joc.2256.
 #' 
 #' @source http://www.meteo.unican.es/datasets/spain02
-"gridData"
+"tgridData"
 
 
 

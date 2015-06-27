@@ -38,8 +38,8 @@
 #' 
 #' b1 <- fillGap(b) # if corPeriod is missing, 'daily' is taken as default.
 #' 
-#' data(datalist)
-#' a <- extractPeriod(datalist, commonPeriod = TRUE)
+#' data(testdl)
+#' a <- extractPeriod(testdl, commonPeriod = TRUE)
 #' a1 <- list2Dataframe(a)
 #' a2 <- fillGap(a1)
 #' 
@@ -48,7 +48,8 @@
 fillGap <- function(dataset, corPeriod = 'daily'){
   
   if (!grepl('-|/', dataset[1, 1])) {
-    stop ('First column is not date or Wrong Date formate, check the format in ?as.Date{base}')
+    stop ('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
+          and use as.Date to convert.')
   }
   Date <- as.Date(dataset[, 1])
   data <- data.frame(dataset[, 2:dim(dataset)[2]])

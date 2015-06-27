@@ -29,8 +29,8 @@ The calculated mean value of the input time series and the plot of the result.
 get mean rainfall bar plot of the input dataset
 }
 \examples{
-data(gridData)# the result of \\code{loadGridData{ecomsUDG.Raccess}}
-b1 <- getPreciBar(gridData, method = 'annual')
-b2 <- getPreciBar(gridData, method = 'meanMonthly')
+#gridData provided by package is the result of \\code{loadGridData{ecomsUDG.Raccess}}
+b1 <- getPreciBar(tgridData, method = 'annual')
+b2 <- getPreciBar(tgridData, method = 'meanMonthly')
 }
 

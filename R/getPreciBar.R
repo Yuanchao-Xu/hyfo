@@ -11,13 +11,22 @@
 #' @param plotRange A boolean showing whether the range will be plotted.
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot.
 #' @examples
-#' data(gridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
-#' b1 <- getPreciBar(gridData, method = 'annual')
-#' b2 <- getPreciBar(gridData, method = 'meanMonthly')
+#' #gridData provided by package is the result of \code{loadGridData{ecomsUDG.Raccess}}
+#' b1 <- getPreciBar(tgridData, method = 'annual')
+#' b2 <- getPreciBar(tgridData, method = 'meanMonthly')
 #' 
 #' @return The calculated mean value of the input time series and the plot of the result.
 #' @export
 getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...){
+  
+  
+  #check input dataset
+  checkWord <- c('Data', 'xyCoords', 'Dates')
+  if(any(is.na(match(checkWord, attributes(dataset)$names)))){
+    stop ('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
+          check help for details.')
+  }
+  
   
   data <- dataset$Data
   startTime <- as.POSIXlt(dataset$Dates$start, tz = 'GMT')
@@ -91,8 +100,10 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
   
   xlab <- paste(xlab, word)
   
+  theme_set(theme_bw())
   
-  mainLayer <- ggplot(plotPreci)+
+  mainLayer <- with(plotPreci, {
+    ggplot(plotPreci)+
     geom_bar(aes(x = Index, y = Preci), stat = 'identity', colour = 'black', fill = 'lightblue', width = .6)+
     xlab(xlab)+
     ylab('Precipitation (mm)')+
@@ -108,6 +119,9 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
     geom_hline(yintercept = medianValue, colour = 'red')+
     geom_text(x = min(xlim) + 0.6 * (max(xlim) - min(xlim)), y = medianValue + 3, vjust = 0,
               label = 'median', colour = 'red')
+  })
+  
+  
   
   
   if(plotRange){
@@ -115,7 +129,10 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
       warning ('There is no plotRange for this method')
       print(mainLayer)
     }else{
-      rangeLayer <- geom_errorbar(aes(x = Index, ymax = maxValue, ymin = minValue), width = 0.3)
+      rangeLayer <- with(plotPreci, {
+        geom_errorbar(aes(x = Index, ymax = maxValue, ymin = minValue), width = 0.3)
+      })
+        
       print(mainLayer + rangeLayer)
     }
     
@@ -150,10 +167,10 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
 #' @return A combined barplot.
 #' @examples
 #' 
-#' data(gridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
+#' data(tgridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
 #' #output type of getPreciBar() has to be 'ggplot'.
-#' b1 <- getPreciBar(gridData, method = 2, output = 'ggplot')
-#' b2 <- getPreciBar(gridData, method = 3, output = 'ggplot')
+#' b1 <- getPreciBar(tgridData, method = 2, output = 'ggplot')
+#' b2 <- getPreciBar(tgridData, method = 3, output = 'ggplot')
 #' 
 #' getPreciBar_comb(b1, b2)
 #' 
@@ -171,9 +188,13 @@ getPreciBar_comb <- function(..., list = NULL, nrow = 1){
   data_ggplot$Name <- factor(data_ggplot$Name, levels = data_ggplot$Name, ordered = TRUE)
   
   theme_set(theme_bw())
-  mainLayer <- ggplot(data_ggplot)+
-    geom_bar(aes(x = Index, y = Preci, fill = Name), stat = 'identity', colour = 'black', width = .6)+
-    facet_wrap( ~ Name, nrow = nrow)
+  
+  mainLayer <- with(data_ggplot, {
+    mainLayer <- ggplot(data_ggplot)+
+      geom_bar(aes(x = Index, y = Preci, fill = Name), stat = 'identity', colour = 'black', width = .6)+
+      facet_wrap( ~ Name, nrow = nrow)
+  })
+
   
   print (mainLayer)
 }

@@ -9,8 +9,8 @@
 #' bind <- 'rbind'
 #' checkBind(data,bind)
 #' 
-#' data(datalist)
-#' checkBind(datalist, 'rbind')
+#' data(testdl)
+#' checkBind(testdl, 'rbind')
 #' #
 #' @export
 checkBind <- function(data, bind){

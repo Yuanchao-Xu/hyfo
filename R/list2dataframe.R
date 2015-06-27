@@ -8,7 +8,7 @@
 #' 
 #' @examples
 #' # open file attached in the package.
-#' file <- system.file("extdata", "dl.txt", package = "hyfo")
+#' file <- system.file("extdata", "testdl.txt", package = "hyfo")
 #' datalist <- dget(file) # read list file.
 #' datalist_new <- extractPeriod(datalist, commonPeriod = TRUE)
 #' 
