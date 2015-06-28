@@ -194,7 +194,7 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
     #    guides(fill = guide_colorbar(title='Rainfall (mm)', barheight = 15))+
     xlab(x_word) +
     ylab('Latitude') +
-    ggtitle(title) +
+    ggtitle(title_d) +
     labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
     theme(plot.title = element_text(size = 20, face = 'bold'),
           axis.title.x = element_text(size = 18),
