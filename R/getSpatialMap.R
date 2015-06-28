@@ -179,7 +179,7 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
   x_word <- paste('Longitude', word)
   world_map <- map_data('world')
   
-  data_ggplot <- melt(matrix, na.rm = T)
+  data_ggplot <- melt(matrix, na.rm = TRUE)
   colnames(data_ggplot) <- c('lat', 'lon', 'value')
   theme_set(theme_bw())
   
@@ -189,16 +189,16 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
     geom_tile(aes(x = lon, y = lat, fill = value)) +
     #scale_fill_gradient(high = 'red', low = 'yellow')+
     scale_fill_gradientn(colours = c('yellow', 'orange', 'red'), na.value = 'transparent',
-                         guide = guide_colorbar(title='Rainfall (mm)', barheight = 15), trans = scale) +#usually scale = 'sqrt'
+                         guide = guide_colorbar(title='Rainfall (mm)', barheight = rel(10)), trans = scale) +#usually scale = 'sqrt'
     geom_map(data = world_map, map = world_map, aes(map_id = region), fill='transparent', color='black') +
     #    guides(fill = guide_colorbar(title='Rainfall (mm)', barheight = 15))+
     xlab(x_word) +
     ylab('Latitude') +
     ggtitle(title_d) +
     labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
-    theme(plot.title = element_text(size = 20, face = 'bold'),
-          axis.title.x = element_text(size = 18),
-          axis.title.y = element_text(size = 18))
+    theme(plot.title = element_text(size = rel(1.8), face = 'bold'),
+          axis.title.x = element_text(size = rel(1.5)),
+          axis.title.y = element_text(size = rel(1.5)))
 #   geom_rect(xmin=min(lon)+0.72*(max(lon)-min(lon)),
 #             xmax=min(lon)+0.99*(max(lon)-min(lon)),
 #             ymin=min(lat)+0.02*(max(lat)-min(lat)),
@@ -227,7 +227,10 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
   #plot points
   if (is.null(points) == FALSE) {
     pointLayer <- with(points, {
-      geom_point(data = points,aes(x = lon, y = lat, size = value, colour = z))
+      geom_point(data = points, aes(x = lon, y = lat, size = value, colour = z),
+                 guide = guide_legend(barheight = rel(3)))
+        
+        
     })
     
     printLayer <- printLayer + pointLayer

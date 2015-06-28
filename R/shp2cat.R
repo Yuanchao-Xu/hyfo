@@ -2,11 +2,13 @@
 #' @param filePath A string representing the path of the shape file.
 #' @return A catchment object can be used in \code{getSpatialMap()}.
 #' @export
+#' @details This function is based on the package \code{rgdal} and \code{sp}, and the output comes from the package 
+#' \code{sp}
 #' @examples
 #' #open internal file
 #' file <- system.file("extdata", "testCat.shp", package = "hyfo")
 #' catchment <- shp2cat(file)
-#' 
+#' @references rgdal package and the 
 #' @import rgdal
 shp2cat <- function(filePath) {
   #if the path <- file.choose(), the seperator is '\\'

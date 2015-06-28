@@ -136,7 +136,7 @@ getAnnual(testdl, output = 'mean', minRecords = 365)
 
 If you are not satisfied with the title and x axis and y axis, you can assign them yourself.
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
-a <- getAnnual(testdl, output = 'mean', title = 'title', x = 'x axis', y = 'y axis')
+a <- getAnnual(testdl, output = 'mean', title = 'aaa', x = 'aaa', y = 'aaa')
 a
 ```
 
@@ -183,7 +183,7 @@ head(df)
 
 From above, we can see that in the gauging station "AAA", there are some missing value marked as "NA". Now we are going to fill these gaps.
 
-The gap filling is based on the correlation and linear regression between each two gauging stations, correlation table, correlation Order and Linear Coefficients are also printed when doing the calculation. Details can be found in  ?fillGap.
+The gap filling is based on the correlation and linear regression between each two gauging stations, correlation table, correlation Order and Linear Coefficients are also printed when doing the calculation. Details can be found in  `?fillGap`.
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
 df_filled <- fillGap(df)
 head(df_filled)
@@ -246,7 +246,7 @@ data(tgridData)
 a <- getSpatialMap(tgridData, method = 'meanAnnual')
 ```
 
-There are several methods to be seleted in the function, details can be found by ?getSpatialMap
+There are several methods to be seleted in the function, details can be found by `?getSpatialMap`.
 
 Sometimes there exists a great difference in the whole map, e.g., the following value, `c(100, 2, 2,6, 1,7)`, since the maximum value is too large, so in the plot, by normal plot scale, we can only recognize value 100 and the rest, it's hard for us to tell the difference between 2, 2.6, and 1.7 from the plot. In this situation, the value needs to be processed before plotting. Here `scale` provides a way to decide the plot scale.
 
@@ -256,6 +256,47 @@ a <- getSpatialMap(tgridData, method = 'meanAnnual', scale = 'sqrt')
 ```
 
 Here in our example, because the region is too small, and the differences is not so big, so it's not so obvious to tell from the plot. But if in a map, both dry region and wet region is included, that will be more obvious to see the difference between the plot scales.
+
+
+Also, if you are not satisfied with the title, x axis and y axis, you can assgin yourself.
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+a <- getSpatialMap(tgridData, method = 'meanAnnual', scale = 'sqrt', 
+                   title = 'aaa', x = 'aaa', y = 'aaa')
+```
+
+## 2.2 Add Background (catchment and gauging stations)
+
+The default background is the world map, while if you have other backgrounds like catchment shape file and station location file, you are welcome to import them as background.
+
+### 2.2.1 Add catchment shape file.
+
+Catchment shape file needs to be processed with a very simple step. It's based on the package `rgdal`, details can be found by `?shp2cat`
+
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+# Use the test file provided by hyfo
+file <- system.file("extdata", "testCat.shp", package = "hyfo")
+cat <- shp2cat(file)
+# cat is the catchment file.
+```
+
+Then the catchment file `cat` can be inputed as background.
+
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+a <- getSpatialMap(tgridData, method = 'meanAnnual', catchment = cat)
+```
+
+### 2.2.2 Add station locations.
+
+Points file needs to be read into dataframe, and special column has to be assigned, details can be found by `?getSpatialMap_mat`
+```{r, fig.show='hold', fig.height=6, fig.width=7}
+# Use the points file provided by hyfo
+file <- system.file("extdata", "points.txt", package = "hyfo")
+points <- read.table(file, header = TRUE, sep = ',' )
+getSpatialMap(tgridData, method = 'winter', points = points, catchment = cat)
+
+```
+
+As can be seen above, the color of the points represents the elevation, the size of the points represents the value, e.g., rainfall value.
 
 
 
