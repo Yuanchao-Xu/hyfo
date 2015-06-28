@@ -15,7 +15,7 @@
 #' dataframe <- list2Dataframe(datalist_new)
 #' 
 #' @export
-list2Dataframe <- function(datalist){
+list2Dataframe <- function(datalist) {
   
   data <- lapply(datalist, function(x) x[, 2])
   names <- lapply(datalist, function(x) colnames(x)[2])
@@ -25,5 +25,5 @@ list2Dataframe <- function(datalist){
   colnames(data) <- names
   data <- data.frame(cbind(Date, data))
   
-  return (data)
+  return(data)
 }

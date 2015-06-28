@@ -16,28 +16,25 @@
 checkBind <- function(data, bind){
   # data has to be a list of values, and will be used in do.call('rbind')
   message ('Check if the data list is available for rbind or cbind... \n')
-  if (bind == 'rbind'){
-    colNum <- sapply(data,function(x) dim(x)[2])
+  if (bind == 'rbind') {
+    colNum <- sapply(data, function(x) dim(x)[2])
     colLev <- unique(colNum)
-    if (length(colLev) != 1){
+    if (length(colLev) != 1) {
       dif <- colLev[2]
       difNum <- which(colNum == dif)
-      stop (sprintf('Different Colomn number in %s th of the data list \n',difNum))
+      stop(sprintf('Different Colomn number in %s th of the data list \n', difNum))
       
     }
     
-  }else if (bind =='cbind'){
-    rowNum <- sapply(data,function(x) dim(x)[1])
+  }else if (bind =='cbind') {
+    rowNum <- sapply(data, function(x) dim(x)[1])
     rowLev <- unique(rowNum)
-    if (length(rowLev) != 1){
+    if (length(rowLev) != 1) {
       dif <- rowLev[2]
       difNum <- which(rowNum == dif)
-      stop (sprintf('Different row number in %s th of the data list \n',rowNum))
+      stop(sprintf('Different row number in %s th of the data list \n', rowNum))
       
     }
-    
-    
   }
-  
-  message ('Data list is OK')
+  message('Data list is OK')
 }

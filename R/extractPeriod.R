@@ -41,11 +41,11 @@
 #' 
 #' @import zoo
 #' @export
-extractPeriod <- function(datalist, startDate = NULL, endDate = NULL, commonPeriod = FALSE){
+extractPeriod <- function(datalist, startDate = NULL, endDate = NULL, commonPeriod = FALSE) {
   
-  if (!is.null(startDate) & !is.null(endDate) & commonPeriod == FALSE){
+  if (!is.null(startDate) & !is.null(endDate) & commonPeriod == FALSE) {
     dataset <- lapply(datalist, extractPeriod_dataset, startDate = startDate, endDate = endDate)
-  }else if (is.null(startDate) & is.null(endDate) & commonPeriod == TRUE){
+  } else if (is.null(startDate) & is.null(endDate) & commonPeriod == TRUE) {
     
     Dates <- lapply(datalist, extractPeriod_getDate) 
     Dates <- do.call('rbind', Dates)
@@ -55,11 +55,11 @@ extractPeriod <- function(datalist, startDate = NULL, endDate = NULL, commonPeri
     
     dataset <- lapply(datalist, extractPeriod_dataset, startDate = startDate, endDate = endDate)
     
-  }else{
-    stop ('Enter startDate and endDate, set commonPeriod as False, or simply set commonPeriod as TRUE')
+  } else {
+    stop('Enter startDate and endDate, set commonPeriod as False, or simply set commonPeriod as TRUE')
   }
   
-  return (dataset)
+  return(dataset)
 }
 
 
@@ -69,29 +69,29 @@ extractPeriod <- function(datalist, startDate = NULL, endDate = NULL, commonPeri
 #' @param startDate A date representing the start date.
 #' @param endDate A date representing the end date.
 #' @return The extracted dataframe between \code{startDate} and \code{endDate}.
-extractPeriod_dataset <- function(dataset, startDate, endDate){
+extractPeriod_dataset <- function(dataset, startDate, endDate) {
   
   dataset[, 1] <- as.Date(dataset[, 1])
   
   startIndex <- which(dataset[, 1] == startDate)
   endIndex <- which(dataset[, 1] == endDate)
   if (length(startIndex) == 0 | length(endIndex) == 0) {
-    stop ('startDate and endDate exceeds the date limits in dataframe. Check datalsit please.')
+    stop('startDate and endDate exceeds the date limits in dataframe. Check datalsit please.')
   }
   output <- dataset[startIndex:endIndex, ]
   
-  return (output)  
+  return(output)  
 }
 
-extractPeriod_getDate <- function(dataset){
+extractPeriod_getDate <- function(dataset) {
   
   if (!grepl('-|/', dataset[1, 1])) {
-    stop ('First column is not date or Wrong Date formate, check the format in ?as.Date{base}, 
+    stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base}, 
           and use as.Date to convert.')
   }
   start <- as.Date(dataset[1, 1])
   end <- as.Date(tail(dataset[, 1], 1))
   
   
-  return (c(start, end))
+  return(c(start, end))
 }

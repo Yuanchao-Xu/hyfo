@@ -8,7 +8,7 @@
 #' catchment <- shp2cat(file)
 #' 
 #' @import rgdal
-shp2cat <- function(filePath){
+shp2cat <- function(filePath) {
   #if the path <- file.choose(), the seperator is '\\'
   if (grepl('\\\\', filePath)) {
     catName <- tail(strsplit(filePath,'\\\\')[[1]], 1)#needs to be four \, caused by some window system problem
@@ -16,20 +16,20 @@ shp2cat <- function(filePath){
     catName2 <- paste('\\\\', catName, sep = '')
     folderName <- strsplit(filePath, catName2)[[1]]
     n <- list.files(folderName, pattern = catName1)
-    if(length(n) == 1) stop ('Please place the shp file in the folder containing 
+    if (length(n) == 1) stop('Please place the shp file in the folder containing 
                              full related files, not only the shape file')
   #the other seperator is '/'  
-  }else if (grepl('/', filePath)){
+  } else if (grepl('/', filePath)) {
     catName <- tail(strsplit(filePath,'/')[[1]], 1)#needs to be four \, caused by some window system problem
     catName1 <- strsplit(catName, '\\.')[[1]][1]
     catName2 <- paste('/', catName, sep = '')
     folderName <- strsplit(filePath, catName2)[[1]]
     n <- list.files(folderName, pattern = catName1)
-    if(length(n) == 1) stop ('Please place the shp file in the folder containing 
+    if (length(n) == 1) stop('Please place the shp file in the folder containing 
                              full related files, not only the shape file')
   }
   
-  if (length(folderName) == 0) stop ('No shape file found, make sure the shp file is selected.')
+  if (length(folderName) == 0) stop('No shape file found, make sure the shp file is selected.')
   catchment <- readOGR(folderName, catName1)
-  return (catchment)
+  return(catchment)
 }

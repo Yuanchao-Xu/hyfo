@@ -17,7 +17,7 @@
 collectData_txt_anarbe <- function(folderName, output = TRUE, rangeWord = c('Ene       ', -1, 
                                                                    'Total     ', -6)){
   #All the code should be ASCII encode, so there should be no strange symbol.
-  if(is.null(rangeWord)){
+  if (is.null(rangeWord)) {
     stop ('rangeWord consists of 4 elements:
           1. start word which program can recognise.
           2. shift1, the shift needs to be made. E.g. start word is in line 7, and program
@@ -42,14 +42,14 @@ collectData_txt_anarbe <- function(folderName, output = TRUE, rangeWord = c('Ene
   colnames(data) <- c('Date', tarName)
   
   #newFileName <- file.choose(new = T)
-  message ('new file should be located a different location than the excel folder, 
+  message('new file should be located a different location than the excel folder,
          in order to avoid error.
          At least 2 excels should be in the folder')
   
   #write.table(data_new,file=newFileName,row.names = F, col.names = F,sep=',')
   
   
-  if (output == T) return (data)
+  if (output == TRUE) return(data)
 
 }  
 
@@ -76,7 +76,7 @@ anarbe_txt <- function(dataset, x1, x2){
   
   data <- as.numeric(data[which(data != '          '), ])
   
-  if (length(data) != length(Date)){
+  if (length(data) != length(Date)) {
     stop('check original txt file. for missing value, the symbol is "--", check
          if this symbol is missing somewhere')
   }

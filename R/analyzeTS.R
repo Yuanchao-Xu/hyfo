@@ -18,7 +18,7 @@ getLMom <- function(dis){
   Lkur <- LMom[4]
   
   output <- data.frame(mean = mean, Lcv = LCV, Lskew = Lskew, Lkur = Lkur)
-  return (output)
+  return(output)
 }
 
 #' get moment analysis of the input distribution
@@ -37,5 +37,5 @@ getMoment <- function(dis) {
   
   output <- data.frame(mean=mean, Variance = variance, Skewness = skewness, Kurtosis = kurtosis)
   
-  return (output)
+  return(output)
 }

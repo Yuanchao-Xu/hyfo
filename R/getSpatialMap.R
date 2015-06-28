@@ -21,12 +21,12 @@
 #' getSpatialMap(tgridData, method = 'winter', catchment = testCat, points = points)
 #' 
 #' @export
-getSpatialMap <- function(dataset, method = NULL, ...){
+getSpatialMap <- function(dataset, method = NULL, ...) {
 
   #check input dataset
   checkWord <- c('Data', 'xyCoords', 'Dates')
-  if(any(is.na(match(checkWord, attributes(dataset)$names)))){
-    stop ('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
+  if (any(is.na(match(checkWord, attributes(dataset)$names)))) {
+    stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
           check help for details.')
   }
   
@@ -39,17 +39,17 @@ getSpatialMap <- function(dataset, method = NULL, ...){
   monthIndex <-startTime$mon + 1
   data <- dataset$Data
   
-  if (is.null(method)){
-    warning ('You should shoose a method, unless input is a matrix directly to be plotted.')
+  if (is.null(method)) {
+    warning('You should shoose a method, unless input is a matrix directly to be plotted.')
     #in case the dataset is ready to plot and no need to calculate
-  }else if(method == 'meanAnnual'){
+  } else if (method == 'meanAnnual') {
     #mean value of the annual precipitation over the period of the data 
     #time <- proc.time()
     data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex,  method = 'meanAnnualPreci')
     #newTime <- proc.time() - time
     title  <- 'Mean Annual Precipitation (mm / year)'
     
-  }else if(method == 'winter'){
+  } else if (method == 'winter') {
     #mean value of the seasonal precipitation, in this case, winter
     
     #time <- proc.time()
@@ -58,44 +58,51 @@ getSpatialMap <- function(dataset, method = NULL, ...){
     #newTime <- proc.time() - time
     title <- 'Mean Winter Precipitation (mm / winter)'
     
-  }else if(method == 'spring'){
+  } else if (method == 'spring') {
     data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'spring')
     
     title <- 'Mean Spring Precipitation (mm / spring)'
     
-  }else if (method == 'summer'){
+  } else if (method == 'summer') {
     data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'summer')
     
     title <- 'Mean Summer Precipitation (mm / summer)'
     
-  }else if (method == 'autumn'){
+  } else if (method == 'autumn') {
     data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'autumn')
     
     title <- 'Mean Autumn Precipitation (mm / autumn)'
     
-  }else if(method == 'mean'){
+  } else if (method == 'mean') {
     #sum value of the dataset, this procedure is to get the mean value
     data_new <- apply(data, MARGIN = c(2,3), FUN = mean)
     title <- 'Mean Daily Precipitation (mm / day)'
-  }else if(method == 'max'){
+  } else if (method == 'max') {
     data_new <- apply(data, MARGIN = c(2,3), FUN = max)
     title <- 'Max Daily Precipitation (mm / day)'
-  }else if(method == 'min'){
+  } else if (method == 'min') {
     data_new <- apply(data, MARGIN = c(2,3), FUN = min)
     title <- 'Min Daily Precipitation (mm / day)'
-  }else{
+  } else if (is.numeric(method)) {
+    
+    data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
+                      method = method)
+    
+    title <- paste(month.abb[method], 'Precipitation (mm / month)', sep = ' ')
+    
+  } else {
     wrongMethod <- method
-    stop (paste('no method called', wrongMethod))
+    stop(paste('no method called', wrongMethod))
   }
   #this is to give attributes to the matrix and better be melted in ggplot.
   colnames(data_new) <- round(lon, 2)
   rownames(data_new) <- round(lat, 2)
   
   output <- getSpatialMap_mat(data_new, title, ...)
-  return (output)
+  return(output)
 }
 
 
@@ -137,15 +144,15 @@ getSpatialMap <- function(dataset, method = NULL, ...){
 #' @export
 #' @import ggplot2 rgdal plyr maps
 getSpatialMap_mat <- function(matrix, title = NULL, catchment = NULL, points = NULL, output = 'data', 
-                              info = TRUE, scale = 'identity', ...){
+                              info = TRUE, scale = 'identity', ...) {
   #check input
   checkWord <- c('lon', 'lat', 'z', 'value')
-  if (is.null(attributes(matrix)$dimnames)){
-    stop ('Input matrix is incorrect, check help to know how to get the matrix.')
-  }else if (!is.null(catchment) & class(catchment) != "SpatialPolygonsDataFrame"){
-    stop ('Catchment format is incorrect, check help to get more details. ')
-  }else if (!is.null(points) & any(is.na(match(checkWord, attributes(points)$names)))){
-    stop ('Points should be a dataframe with colnames "lon, lat, z, value".')
+  if (is.null(attributes(matrix)$dimnames)) {
+    stop('Input matrix is incorrect, check help to know how to get the matrix.')
+  } else if (!is.null(catchment) & class(catchment) != "SpatialPolygonsDataFrame") {
+    stop('Catchment format is incorrect, check help to get more details. ')
+  } else if (!is.null(points) & any(is.na(match(checkWord, attributes(points)$names)))) {
+    stop('Points should be a dataframe with colnames "lon, lat, z, value".')
   }
   
   #ggplot
@@ -156,14 +163,14 @@ getSpatialMap_mat <- function(matrix, title = NULL, catchment = NULL, points = N
   #in other words, all the parameters in aes(), they have to come from the main dataset. Otherwise, just put them
   #outside aes() as normal parameters.
   
-  if (info == T) {
+  if (info == TRUE) {
     plotMax <- round(max(matrix, na.rm = TRUE), 2)
     plotMin <- round(min(matrix, na.rm = TRUE), 2)
     plotMean <- round(mean(matrix, na.rm = TRUE), 2)
     plotMedian <- round(median(matrix, na.rm = TRUE), 2)
     word <- paste('\n\n', paste('Max', '=', plotMax), ',', paste('Min', '=', plotMin), ',',
                   paste('Mean', '=', plotMean), ',', paste('Median', '=', plotMedian))
-  }else{
+  } else {
     word <- NULL
   }
   
@@ -202,7 +209,7 @@ getSpatialMap_mat <- function(matrix, title = NULL, catchment = NULL, points = N
   printLayer <- mainLayer
   
   #catchment conversion
-  if(is.null(catchment) == FALSE){
+  if (is.null(catchment) == FALSE) {
     a <- catchment
     a@data$id <- rownames(a@data)
     b <- fortify(a, region = 'id')
@@ -216,7 +223,7 @@ getSpatialMap_mat <- function(matrix, title = NULL, catchment = NULL, points = N
     printLayer <- printLayer + catchmentLayer
   }
   #plot points
-  if(is.null(points) == FALSE){
+  if (is.null(points) == FALSE) {
     pointLayer <- with(points, {
       geom_point(data = points,aes(x = lon, y = lat, size = value, colour = z))
     })
@@ -224,14 +231,14 @@ getSpatialMap_mat <- function(matrix, title = NULL, catchment = NULL, points = N
     printLayer <- printLayer + pointLayer
   }
   
-  print (printLayer)
+  print(printLayer)
   
-  if(output == 'ggplot') {
+  if (output == 'ggplot') {
     data_ggplot$Name <- rep(title, dim(data_ggplot)[1])
     return (data_ggplot)
-  }else if (output == 'plot'){
+  } else if (output == 'plot') {
     return(printLayer)
-  }else{
+  } else {
     return(matrix)
   }
 }
@@ -252,12 +259,12 @@ getSpatialMap_mat <- function(matrix, title = NULL, catchment = NULL, points = N
 #' 
 #' @export
 #' @import ggplot2 maps
-getSpatialMap_comb <- function(..., list = NULL, nrow = 1){
+getSpatialMap_comb <- function(..., list = NULL, nrow = 1) {
   
   
-  if (!is.null(list)){
+  if (!is.null(list)) {
     data_ggplot <- do.call('rbind', list)
-  }else{
+  } else {
     maps <- list(...)
     data_ggplot <- do.call('rbind', maps)
   }
@@ -274,6 +281,6 @@ getSpatialMap_comb <- function(..., list = NULL, nrow = 1){
     facet_wrap(~ Name, nrow = nrow)
   })
   
-  print (mainLayer)
+  print(mainLayer)
 }
 

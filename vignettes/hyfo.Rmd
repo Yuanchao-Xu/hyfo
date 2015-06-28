@@ -10,10 +10,10 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{ASCII}
 ---
-##### hyfo is designed for hydrology and forecasting anaylasis, containing a number of tools including data extration, data processing and data visulization. There are two main parts in the package:
+##### hyfo is designed for hydrology and forecasting anaylasis, containing a number of tools including data extration, data processing and data visulization. There are two main parts in the package, as well as in this mannual:
 
 1. Hydrology
-* Providing tools from raw data extration to model input data.
+* Providing tools from raw data extration to final precipitation data used by model.
 * e.g., data extraction from file, precipitation gap filler, annual precipitation calculation.
 
 2. Forecasting
@@ -44,17 +44,19 @@ Now let's use internal data as an example.
 library(hyfo)#load the package.
 
 file <- system.file("extdata", "1999.csv", package = "hyfo")
-folder <- strsplit(file, '1999')[[1]][1] # get the folder containing different csv (or other type) files.
+# get the folder containing different csv (or other type) files.
+folder <- strsplit(file, '1999')[[1]][1] 
 
-# Extract and combine content from different files and in each file, the extracted zone is from row 10 to row 20, #Column 1 to column2.
+# Extract and combine content from different files and in each file, the extracted zone is 
+# from row 10 to row 20, Column 1 to column2.
 a <- collectData(folder, fileType = 'csv', range = c(10, 20, 1,2))
 str(a)
 ```
 
 `a` cannot be directly inputed in `hyfo`, it still needs some process.
-
 ```{r, fig.show = 'hold', fig.height = 4, fig.width = 7}
-# Check the date to see if it follows the format in ?as.Date(), if not, use as.Date to convert. 
+# Check the date to see if it follows the format in ?as.Date(), if not, 
+# use as.Date to convert. 
 a <- data.frame(a)
 #get date
 date <- a[, 1]
@@ -63,23 +65,22 @@ date <- a[, 1]
 date <- as.Date(date, format = '%d/%m/%Y')
 a[, 1] <- date
 
-# Now a has become `a` time series dataframe, which is the atom element of the analysis. `hyfo` deals with list #containing different time series dataframe. In this example, there is only one dataframe, and more examples please #refer to the following chapter.
-
+# Now a has become `a` time series dataframe, which is the atom element of the analysis. 
+#`hyfo` deals with list containing different time series dataframe. In this example, 
+#there is only one dataframe, and more examples please refer to the following chapter.
 datalist <- list(a)
-# Use getAnnual as an example, here since `a` is not a complete time series, the result is only base on the input.
-# GetAnnual will be introduced in the next chapter.
+
+# Use getAnnual as an example, here since `a` is not a complete time series, 
+# the result is only base on the input.
+# getAnnual gives the annual precipitation of each year, 
+# and will be introduced in the next chapter.
 getAnnual(datalist)
-
-
 ```
-
 
 #### 1.1.2 Mannually
 
 Following example shows a simple way to generate dataframe with start date, end date, and the value. Here in the example, `sample()` is used to generate random values, while in real case it will be a vector containing time series values.
-
 ```{r, fig.show = 'hold', fig.height = 4, fig.width = 7}
-
 # Generate timeseries datalist. Each data frame consists of a Date and a value.
 AAA <- data.frame(
   Date = seq(as.Date('1990-10-28'), as.Date('1997-4-1'), 1), # Date column
@@ -97,22 +98,133 @@ CCC <- data.frame(
                                 as.Date('1996-1-1'),1)), repl = TRUE)) 
 
 datalist <- list(AAA, BBB, CCC)# dput() and dget() can be used to save and load list file.
-
-b <- getAnnual(datalist)
+a <- getAnnual(datalist)
 ```
 
-
-### 1.2 Rainfall Analysis.
-
+### 1.2 Rainfall Analysis
 
 Assuming we have three gauging stations named "AAA", "BBB", "CCC", the precipitation information can be get by the following:
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+# testdl is a datalist provided by the package as a test. 
+# It's a list containing different time series.
+data(testdl)
+a <- getAnnual(testdl)
+```
 
+As shown above, the annual precipitation and the number of missing values are shown in the figure. Knowing how many missing values you have is alway important when calculating the mean annual precipitation. 
+
+Now we want to get the mean annual precipitation.
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+a <- getAnnual(testdl, output = 'mean')
+a
+```
+
+Mean annual precipitation is calculated, but as we can see in the figure before, it's not reliable, since there are a lot of missing values in AAA and CCC, especially in AAA, in 1993, there are more than 30 missing values in a year. So we have to decide which is the threshold for the valid record. the default is 355, which means in a year (355 or 365 days), if the valid records (not missing) exceeds 355, then this year is taken into consideration in the mean annual preicipitation calculation.
+```{r, fig.show='hold', fig.height=3, fig.width=3}
+getAnnual(testdl, output = 'mean', minRecords = 300)
+getAnnual(testdl, output = 'mean', minRecords = 365)
+```
+
+If you are not satisfied with the title and x axis and y axis, you can assign them yourself.
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+a <- getAnnual(testdl, output = 'mean', title = 'title', x = 'x axis', y = 'y axis')
+a
+```
+
+If you want to calculate annual rainfall for a single dataframe containing one time series.
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+a <- getAnnual_dataframe(testdl[[1]])
+a
+```
+
+### 1.3 Extract Common Period from Different Time Series
+
+Now we have the general information of the precipitation, if we want to use them in a model, we have to extract the common period of them, and use the common period precipitation to analyze.
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+testdl_new <- extractPeriod(testdl, commonPeriod = TRUE )
+str(testdl_new)
+```
+
+If we want to extract data from a certain period, we can assgin start and end date.
 
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
-#datalist is provided by the package as a test. it's a list containing different time series.
-data(testdl)
-b <- getAnnual(testdl)
+# Extract period of the winter of 1994
+testdl_new <- extractPeriod(testdl, startDate = '1994-12-01', endDate = '1995-03-01' )
+str(testdl_new)
 ```
+
+### 1.3 Fill Gaps
+
+Although we have got the precipitation of the common period, we can still see that there are some missing values inside, which we should fill.
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+testdl_new <- extractPeriod(testdl, commonPeriod = TRUE )
+a <- getAnnual(testdl_new)
+a
+```
+
+First we have to transform the datalist to dataframe, which can be done by the code below:
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+df <- list2Dataframe(testdl_new)
+head(df)
+```
+
+From above, we can see that in the gauging station "AAA", there are some missing value marked as "NA". Now we are going to fill these gaps.
+
+The gap filling is based on the correlation and linear regression between each two gauging stations, correlation table, correlation Order and Linear Coefficients are also printed when doing the calculation. Details can be found in ?fillGap.
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+df_filled <- fillGap(df)
+head(df_filled)
+```
+
+Default correlation period is "daily", while sometimes the daily rainfall correlation of precipitation is not so strong, we can also select the correlation period.
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+df_filled <- fillGap(df, corPeriod = 'monthly')
+head(df_filled)
+df_filled <- fillGap(df, corPeriod = 'yearly')
+head(df_filled)
+```
+
+### 1.3 Seasonal and Monthly Precipitation.
+
+Sometimes we need to know not only the annual precipitation, but also the precipitation of a certain month or certain season.
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+data(testdl)
+# year and mon can be extracted from date.
+TS  <- testdl[[1]]
+year = as.numeric(format(TS[, 1], '%Y'))
+month = as.numeric(format(TS[, 1], '%m'))
+
+# Get the mean spring precipitation.
+a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month)
+a
+
+# Get the series of spring precipitation, set fullResults = TRUE.
+a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month,
+                  fullResults = TRUE)
+a
+
+# If missing value is excluded, set omitNA = TRUE.
+a <- getMeanPreci(TS[, 2], method = 'winter', yearIndex = year, monthIndex = month,
+                  omitNA = TRUE, fullResults = TRUE)
+a
+
+# Get special month precipitation, e.g. march.
+a <- getMeanPreci(TS[, 2], method = 3, yearIndex = year, monthIndex = month,
+                  fullResults = TRUE)
+a
+```
+
+
+
+
+
+
+
+
+
+Gap filling is based on the correlation coefficient and the linear regression between each two gauging stations.
+
+
 
 
 

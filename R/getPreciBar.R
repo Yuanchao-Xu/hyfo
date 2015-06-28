@@ -17,13 +17,13 @@
 #' 
 #' @return The calculated mean value of the input time series and the plot of the result.
 #' @export
-getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...){
+getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...) {
   
   
   #check input dataset
   checkWord <- c('Data', 'xyCoords', 'Dates')
-  if(any(is.na(match(checkWord, attributes(dataset)$names)))){
-    stop ('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
+  if (any(is.na(match(checkWord, attributes(dataset)$names)))) {
+    stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
           check help for details.')
   }
   
@@ -35,7 +35,7 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
   TS <- apply(data, MARGIN = 1, FUN = mean, na.rm = TRUE) 
   
   
-  if (method == 'meanMonthly'){
+  if (method == 'meanMonthly') {
     
     monthlypreci <- tapply(TS, INDEX = list(yearIndex, monthIndex), FUN = sum, na.rm = TRUE)
     meanMonthlyPreci <- apply(monthlypreci, MARGIN = 2, FUN = mean, na.rm = TRUE)
@@ -46,7 +46,7 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
     plotPreci <- data.frame(Index = month.abb[1:12], Preci = meanMonthlyPreci)
     plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
     
-    if(plotRange){
+    if (plotRange) {
       maxValue <- apply(monthlypreci, MARGIN = 2, FUN = max, na.rm = TRUE)
       minValue <- apply(monthlypreci, MARGIN = 2, FUN = min, na.rm = TRUE)
       
@@ -55,12 +55,12 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
       
       ylim <- c(0,max(maxValue, na.rm = TRUE) * 1.1)
       
-    }else{
+    } else {
       ylim <- c(0,max(meanMonthlyPreci, na.rm = TRUE) * 1.1)
     }
     
     
-  }else if (method == 'annual'){
+  } else if (method == 'annual') {
     annualPreci <- tapply(TS, INDEX = yearIndex, FUN = sum, na.rm = TRUE)
     title <- 'Annual Precipitation'
     xlab <- 'Year'
@@ -71,19 +71,19 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
     
     ylim <- c(0, max(annualPreci, na.rm = TRUE) * 1.1)
     
-  }else if (is.numeric(method)){
+  } else if (is.numeric(method)) {
     month <- method
     monthlyPreci <- tapply(TS, INDEX = list(yearIndex, monthIndex), FUN = sum)[, month]
     
     plotPreci <- data.frame(Index = names(monthlyPreci), Preci = monthlyPreci)
-    plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = T)
+    plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
     
     title <- paste(month.abb[month], 'Precipitation over Whole Period', sep = ' ')
     xlab <- 'Year'
-    ylim <- c(0,max(monthlyPreci, na.rm=TRUE) * 1.1)
+    ylim <- c(0,max(monthlyPreci, na.rm = TRUE) * 1.1)
     
-  }else{
-    stop (paste('No method called "', method, '", check help for information'))
+  } else {
+    stop(paste('No method called "', method, '", check help for information'))
   }
   
   
@@ -121,14 +121,12 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
               label = 'median', colour = 'red')
   })
   
-  
-  
-  
-  if(plotRange){
-    if(is.null(plotPreci$maxValue)){
-      warning ('There is no plotRange for this method')
+
+  if (plotRange) {
+    if (is.null(plotPreci$maxValue)) {
+      warning('There is no plotRange for this method')
       print(mainLayer)
-    }else{
+    } else {
       rangeLayer <- with(plotPreci, {
         geom_errorbar(aes(x = Index, ymax = maxValue, ymin = minValue), width = 0.3)
       })
@@ -136,16 +134,16 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
       print(mainLayer + rangeLayer)
     }
     
-  }else{
+  } else {
     print(mainLayer)
   } 
   
   if (output == 'plot') {
     return(mainLayer)
-  }else if (output == 'ggplot') {
+  } else if (output == 'ggplot') {
     plotPreci$Name <- rep(title, dim(plotPreci)[1])
     return(plotPreci)
-  }else{
+  } else {
     return(plotPreci)
   }
 }
@@ -176,10 +174,10 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
 #' 
 #' @export
 #' @import ggplot2
-getPreciBar_comb <- function(..., list = NULL, nrow = 1){
-  if(!is.null(list)){
+getPreciBar_comb <- function(..., list = NULL, nrow = 1) {
+  if (!is.null(list)) {
     data_ggplot <- do.call('rbind', list)
-  }else{
+  } else {
     
     bars <- list(...)
     data_ggplot <- do.call('rbind', bars)
@@ -196,6 +194,6 @@ getPreciBar_comb <- function(..., list = NULL, nrow = 1){
   })
 
   
-  print (mainLayer)
+  print(mainLayer)
 }
 

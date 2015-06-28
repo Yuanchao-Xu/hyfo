@@ -19,14 +19,14 @@
 #' 
 #' @export
 #' @import ggplot2 reshape2 stats
-getAnnual <- function(datalist, output = 'series', minRecords = 355, ...){
+getAnnual <- function(datalist, output = 'series', minRecords = 355, ...) {
   
   data <- lapply(datalist, FUN = getAnnual_dataframe)
   data <- do.call('rbind', data)   
   rownames(data) <- NULL   
   theme_set(theme_bw())
   
-  if (output == 'mean'){
+  if (output == 'mean') {
     validData <- data[data$recordNum >= minRecords,]
  
     data <- aggregate(validData$AnnualPreci, list(validData$Name), mean)
@@ -39,10 +39,10 @@ getAnnual <- function(datalist, output = 'series', minRecords = 355, ...){
       
     })
     
-    print (mainLayer)
-    return (data)
+    print(mainLayer)
+    return(data)
     
-  }else{
+  } else {
     
     plotData <- with(data, {
       subset(data, select = -recordNum)
@@ -64,8 +64,8 @@ getAnnual <- function(datalist, output = 'series', minRecords = 355, ...){
     })
     
     
-    print (mainLayer)
-    return (data)
+    print(mainLayer)
+    return(data)
   }  
 }
 
@@ -81,7 +81,7 @@ getAnnual <- function(datalist, output = 'series', minRecords = 355, ...){
 #' getAnnual_dataframe(testdl[[1]])
 #' 
 #' @export
-getAnnual_dataframe <- function(dataset){
+getAnnual_dataframe <- function(dataset) {
   
   if (!grepl('-|/', dataset[1, 1])) {
     stop ('First column is not date or Wrong Date formate, check the format in ?as.Date{base},
@@ -101,7 +101,7 @@ getAnnual_dataframe <- function(dataset){
   name <- rep(colnames(dataset)[2], length(calcuNum))
   output <- data.frame(Year = yearUnique, Name = name, AnnualPreci = annualPreci,
                         recordNum, NANum)
-  return (output)
+  return(output)
 }
 
 

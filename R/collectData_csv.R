@@ -13,6 +13,7 @@
 #' @source http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
 #' @export
 collectData_csv_anarbe <- function(folderName, output = TRUE){
+  
   fileNames <- list.files(folderName, pattern='*.csv', full.names = TRUE)
   data <- lapply(fileNames, readColumn_csv_anarbe)
   data <- do.call('rbind', data)
@@ -40,8 +41,8 @@ readColumn_csv_anarbe <- function(fileName){
   }
   
   colnames(data) <- c('Date', 'target')
-  message (fileName)
+  message(fileName)
   
-  return (data)
+  return(data)
 }
 

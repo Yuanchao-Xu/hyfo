@@ -1,29 +1,29 @@
 
-readData_folder <- function(folderName, keyword){
+readData_folder <- function(folderName, keyword) {
   
   folderName <- paste(folderName, keyword, sep = '\\')
   
   fileNames <- list.files(folderName, pattern = '*.csv', full.names = TRUE)
   
-  if (length(fileNames)==0){
+  if (length(fileNames)==0) {
     fileNames <- list.files(folderName, pattern = '.TXT', full.names = TRUE)
-    if(length(fileNames)==0) stop ('Wrong keyword, initial has to be Upper-case')
+    if (length(fileNames)==0) stop('Wrong keyword, initial has to be Upper-case')
     
     data <- collectData_txt_anarbe(folderName, rangeWord = c('D?a       ', -1, 'M?x.      ', -5))
     rownames(data) <- NULL
-  }else {
+  } else {
     data <- collectData_csv_anarbe(folderName)
   }
   
-  return (data)
+  return(data)
 }
 
 
-readData <- function(keyword){
-  message ('Choose the main folder that, in it, there are different folders representing different gauging stations,
+readData <- function(keyword) {
+  message('Choose the main folder that, in it, there are different folders representing different gauging stations,
            all the gauging stations have precipitation data, some of them also have discharge data,
            this function is to open different gauging folders and read the data, arragen them together.')
-  message ('\n\n
+  message('\n\n
            new file is a list based file and needs to be read by dget()')
   
   folderName <- choose.dir()
@@ -36,5 +36,5 @@ readData <- function(keyword){
   fileName <- file.choose(new = TRUE)
   dput(data, file = fileName)
   
-  return (data)
+  return(data)
 }
