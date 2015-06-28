@@ -19,6 +19,7 @@ Fill gaps in the rainfall time series.
 }
 \details{
 the gap filler follows the rules below:
+
  1. The correlation coefficient of every two columns (except time column) is calculated.
 the correlation coefficient calculation can be based on 'daily', 'monthly', 'annual',
 in each case, the daily data, the monthly mean daily data and annual mean daily data of
@@ -56,5 +57,8 @@ data(testdl)
 a <- extractPeriod(testdl, commonPeriod = TRUE)
 a1 <- list2Dataframe(a)
 a2 <- fillGap(a1)
+}
+\references{
+Gap fiiling method based on correlation and linear regression.
 }
 

@@ -17,18 +17,34 @@
 #' year = as.numeric(format(TS[, 1], '%Y'))
 #' month = as.numeric(format(TS[, 1], '%m'))
 #' 
-#' a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month, fullResults = TRUE)
+#' # Get the mean spring precipitation.
+#' a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month)
+#' a
 #' 
-#' # If missing value is included, set omitNA = TRUE.
-#' a <- getMeanPreci(TS[, 2], method = 'winter', yearIndex = year, monthIndex = month, omitNA = TRUE, 
-#' fullResults = TRUE)
+#' # Get the series of spring precipitation, set fullResults = TRUE.
+#' a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month,
+#'                   fullResults = TRUE)
+#' a
 #' 
+#' # If missing value is excluded, set omitNA = TRUE.
+#' a <- getMeanPreci(TS[, 2], method = 'winter', yearIndex = year, monthIndex = month,
+#'                   omitNA = TRUE, fullResults = TRUE)
+#' a
 #' 
+#' # Get special month precipitation, e.g. march.
+#' a <- getMeanPreci(TS[, 2], method = 3, yearIndex = year, monthIndex = month,
+#'                   fullResults = TRUE)
+#' a
+#' 
+#' # We can also get annual precipitation.
+#' a <- getMeanPreci(TS[, 2], method = 'meanAnnualPreci', yearIndex = year, monthIndex = month,
+#'                   fullResults = TRUE)
+#'
 #' @export
 getMeanPreci <- function(inputTS, method = NULL, yearIndex = NULL, monthIndex = NULL,
                          fullResults = FALSE, omitNA = FALSE) {
   # First check if all the records are NA.
-  if (!is.na(inputTS)) {
+  if (any(!is.na(inputTS))) {
     #converting daily preci to the wanted preci.
     if (method == 'meanAnnualPreci') {
       ###yearIndex <- startTime$year + 1900
