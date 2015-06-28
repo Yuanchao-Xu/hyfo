@@ -47,7 +47,7 @@ getSpatialMap <- function(dataset, method = NULL, ...) {
     #time <- proc.time()
     data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex,  method = 'meanAnnualPreci')
     #newTime <- proc.time() - time
-    title  <- 'Mean Annual Precipitation (mm / year)'
+    title_d  <- 'Mean Annual Precipitation (mm / year)'
     
   } else if (method == 'winter') {
     #mean value of the seasonal precipitation, in this case, winter
@@ -56,52 +56,54 @@ getSpatialMap <- function(dataset, method = NULL, ...) {
     data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'winter')
     #newTime <- proc.time() - time
-    title <- 'Mean Winter Precipitation (mm / winter)'
+    title_d <- 'Mean Winter Precipitation (mm / winter)'
     
   } else if (method == 'spring') {
     data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'spring')
     
-    title <- 'Mean Spring Precipitation (mm / spring)'
+    title_d <- 'Mean Spring Precipitation (mm / spring)'
     
   } else if (method == 'summer') {
     data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'summer')
     
-    title <- 'Mean Summer Precipitation (mm / summer)'
+    title_d <- 'Mean Summer Precipitation (mm / summer)'
     
   } else if (method == 'autumn') {
     data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'autumn')
     
-    title <- 'Mean Autumn Precipitation (mm / autumn)'
+    title_d <- 'Mean Autumn Precipitation (mm / autumn)'
     
   } else if (method == 'mean') {
     #sum value of the dataset, this procedure is to get the mean value
     data_new <- apply(data, MARGIN = c(2,3), FUN = mean)
-    title <- 'Mean Daily Precipitation (mm / day)'
+    title_d <- 'Mean Daily Precipitation (mm / day)'
   } else if (method == 'max') {
     data_new <- apply(data, MARGIN = c(2,3), FUN = max)
-    title <- 'Max Daily Precipitation (mm / day)'
+    title_d <- 'Max Daily Precipitation (mm / day)'
   } else if (method == 'min') {
     data_new <- apply(data, MARGIN = c(2,3), FUN = min)
-    title <- 'Min Daily Precipitation (mm / day)'
+    title_d <- 'Min Daily Precipitation (mm / day)'
   } else if (is.numeric(method)) {
     
     data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = method)
     
-    title <- paste(month.abb[method], 'Precipitation (mm / month)', sep = ' ')
+    title_d <- paste(month.abb[method], 'Precipitation (mm / month)', sep = ' ')
     
   } else {
     wrongMethod <- method
     stop(paste('no method called', wrongMethod))
   }
-  #this is to give attributes to the matrix and better be melted in ggplot.
+  # This is to give attributes to the matrix and better be melted in ggplot.
   colnames(data_new) <- round(lon, 2)
   rownames(data_new) <- round(lat, 2)
   
-  output <- getSpatialMap_mat(data_new, title, ...)
+  # If ... also has a title argument, this will cause conflicts. so title has to be renamed as title_d
+  # This has to be paid a lot of attention when use ... to pass arguments.
+  output <- getSpatialMap_mat(matrix = data_new, title_d = title_d, ...)
   return(output)
 }
 
@@ -143,7 +145,7 @@ getSpatialMap <- function(dataset, method = NULL, ...) {
 #' 
 #' @export
 #' @import ggplot2 rgdal plyr maps
-getSpatialMap_mat <- function(matrix, title = NULL, catchment = NULL, points = NULL, output = 'data', 
+getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points = NULL, output = 'data', 
                               info = TRUE, scale = 'identity', ...) {
   #check input
   checkWord <- c('lon', 'lat', 'z', 'value')
@@ -183,17 +185,17 @@ getSpatialMap_mat <- function(matrix, title = NULL, catchment = NULL, points = N
   
   mainLayer <- with(data_ggplot, {
     
-    ggplot(data = data_ggplot)+
-    geom_tile(aes(x = lon, y = lat, fill = value))+
+    ggplot(data = data_ggplot) +
+    geom_tile(aes(x = lon, y = lat, fill = value)) +
     #scale_fill_gradient(high = 'red', low = 'yellow')+
     scale_fill_gradientn(colours = c('yellow', 'orange', 'red'), na.value = 'transparent',
-                         guide = guide_colorbar(title='Rainfall (mm)', barheight = 15), trans = scale)+#usually scale = 'sqrt'
-    geom_map(data = world_map, map = world_map, aes(map_id = region), fill='transparent', color='black')+
+                         guide = guide_colorbar(title='Rainfall (mm)', barheight = 15), trans = scale) +#usually scale = 'sqrt'
+    geom_map(data = world_map, map = world_map, aes(map_id = region), fill='transparent', color='black') +
     #    guides(fill = guide_colorbar(title='Rainfall (mm)', barheight = 15))+
-    xlab(x_word)+
-    ylab('Latitude')+
-    ggtitle(title)+
-    labs(empty = NULL, ...)+#in order to pass "...", arguments shouldn't be empty.
+    xlab(x_word) +
+    ylab('Latitude') +
+    ggtitle(title) +
+    labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
     theme(plot.title = element_text(size = 20, face = 'bold'),
           axis.title.x = element_text(size = 18),
           axis.title.y = element_text(size = 18))
@@ -273,11 +275,11 @@ getSpatialMap_comb <- function(..., list = NULL, nrow = 1) {
   world_map <- map_data('world')
   theme_set(theme_bw())
   mainLayer <- with(data_ggplot, {
-    ggplot(data = data_ggplot)+ 
-    geom_tile(aes(x = lon, y = lat, fill = value))+
+    ggplot(data = data_ggplot) + 
+    geom_tile(aes(x = lon, y = lat, fill = value)) +
     #scale_fill_gradient(high = 'red', low = 'yellow')+
-    scale_fill_gradientn(colours = c('yellow', 'orange', 'red'), na.value = 'transparent')+#usually scale = 'sqrt'
-    geom_map(data = world_map, map = world_map, aes(map_id = region), fill = 'transparent', color = 'black')+
+    scale_fill_gradientn(colours = c('yellow', 'orange', 'red'), na.value = 'transparent') +#usually scale = 'sqrt'
+    geom_map(data = world_map, map = world_map, aes(map_id = region), fill = 'transparent', color = 'black') +
     facet_wrap(~ Name, nrow = nrow)
   })
   

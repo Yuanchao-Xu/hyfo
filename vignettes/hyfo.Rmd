@@ -236,13 +236,26 @@ a <- getMeanPreci(TS[, 2], method = 'meanAnnualPreci', yearIndex = year, monthIn
 
 # 2. Forecasting
 
-## 2.1 getSpatialMap
+## 2.1 Plot Spatial Map
 
-As described at the start of the mannual, `hyfo` is mainly in charge of the post processing of the forecast data. Input of `hyfo` should be the result from  `loadGridData{ecomsUDG.Raccess}` or `loadECOMS{ecomsUDG.Raccess}`. An example is included in the package.
+As described at the start of the mannual, `hyfo` is mainly in charge of the post processing of the forecast data. Input of `hyfo` should be the result from  `loadGridData{ecomsUDG.Raccess}` or `loadECOMS{ecomsUDG.Raccess}`. An example is included in the package. 
+
+If we want to see the mean daily precipitation.
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
 data(tgridData)
-a <- getSpatialMap(tgridData, method = 'mean')
+a <- getSpatialMap(tgridData, method = 'meanAnnual')
 ```
+
+There are several methods to be seleted in the function, details can be found by ?getSpatialMap
+
+Sometimes there exists a great difference in the whole map, e.g., the following value, `c(100, 2, 2,6, 1,7)`, since the maximum value is too large, so in the plot, by normal plot scale, we can only recognize value 100 and the rest, it's hard for us to tell the difference between 2, 2.6, and 1.7 from the plot. In this situation, the value needs to be processed before plotting. Here `scale` provides a way to decide the plot scale.
+
+`scale` passes the arguments to the `trans` argument in `ggplot2`. The most common scale is "sqrt" and "log10", which focus more on the minutiae. Default is "identity", which means no change to the plot scale.
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+a <- getSpatialMap(tgridData, method = 'meanAnnual', scale = 'sqrt')
+```
+
+Here in our example, because the region is too small, and the differences is not so big, so it's not so obvious to tell from the plot. But if in a map, both dry region and wet region is included, that will be more obvious to see the difference between the plot scales.
 
 
 
