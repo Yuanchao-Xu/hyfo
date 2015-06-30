@@ -15,9 +15,16 @@ A catchment object can be used in \code{getSpatialMap()}.
 \description{
 Get a catchment object from selected shape file.
 }
+\details{
+This function is based on the package \code{rgdal} and \code{sp}, and the output comes from the package
+\code{sp}
+}
 \examples{
 #open internal file
 file <- system.file("extdata", "testCat.shp", package = "hyfo")
 catchment <- shp2cat(file)
+}
+\references{
+rgdal package and the
 }
 

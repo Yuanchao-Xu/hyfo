@@ -4,13 +4,18 @@
 \alias{getSpatialMap}
 \title{Get spatial map of the input dataset.}
 \usage{
-getSpatialMap(dataset, method = NULL, ...)
+getSpatialMap(dataset, method = NULL, member = NULL, ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using
 \code{library(ecomsUDG.Raccess)}.}
 
-\item{method}{A string showing different calculating method for the map.}
+\item{method}{A string showing different calculating method for the map. More information please refer to
+details.}
+
+\item{member}{A number showing which member is selected to get, if the dataset has a "member" dimension. Default
+is NULL, if no member assigned, and there is a "member" in dimensions, the mean value of the members will be
+taken.}
 
 \item{...}{Check \code{?getSpatialMap_mat} for details, e.g., x, y, title, catchment,
 points, output,}
@@ -20,6 +25,13 @@ A matrix representing the raster map is returned, and the map is plotted.
 }
 \description{
 Get spatial map of the input dataset.
+}
+\details{
+There are following methods to be selected,
+"meanAnnual": annual rainfall of each year is plotted.
+"winter", "spring", "autumn", "summer": MEAN seasonal rainfall of each year is plotted.
+Month(number 1 to 12): MEAN month rainfall of each year is plotted, e.g. MEAN march rainfall of each year.
+"mean", "max", "min": mean daily, maximum daily, minimum daily precipitation.
 }
 \examples{
 #gridData provided in the package is the result of \\code {loadGridData{ecomsUDG.Raccess}}

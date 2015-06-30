@@ -135,9 +135,8 @@ getAnnual(testdl, output = 'mean', minRecords = 365)
 ```
 
 If you are not satisfied with the title and x axis and y axis, you can assign them yourself.
-```{r, fig.show='hold', fig.height=4, fig.width=7}
+```{r, fig.show='hold', fig.height=4, fig.width=7, results='hide'}
 a <- getAnnual(testdl, output = 'mean', title = 'aaa', x = 'aaa', y = 'aaa')
-a
 ```
 
 If you want to calculate annual rainfall for a single dataframe containing one time series.
@@ -208,28 +207,33 @@ data(testdl)
 TS  <- testdl[[1]]
 year = as.numeric(format(TS[, 1], '%Y'))
 month = as.numeric(format(TS[, 1], '%m'))
-
-# Get the mean spring precipitation.
+```
+Get the mean spring precipitation.
+```{r, fig.show='hold', fig.height=4, fig.width=7}
 a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month)
 a
-
-# Get the series of spring precipitation, set fullResults = TRUE.
+```
+Get the series of spring precipitation, set `fullResults = TRUE`.
+```{r, fig.show='hold', fig.height=4, fig.width=7}
 a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month,
                   fullResults = TRUE)
 a
-
-# If missing value is excluded, set omitNA = TRUE.
+```
+If missing value is excluded, set omitNA = TRUE.
+```{r, fig.show='hold', fig.height=4, fig.width=7}
 a <- getMeanPreci(TS[, 2], method = 'winter', yearIndex = year, monthIndex = month,
                   omitNA = TRUE, fullResults = TRUE)
 a
-
-# Get special month precipitation, e.g. march.
+```
+Get special month precipitation, e.g. march.
+```{r, fig.show='hold', fig.height=4, fig.width=7}
 a <- getMeanPreci(TS[, 2], method = 3, yearIndex = year, monthIndex = month,
                   fullResults = TRUE)
 a
-
-# We can also get annual precipitation.
-a <- getMeanPreci(TS[, 2], method = 'meanAnnualPreci', yearIndex = year, monthIndex = month,
+```
+We can also get annual precipitation.
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+a <- getMeanPreci(TS[, 2], method = 'annual', yearIndex = year, monthIndex = month,
                   fullResults = TRUE)
 ```
 
@@ -299,48 +303,137 @@ getSpatialMap(tgridData, method = 'winter', points = points, catchment = cat)
 As can be seen above, the color of the points represents the elevation, the size of the points represents the value, e.g., rainfall value.
 
 
+## 2.3 Precipitation Bar Plot
 
+Bisides spatial map, bar plot can also be plotted. The value in the bar plot is spatially averaged, i.e. the value in the bar plot is the mean value over the region.
 
+Annual precipitation.
 
-
-
-
-Gap filling is based on the correlation coefficient and the linear regression between each two gauging stations.
-
-
-
-
-
-
-
-
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold', size=10}
-plot(1:10)
-plot(10:1)
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+data(tgridData)
+a <- getPreciBar(tgridData, method = 'annual')
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+Mean monthly precipitation over the whole period, with the ranges for each month. But not all kinds of bar plot have a plot range.
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
-
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+a <- getPreciBar(tgridData, method = 'meanMonthly')
+a <- getPreciBar(tgridData, method = 'meanMonthly', plotRange = FALSE)
 ```
 
-Also a quote using `>`:
+Seasonal precipitation, and monthly precipitation can also be plotted. 
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+a <- getPreciBar(tgridData, method = 'spring')# spring precipitation for each year
+a <- getPreciBar(tgridData, method = 3) # march precipitation for each year
+```
+
+## 2.4 Analysis and Comparison
+
+For some cases, analysis and comparison are necesssary, which are also provided by `hyfo`. 
+
+There are three different kinds of output from `getSpatialMap` and `getPreciBar`, respectively, `output = 'data'`, `output = 'ggplot'` and `output = 'plot'`. 
+
+`output = 'data'` is default in the function and do not need to be declare when input. It is mainly used in analyzing and replot the results.
+
+`output = 'ggplot'` is used when combining different plots.
+
+`output = 'plot'` is used when a layer output is needed. the output can be directly printed, and can be mannually combined by the plot arrange functions, e.g., `grid.arrange()`
+
+
+### 2.4.1 Spatial Map
+
+The default "data" output provides a matrix, representing the raster information of the spatial map. 
+
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+a <- getSpatialMap(tgridData, method = 'meanAnnual')
+a
+```
+
+This matrix is upside down from what you can see from the plot. **DO NOT try to change this matrix.**
+`hyfo` can deal with it.
+
+```{r, fig.show='hold', fig.height=4, fig.width=7}
+# For re-plot the matrix
+b <- getSpatialMap_mat(a)
+
+# Without title and x and y, also you can assign yourself.
+b <- getSpatialMap_mat(a, title = 'aaa', x = 'aaa', y = '')
+```
+
+The matrix can be used to make different analysis and plot again.
+
+##### Note
+**If the matrix doesn't come from `getSpatialMap`, dimension name of longitude and latitude needs to be provided to the matrix, in order to be plotted.**
+```{r, fig.show='hold', fig.height=4, fig.width=7, results='hide'}
+
+a1 <- getSpatialMap(tgridData, method = 'mean')
+a2 <- getSpatialMap(tgridData, method = 'max')
+
+# To see the difference between mean value and maximum value.
+b <- a2 - a1
+getSpatialMap_mat(b, title = '', x = '', y = '')
+
+# To make some changes to mean value.
+b <- a1 * 3 -1
+getSpatialMap_mat(b, title = '', x = '', y = '')
+
+# Bias, variation and other analysis can also be processed 
+# the same way. 
+# Just apply the analysis to the matrix and 
+# use getSpatialMap_mat to plot.
+```
+
+If multi-plot is needed, `hyfo` can also combine different plots together. Use `output = ggplot`, which gives back the a special format that can be easily used by `ggplot2`
+
+```{r, fig.show='hide', fig.height=4, fig.width=7}
+
+a1 <- getSpatialMap(tgridData, method = 'spring', output = 'ggplot')
+a2 <- getSpatialMap(tgridData, method = 'summer', output = 'ggplot')
+a3 <- getSpatialMap(tgridData, method = 'meanAnnual', output = 'ggplot')
+a4 <- getSpatialMap(tgridData, method = 'winter', output = 'ggplot')
+
+```
+
+```{r, fig.show='hold', fig.height=6, fig.width=7}
+
+getSpatialMap_comb(a1, a2, a3, a4, nrow = 2)# you cannot assign title
+getSpatialMap_comb(a1, a2, a3, a4, nrow = 4)
+
+```
+
+`getSpatialMap_comb` accepts list (using `list =`) object too, which is easier for multi-plot. First list of 12 months are got.
+```{r, fig.show='hide'}
+c <- lapply(1:12, function(x) getSpatialMap(tgridData, method = x, output = 'ggplot') )
+```
+
+Then they are combined.
+```{r, fig.show='hold', fig.height=6, fig.width=7}
+getSpatialMap_comb(list = c, nrow = 4)
+```
+
+### 2.4.2 Bar Plot
+
+Basically, bar plot follows the same rule as part 2.4.1 spatial map, only a few cases that needs to pay attention.
+
+```{r, fig.show='hide', fig.height=4, fig.width=7, results='hide'}
+b1 <- getPreciBar(tgridData, method = 'spring', output = 'ggplot')
+b2 <- getPreciBar(tgridData, method = 'summer', output = 'ggplot')
+b3 <- getPreciBar(tgridData, method = 'autumn', output = 'ggplot')
+b4 <- getPreciBar(tgridData, method = 'winter', output = 'ggplot')
+```
+
+```{r, fig.show='hold', fig.height=6, fig.width=7}
+getPreciBar_comb(b1, b2, b3, b4, nrow = 2)
+```
+
+```{r, fig.show='hide', fig.height=4, fig.width=7, results='hide'}
+c <- lapply(1:12, function(x) getPreciBar(tgridData, method = x, output = 'ggplot') )
+```
+
+```{r, fig.show='hold', fig.height=6, fig.width=7}
+getPreciBar_comb(list = c, nrow = 4)
+```
+
+
+

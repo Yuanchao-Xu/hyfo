@@ -2,22 +2,38 @@
 #' 
 #' @param dataset A list containing different information, should be the result of reading netcdf file using
 #' \code{library(ecomsUDG.Raccess)}, e.g., \code{loadGridData{ecomsUDG.Raccess}}
-#' @param method A string showing the calculating method of the input time series, including: "meanMonthly",
-#' "annual", and one umber from 1 to 12 representing the month.
+#' @param method A string showing the calculating method of the input time series. More information
+#' please refer to the details.
 #' @param output A string showing the type of the output, if \code{output = 'ggplot'}, the returned 
 #' data can be used in ggplot and \code{getPreciBar_comb()}; if \code{output = 'plot'}, the returned data is the plot containing all 
 #' layers' information, and can be plot directly or used in grid.arrange; if not set, the data
 #' will be returned.
 #' @param plotRange A boolean showing whether the range will be plotted.
+#' @param member A number showing which member is selected to get, if the dataset has a "member" dimension. Default
+#' is NULL, if no member assigned, and there is a "member" in dimensions, the mean value of the members will be
+#' taken.
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot.
+#' @details
+#' There are following methods to be selected, 
+#' "annual": annual rainfall of each year is plotted.  
+#' "winter", "spring", "autumn", "summer": seasonal rainfall of each year is plotted.
+#' Month(number 1 to 12): month rainfall of each year is plotted, e.g. march rainfall of each year.
+#' "meanMonthly": the mean monthly rainfall of each month over the whole period.
+#' 
+#' #Since "winter" is a crossing year, 12, 1, 2, 12 is in former year, and 1, 2 are in latter year.
+#' #so winter belongs to the latter year.
+#' 
+#' 
+#' 
 #' @examples
 #' #gridData provided by package is the result of \code{loadGridData{ecomsUDG.Raccess}}
+#' data(tgridData)
 #' b1 <- getPreciBar(tgridData, method = 'annual')
 #' b2 <- getPreciBar(tgridData, method = 'meanMonthly')
 #' 
 #' @return The calculated mean value of the input time series and the plot of the result.
 #' @export
-getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...) {
+getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, member = NULL, ...) {
   
   
   #check input dataset
@@ -27,16 +43,33 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
           check help for details.')
   }
   
-  
-  data <- dataset$Data
   startTime <- as.POSIXlt(dataset$Dates$start, tz = 'GMT')
   yearIndex <- startTime$year + 1900
   monthIndex <- startTime$mon + 1
-  TS <- apply(data, MARGIN = 1, FUN = mean, na.rm = TRUE) 
+  data <- dataset$Data
+
+  # Dimension needs to be arranged. Make sure first and second dimension is lat and lon.
+  att <- attributes(data)$dimensions
+  dimIndex <- seq(1, length(att))
+  dimIndex1 <- match(c('lat', 'lon', 'time'), att)# match can apply to simple cases
+  dimIndex2 <- dimIndex[-dimIndex1]# choose nomatch
   
   
-  if (method == 'meanMonthly') {
+  data <- aperm(data, c(dimIndex1, dimIndex2))
+  attributes(data)$dimensions <- att[c(dimIndex1, dimIndex2)]
+  
+  # Because in the following part, only 3 dimensions are allowed, so data has to be processed.
+  if (is.null(member) & any(attributes(data)$dimensions == 'member')) {
+    dimIndex3 <- which(attributes(data)$dimensions != 'member')
+    data <- apply(data, MARGIN = dimIndex3, FUN = mean, na.rm = TRUE)
+  } else if (any(attributes(data)$dimensions == 'member')) {
+    dimIndex3 <- which(attributes(data)$dimensions == 'member')
+    data <- chooseDim(data, dimIndex3, member, drop = TRUE)
+  }
+  
+  TS <- apply(data, MARGIN = 3, FUN = mean, na.rm = TRUE) 
     
+  if (method == 'meanMonthly') {
     monthlypreci <- tapply(TS, INDEX = list(yearIndex, monthIndex), FUN = sum, na.rm = TRUE)
     meanMonthlyPreci <- apply(monthlypreci, MARGIN = 2, FUN = mean, na.rm = TRUE)
     
@@ -44,6 +77,8 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
     xlab <- 'Month'
     
     plotPreci <- data.frame(Index = month.abb[1:12], Preci = meanMonthlyPreci)
+    
+    # Here factor has to be reassigned, to keep the original order, or it will be reordered.
     plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
     
     if (plotRange) {
@@ -60,7 +95,8 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
     }
     
     
-  } else if (method == 'annual') {
+  } else if (method == 'annual') {  
+    
     annualPreci <- tapply(TS, INDEX = yearIndex, FUN = sum, na.rm = TRUE)
     title <- 'Annual Precipitation'
     xlab <- 'Year'
@@ -72,6 +108,7 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
     ylim <- c(0, max(annualPreci, na.rm = TRUE) * 1.1)
     
   } else if (is.numeric(method)) {
+    
     month <- method
     monthlyPreci <- tapply(TS, INDEX = list(yearIndex, monthIndex), FUN = sum)[, month]
     
@@ -80,7 +117,53 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
     
     title <- paste(month.abb[month], 'Precipitation over Whole Period', sep = ' ')
     xlab <- 'Year'
-    ylim <- c(0,max(monthlyPreci, na.rm = TRUE) * 1.1)
+    ylim <- c(0, max(monthlyPreci, na.rm = TRUE) * 1.1)
+    
+  } else if (method == 'spring') {   
+    
+    seasonalPreci <- getMeanPreci(TS, method = 'spring', yearIndex = yearIndex,
+                              monthIndex = monthIndex, fullResults = TRUE)
+    plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
+    plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
+    
+    title <- paste('Spring', 'Precipitation over Whole Period', sep = ' ')
+    xlab <- 'Year'
+    ylim <- c(0, max(seasonalPreci, na.rm = TRUE) * 1.1)
+    
+    
+  } else if (method == 'summer') {
+    
+    seasonalPreci <- getMeanPreci(TS, method = 'summer', yearIndex = yearIndex,
+                                  monthIndex = monthIndex, fullResults = TRUE)
+    plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
+    plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
+    
+    title <- paste('Summer', 'Precipitation over Whole Period', sep = ' ')
+    xlab <- 'Year'
+    ylim <- c(0, max(seasonalPreci, na.rm = TRUE) * 1.1)
+    
+    
+  } else if (method == 'autumn') {
+    
+    seasonalPreci <- getMeanPreci(TS, method = 'autumn', yearIndex = yearIndex,
+                                  monthIndex = monthIndex, fullResults = TRUE)
+    plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
+    plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
+    
+    title <- paste('Autumn', 'Precipitation over Whole Period', sep = ' ')
+    xlab <- 'Year'
+    ylim <- c(0, max(seasonalPreci, na.rm = TRUE) * 1.1)
+    
+  } else if (method == 'winter') {
+    
+    seasonalPreci <- getMeanPreci(TS, method = 'winter', yearIndex = yearIndex,
+                                  monthIndex = monthIndex, fullResults = TRUE)
+    plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
+    plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
+    
+    title <- paste('Winter', 'Precipitation over Whole Period', sep = ' ')
+    xlab <- 'Year'
+    ylim <- c(0, max(seasonalPreci, na.rm = TRUE) * 1.1)
     
   } else {
     stop(paste('No method called "', method, '", check help for information'))
@@ -103,20 +186,20 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
   theme_set(theme_bw())
   
   mainLayer <- with(plotPreci, {
-    ggplot(plotPreci)+
-    geom_bar(aes(x = Index, y = Preci), stat = 'identity', colour = 'black', fill = 'lightblue', width = .6)+
-    xlab(xlab)+
-    ylab('Precipitation (mm)')+
-    ggtitle(title)+
-    labs(empty = NULL, ...)+#in order to pass "...", arguments shouldn't be empty.
-    theme(plot.title = element_text(size = 20, face = 'bold'),
-          axis.title.x = element_text(size = 18),
-          axis.title.y = element_text(size = 18))+
+    ggplot(plotPreci) +
+    geom_bar(aes(x = Index, y = Preci), stat = 'identity', colour = 'black', fill = 'cyan', width = .6) +
+    xlab(xlab) +
+    ylab('Precipitation (mm)') +
+    ggtitle(title) +
+    labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
+    theme(plot.title = element_text(size = rel(1.3), face = 'bold'),
+          axis.title.x = element_text(size = rel(1.2)),
+          axis.title.y = element_text(size = rel(1.2))) +
 #    geom_text(x = min(xlim) + 0.95 * (max(xlim) - min(xlim)), y = min(ylim) + 0.15 * (max(ylim) - min(ylim)),
 #              label = word)+
-    geom_hline(yintercept = meanValue)+
-    geom_text(x = min(xlim) + 0.3 * (max(xlim) - min(xlim)), y = meanValue + 3, vjust = 0, label = 'mean')+
-    geom_hline(yintercept = medianValue, colour = 'red')+
+    geom_hline(yintercept = meanValue) +
+    geom_text(x = min(xlim) + 0.3 * (max(xlim) - min(xlim)), y = meanValue + 3, vjust = 0, label = 'mean') +
+    geom_hline(yintercept = medianValue, colour = 'red') +
     geom_text(x = min(xlim) + 0.6 * (max(xlim) - min(xlim)), y = medianValue + 3, vjust = 0,
               label = 'median', colour = 'red')
   })
@@ -124,13 +207,12 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, ...)
 
   if (plotRange) {
     if (is.null(plotPreci$maxValue)) {
-      warning('There is no plotRange for this method')
+      message('There is no plotRange for this method')
       print(mainLayer)
     } else {
       rangeLayer <- with(plotPreci, {
         geom_errorbar(aes(x = Index, ymax = maxValue, ymin = minValue), width = 0.3)
-      })
-        
+      })       
       print(mainLayer + rangeLayer)
     }
     
@@ -189,11 +271,11 @@ getPreciBar_comb <- function(..., list = NULL, nrow = 1) {
   
   mainLayer <- with(data_ggplot, {
     mainLayer <- ggplot(data_ggplot)+
-      geom_bar(aes(x = Index, y = Preci, fill = Name), stat = 'identity', colour = 'black', width = .6)+
+      geom_bar(aes(x = Index, y = Preci),fill = 'cyan', stat = 'identity', colour = 'black', width = .6)+
       facet_wrap( ~ Name, nrow = nrow)
   })
 
   
-  print(mainLayer)
+  suppressWarnings(print(mainLayer))
 }
 

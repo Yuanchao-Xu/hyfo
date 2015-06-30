@@ -9,9 +9,17 @@
 #' FALSE, only mean value will be returned, if TRUE, the sequence of values will be returned.
 #' @param omitNA in the calculation, whether NA is omitted, default is FALSE.
 #' @details
-#' there are following methods to be selected, "meanAnnualPreci", "winter", "spring", "autumn", "summer".
+#' There are following methods to be selected, 
+#' "annual": annual rainfall of each year is plotted.  
+#' "winter", "spring", "autumn", "summer": seasonal rainfall of each year is plotted.
+#' Month(number 1 to 12): month rainfall of each year is plotted, e.g. march rainfall of each year.
+#' 
+#' Since "winter" is a crossing year, 12, 1, 2, 12 is in former year, and 1, 2 are in latter year.
+#' so winter belongs to the latter year.
+#' 
 #' @return The mean value of the input time series or the full results before calculating mean.
 #' @examples
+#' 
 #' data(testdl)
 #' TS  <- testdl[[1]]
 #' year = as.numeric(format(TS[, 1], '%Y'))
@@ -37,7 +45,7 @@
 #' a
 #' 
 #' # We can also get annual precipitation.
-#' a <- getMeanPreci(TS[, 2], method = 'meanAnnualPreci', yearIndex = year, monthIndex = month,
+#' a <- getMeanPreci(TS[, 2], method = 'annual', yearIndex = year, monthIndex = month,
 #'                   fullResults = TRUE)
 #'
 #' @export
@@ -46,76 +54,94 @@ getMeanPreci <- function(inputTS, method = NULL, yearIndex = NULL, monthIndex = 
   # First check if all the records are NA.
   if (any(!is.na(inputTS))) {
     #converting daily preci to the wanted preci.
-    if (method == 'meanAnnualPreci') {
+    if (method == 'annual') {
       ###yearIndex <- startTime$year + 1900
       annualPreci <- tapply(inputTS, INDEX = yearIndex, FUN = sum, na.rm = omitNA)#ggplot is able not to show NA, so choose TRUE
-      if (fullResults == TRUE) output <- annualPreci else output <- mean(annualPreci, na.rm = omitNA)
+      if (fullResults == TRUE) output <- annualPreci else output <- mean(annualPreci, na.rm = TRUE)
       
     } else if (method == 'winter') {
-      #winter is the most tricky part, because it starts from Dec to Feb next year, it's a year-crossing season,
-      #so we have to make some changes to the monthIndex
-      #e.g.data from 1950.1.1 - 2008.3.31 if we want to calculate the mean winter preci, to calculate winter month
-      #December, we have to move the yearIndex one month forwards or two months backwards, to make 12,1,2 in one year      
-      ###yearIndex <- startTime$year + 1900
-      ###monthIndex <- startTime$mon + 1
+#       #winter is the most tricky part, because it starts from Dec to Feb next year, it's a year-crossing season,
+#       #so we have to make some changes to the monthIndex
+#       #e.g.data from 1950.1.1 - 2008.3.31 if we want to calculate the mean winter preci, to calculate winter month
+#       #December, we have to move the yearIndex one month forwards or two months backwards, to make 12,1,2 in one year      
+#       ###yearIndex <- startTime$year + 1900
+#       ###monthIndex <- startTime$mon + 1
+#       
+#       #we move the yearIndex one month backwards
+#       yearIndex_new <- c(yearIndex[32:length(yearIndex)], rep(tail(yearIndex, 1), 31))
+#       
+#       winterIndex <- which(monthIndex == 12 | monthIndex == 1 | monthIndex == 2)
+#       winterYear <- yearIndex_new[winterIndex]#this index is used for calculation
+#       
+#       #because we don't have 1949.Dec, so the first winter is not intact, so first two months are elemenated
+#       
+#       startIndex <- length(which(winterYear == yearIndex[1])) + 1
+#       winterOfLastYear <- length(which(winterYear == tail(yearIndex, 1)))
+#       if (winterOfLastYear > 91) {
+#         endIndex <- length(winterYear) - 31 #in case the data set ends at Dec.31
+#         
+#       } else if (winterOfLastYear < 90) { # incase the data ends at Jan 31
+#         endIndex <- length(winterYear) - length(which(winterYear == tail(yearIndex, 1)))
+#         
+#       } else {
+#         endIndex <- length(winterYear)
+#       }
+#       
+#       inputTS <- inputTS[winterIndex][startIndex:endIndex]#needs two process with inputPreci, first, extract
+#       #the winter preci, second, delete first two month of 1950
+#       
+#       winterYear <- winterYear[startIndex:endIndex]#needs one process, delete two months   
+#       seasonalPreci <- tapply(inputTS,INDEX = winterYear, FUN = sum, na.rm = omitNA)
       
-      #we move the yearIndex one month backwards
-      yearIndex_new <- c(yearIndex[32:length(yearIndex)], rep(tail(yearIndex, 1), 31))
+      # upper part is the older method saved as backup.
       
-      winterIndex <- which(monthIndex == 12 | monthIndex == 1 | monthIndex == 2)
-      winterYear <- yearIndex_new[winterIndex]#this index is used for calculation
+      matrix <- tapply(inputTS, INDEX = list(monthIndex, yearIndex), FUN = sum, na.rm = omitNA)
+      col <- colnames(matrix)
+      dec <- matrix[12,] # extract December.
+      dec <- c(NA, dec[1:length(dec) - 1]) # rearrange December order to push it to next year.
+      names(dec) <- col
+      matrix <- rbind(dec, matrix[1:11, ])      
+      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[1:3]))
       
-      #because we don't have 1949.Dec, so the first winter is not intact, so first two months are elemenated
-      
-      startIndex <- length(which(winterYear == yearIndex[1])) + 1
-      winterOfLastYear <- length(which(winterYear == tail(yearIndex, 1)))
-      if (winterOfLastYear > 91) {
-        endIndex <- length(winterYear) - 31 #in case the data set ends at Dec.31
-      } else if (winterOfLastYear < 90) { # incase the data ends at Jan 31
-        endIndex <- length(winterYear) - length(which(winterYear == tail(yearIndex, 1)))
-      } else {
-        endIndex <- length(winterYear)
-      }
-      
-      inputTS <- inputTS[winterIndex][startIndex:endIndex]#needs two process with inputPreci, first, extract
-      #the winter preci, second, delete first two month of 1950
-      
-      winterYear <- winterYear[startIndex:endIndex]#needs one process, delete two months
-      
-      seasonalPreci <- tapply(inputTS,INDEX = winterYear, FUN = sum, na.rm = omitNA)
-      if (fullResults == TRUE) output <- seasonalPreci else output <- mean(seasonalPreci, na.rm = omitNA)  
+      if (fullResults == TRUE) output <- seasonalPreci else output <- mean(seasonalPreci, na.rm = TRUE)  
       
     } else if (method == 'spring') {
-      springIndex <- which(monthIndex == 3 | monthIndex == 4 | monthIndex == 5)
-      springYear <- yearIndex[springIndex]
-      inputTS <- inputTS[springIndex]
-      seasonalPreci <- tapply(inputTS, INDEX = springYear, FUN = sum, na.rm = omitNA)
-      if (fullResults == TRUE) output <- seasonalPreci else output <- mean(seasonalPreci, na.rm = omitNA)
+      
+#       springIndex <- which(monthIndex == 3 | monthIndex == 4 | monthIndex == 5)
+#       springYear <- yearIndex[springIndex]
+#       inputTS <- inputTS[springIndex]
+#       seasonalPreci <- tapply(inputTS, INDEX = springYear, FUN = sum, na.rm = omitNA)
+      matrix <- tapply(inputTS, INDEX = list(monthIndex, yearIndex), FUN = sum, na.rm = omitNA)
+      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[3:5]))
+      
+      if (fullResults == TRUE) output <- seasonalPreci else output <- mean(seasonalPreci, na.rm = TRUE)
       
     } else if (method == 'summer') {
-      summerIndex <- which(monthIndex == 6 | monthIndex == 7 | monthIndex == 8)
-      summerYear <- yearIndex[summerIndex]
-      inputTS <- inputTS[summerIndex]
-      seasonalPreci <- tapply(inputTS, INDEX = summerYear, FUN = sum, na.rm = omitNA)
-      if (fullResults == TRUE) output <- seasonalPreci else output <- mean(seasonalPreci, na.rm = omitNA)
+      
+      matrix <- tapply(inputTS, INDEX = list(monthIndex, yearIndex), FUN = sum, na.rm = omitNA)
+      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[6:8]))
+      
+      if (fullResults == TRUE) output <- seasonalPreci else output <- mean(seasonalPreci, na.rm = TRUE)
       
     } else if (method == 'autumn') {
-      autumnIndex <- which(monthIndex == 9 | monthIndex == 10 | monthIndex == 11)
-      autumnYear <- yearIndex[autumnIndex]
-      inputTS <- inputTS[autumnIndex]
-      seasonalPreci <- tapply(inputTS, INDEX = autumnYear, FUN = sum, na.rm = omitNA)
-      if (fullResults == TRUE) output <- seasonalPreci else output <- mean(seasonalPreci, na.rm = omitNA)
+      
+      matrix <- tapply(inputTS, INDEX = list(monthIndex, yearIndex), FUN = sum, na.rm = omitNA)
+      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[9:11]))
+
+      if (fullResults == TRUE) output <- seasonalPreci else output <- mean(seasonalPreci, na.rm = TRUE)
+      
     } else if (is.numeric(method)) {
+      
       month <- method
       monthlyPreci <- tapply(inputTS, INDEX = list(yearIndex, monthIndex), 
                              FUN = sum, na.rm = omitNA)[, month]
       
-      if (fullResults == TRUE) output <- monthlyPreci else output <- mean(monthlyPreci, na.rm = omitNA)
+      if (fullResults == TRUE) output <- monthlyPreci else output <- mean(monthlyPreci, na.rm = TRUE)
     }
+    
   } else {
     output <- NA
   }
 
-  
   return(output)
 }

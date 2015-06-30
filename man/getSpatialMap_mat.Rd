@@ -4,14 +4,14 @@
 \alias{getSpatialMap_mat}
 \title{Get spatial map of the input dataset, and a matrix representing the raster map will be returned.}
 \usage{
-getSpatialMap_mat(matrix, title = NULL, catchment = NULL, points = NULL,
+getSpatialMap_mat(matrix, title_d = NULL, catchment = NULL, points = NULL,
   output = "data", info = TRUE, scale = "identity", ...)
 }
 \arguments{
 \item{matrix}{A matrix raster, should be the result of \code{getSpatialMap()}, output should be default
 or 'data'}
 
-\item{title}{A string showing the title of the plot, defaut is NULL.}
+\item{title_d}{A string showing the title of the plot, defaut is NULL.}
 
 \item{catchment}{A catchment file geting from \code{shp2cat()} in the package, if a catchment is available for background.}
 

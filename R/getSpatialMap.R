@@ -2,10 +2,20 @@
 #' 
 #' @param dataset A list containing different information, should be the result of reading netcdf file using
 #' \code{library(ecomsUDG.Raccess)}.
-#' @param method A string showing different calculating method for the map.
+#' @param method A string showing different calculating method for the map. More information please refer to
+#' details.
+#' @param member A number showing which member is selected to get, if the dataset has a "member" dimension. Default
+#' is NULL, if no member assigned, and there is a "member" in dimensions, the mean value of the members will be
+#' taken.
 #' @param ... Check \code{?getSpatialMap_mat} for details, e.g., x, y, title, catchment, 
 #' points, output,
 #' @return A matrix representing the raster map is returned, and the map is plotted.
+#' @details
+#' There are following methods to be selected, 
+#' "meanAnnual": annual rainfall of each year is plotted.  
+#' "winter", "spring", "autumn", "summer": MEAN seasonal rainfall of each year is plotted.
+#' Month(number 1 to 12): MEAN month rainfall of each year is plotted, e.g. MEAN march rainfall of each year.
+#' "mean", "max", "min": mean daily, maximum daily, minimum daily precipitation.
 #' @examples
 #' 
 #' #gridData provided in the package is the result of \code {loadGridData{ecomsUDG.Raccess}}
@@ -21,7 +31,7 @@
 #' getSpatialMap(tgridData, method = 'winter', catchment = testCat, points = points)
 #' 
 #' @export
-getSpatialMap <- function(dataset, method = NULL, ...) {
+getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
 
   #check input dataset
   checkWord <- c('Data', 'xyCoords', 'Dates')
@@ -39,58 +49,86 @@ getSpatialMap <- function(dataset, method = NULL, ...) {
   monthIndex <-startTime$mon + 1
   data <- dataset$Data
   
+  # Dimension needs to be arranged. Make sure first and second dimension is lat and lon.
+  att <- attributes(data)$dimensions
+  dimIndex <- seq(1, length(att))
+  dimIndex1 <- match(c('lat', 'lon', 'time'), att)# match can apply to simple cases
+  dimIndex2 <- dimIndex[-dimIndex1]# choose nomatch
+  
+  
+  data <- aperm(data, c(dimIndex1, dimIndex2))
+  attributes(data)$dimensions <- att[c(dimIndex1, dimIndex2)]
+  
+  # Because in the following part, only 3 dimensions are allowed, so data has to be processed.
+  if (is.null(member) & any(attributes(data)$dimensions == 'member')) {
+    dimIndex3 <- which(attributes(data)$dimensions != 'member')
+    data <- apply(data, MARGIN = dimIndex3, FUN = mean, na.rm = TRUE)
+  } else if (any(attributes(data)$dimensions == 'member')) {
+    dimIndex3 <- which(attributes(data)$dimensions == 'member')
+    data <- chooseDim(data, dimIndex3, member, drop = TRUE)
+  }
+  
+  
+  
+  
   if (is.null(method)) {
+    
     warning('You should shoose a method, unless input is a matrix directly to be plotted.')
     #in case the dataset is ready to plot and no need to calculate
-  } else if (method == 'meanAnnual') {
+    
+  } else if (method == 'meanAnnual') { 
     #mean value of the annual precipitation over the period of the data 
     #time <- proc.time()
-    data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex,  method = 'meanAnnualPreci')
+    data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex,  method = 'annual')
     #newTime <- proc.time() - time
     title_d  <- 'Mean Annual Precipitation (mm / year)'
     
   } else if (method == 'winter') {
-    #mean value of the seasonal precipitation, in this case, winter
-    
+    #mean value of the seasonal precipitation, in this case, winter 
     #time <- proc.time()
-    data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
+    data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'winter')
     #newTime <- proc.time() - time
     title_d <- 'Mean Winter Precipitation (mm / winter)'
     
   } else if (method == 'spring') {
-    data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
-                      method = 'spring')
     
+    data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
+                      method = 'spring')    
     title_d <- 'Mean Spring Precipitation (mm / spring)'
     
   } else if (method == 'summer') {
-    data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
-                      method = 'summer')
     
+    data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
+                      method = 'summer')    
     title_d <- 'Mean Summer Precipitation (mm / summer)'
     
   } else if (method == 'autumn') {
-    data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
-                      method = 'autumn')
     
+    data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
+                      method = 'autumn')    
     title_d <- 'Mean Autumn Precipitation (mm / autumn)'
     
   } else if (method == 'mean') {
+    
     #sum value of the dataset, this procedure is to get the mean value
-    data_new <- apply(data, MARGIN = c(2,3), FUN = mean)
+    data_new <- apply(data, MARGIN = c(1, 2), FUN = mean)
     title_d <- 'Mean Daily Precipitation (mm / day)'
+    
   } else if (method == 'max') {
-    data_new <- apply(data, MARGIN = c(2,3), FUN = max)
+    
+    data_new <- apply(data, MARGIN = c(1, 2), FUN = max)
     title_d <- 'Max Daily Precipitation (mm / day)'
+    
   } else if (method == 'min') {
-    data_new <- apply(data, MARGIN = c(2,3), FUN = min)
+    
+    data_new <- apply(data, MARGIN = c(1, 2), FUN = min)
     title_d <- 'Min Daily Precipitation (mm / day)'
+    
   } else if (is.numeric(method)) {
     
-    data_new <- apply(data, MARGIN = c(2,3), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
-                      method = method)
-    
+    data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
+                      method = method)    
     title_d <- paste(month.abb[method], 'Precipitation (mm / month)', sep = ' ')
     
   } else {
@@ -115,7 +153,7 @@ getSpatialMap <- function(dataset, method = NULL, ...) {
 #' 
 #' @param matrix A matrix raster, should be the result of \code{getSpatialMap()}, output should be default
 #' or 'data'
-#' @param title A string showing the title of the plot, defaut is NULL.
+#' @param title_d A string showing the title of the plot, defaut is NULL.
 #' @param catchment A catchment file geting from \code{shp2cat()} in the package, if a catchment is available for background.
 #' @param points A dataframe, showing other information, e.g., location of the gauging stations. The 
 #' the data.frame should be with columes "name, lon, lat, z, value".
@@ -165,7 +203,7 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
   #in other words, all the parameters in aes(), they have to come from the main dataset. Otherwise, just put them
   #outside aes() as normal parameters.
   
-  if (info == TRUE) {
+  if (info == TRUE) {  
     plotMax <- round(max(matrix, na.rm = TRUE), 2)
     plotMin <- round(min(matrix, na.rm = TRUE), 2)
     plotMean <- round(mean(matrix, na.rm = TRUE), 2)
@@ -189,16 +227,16 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
     geom_tile(aes(x = lon, y = lat, fill = value)) +
     #scale_fill_gradient(high = 'red', low = 'yellow')+
     scale_fill_gradientn(colours = c('yellow', 'orange', 'red'), na.value = 'transparent',
-                         guide = guide_colorbar(title='Rainfall (mm)', barheight = rel(10)), trans = scale) +#usually scale = 'sqrt'
+                         guide = guide_colorbar(title='Rainfall (mm)', barheight = rel(9)), trans = scale) +#usually scale = 'sqrt'
     geom_map(data = world_map, map = world_map, aes(map_id = region), fill='transparent', color='black') +
     #    guides(fill = guide_colorbar(title='Rainfall (mm)', barheight = 15))+
     xlab(x_word) +
     ylab('Latitude') +
     ggtitle(title_d) +
     labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
-    theme(plot.title = element_text(size = rel(1.8), face = 'bold'),
-          axis.title.x = element_text(size = rel(1.5)),
-          axis.title.y = element_text(size = rel(1.5)))
+    theme(plot.title = element_text(size = rel(1.3), face = 'bold'),
+          axis.title.x = element_text(size = rel(1.2)),
+          axis.title.y = element_text(size = rel(1.2)))
 #   geom_rect(xmin=min(lon)+0.72*(max(lon)-min(lon)),
 #             xmax=min(lon)+0.99*(max(lon)-min(lon)),
 #             ymin=min(lat)+0.02*(max(lat)-min(lat)),
@@ -239,7 +277,7 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
   print(printLayer)
   
   if (output == 'ggplot') {
-    data_ggplot$Name <- rep(title, dim(data_ggplot)[1])
+    data_ggplot$Name <- rep(title_d, dim(data_ggplot)[1])
     return (data_ggplot)
   } else if (output == 'plot') {
     return(printLayer)
@@ -259,8 +297,10 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
 #' #The output should be 'ggplot'
 #' a1 <- getSpatialMap(tgridData, method = 'summer', output = 'ggplot')
 #' a2 <- getSpatialMap(tgridData, method = 'winter', output = 'ggplot')
-#' 
-#' getSpatialMap_comb(a1, a2)
+#' a3 <- getSpatialMap(tgridData, method = 'mean', output = 'ggplot')
+#' a4 <- getSpatialMap(tgridData, method = 'max', output = 'ggplot')
+#' getSpatialMap_comb(a1, a2, a3, a4)
+#' getSpatialMap_comb(a1, a2, a3, a4, nrow = 2)
 #' 
 #' @export
 #' @import ggplot2 maps
@@ -273,7 +313,7 @@ getSpatialMap_comb <- function(..., list = NULL, nrow = 1) {
     maps <- list(...)
     data_ggplot <- do.call('rbind', maps)
   }
-  
+  data_ggplot$Name <- factor(data_ggplot$Name, levels = data_ggplot$Name, ordered = TRUE)
   
   world_map <- map_data('world')
   theme_set(theme_bw())
@@ -286,6 +326,27 @@ getSpatialMap_comb <- function(..., list = NULL, nrow = 1) {
     facet_wrap(~ Name, nrow = nrow)
   })
   
-  print(mainLayer)
+  suppressWarnings(print(mainLayer))
+}
+
+
+
+
+chooseDim <- function(array, dim, value, drop = FALSE) { 
+  # Create list representing arguments supplied to [
+  # bquote() creates an object corresponding to a missing argument
+  indices <- rep(list(bquote()), length(dim(array)))
+  indices[[dim]] <- value
+  
+  # Generate the call to [
+  call <- as.call(c(
+    list(as.name("["), quote(array)),
+    indices,
+    list(drop = drop)))
+  # Print it, just to make it easier to see what's going on
+  print(call)
+  
+  # Finally, evaluate it
+  eval(call)
 }
 

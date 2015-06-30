@@ -24,7 +24,9 @@ data(tgridData)# the result of \\code{loadGridData{ecomsUDG.Raccess}}
 #The output should be 'ggplot'
 a1 <- getSpatialMap(tgridData, method = 'summer', output = 'ggplot')
 a2 <- getSpatialMap(tgridData, method = 'winter', output = 'ggplot')
-
-getSpatialMap_comb(a1, a2)
+a3 <- getSpatialMap(tgridData, method = 'mean', output = 'ggplot')
+a4 <- getSpatialMap(tgridData, method = 'max', output = 'ggplot')
+getSpatialMap_comb(a1, a2, a3, a4)
+getSpatialMap_comb(a1, a2, a3, a4, nrow = 2)
 }
 

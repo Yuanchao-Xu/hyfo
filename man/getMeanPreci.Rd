@@ -29,7 +29,13 @@ The mean value of the input time series or the full results before calculating m
 Get mean rainfall data, e.g. mean annual rainfall, mean monthly rainfall and mean winter rainfall.
 }
 \details{
-there are following methods to be selected, "meanAnnualPreci", "winter", "spring", "autumn", "summer".
+There are following methods to be selected,
+"annual": annual rainfall of each year is plotted.
+"winter", "spring", "autumn", "summer": seasonal rainfall of each year is plotted.
+Month(number 1 to 12): month rainfall of each year is plotted, e.g. march rainfall of each year.
+
+Since "winter" is a crossing year, 12, 1, 2, 12 is in former year, and 1, 2 are in latter year.
+so winter belongs to the latter year.
 }
 \examples{
 data(testdl)
@@ -57,7 +63,7 @@ a <- getMeanPreci(TS[, 2], method = 3, yearIndex = year, monthIndex = month,
 a
 
 # We can also get annual precipitation.
-a <- getMeanPreci(TS[, 2], method = 'meanAnnualPreci', yearIndex = year, monthIndex = month,
+a <- getMeanPreci(TS[, 2], method = 'annual', yearIndex = year, monthIndex = month,
                   fullResults = TRUE)
 }
 
