@@ -28,6 +28,27 @@ vignette: >
 
 * The functions end with `_anarbe` are the functions designed specially for some case in Spain, those functions mostly are about data collection of the anarbe catchment, which will be introduced in the end fo this mannual.
 
+# Content
+1. Hydrology
+  + 1.1 Data Preparation
+      + 1.1.1 From File
+      + 1.1.2 Mannually
+  + 1.2 Rainfall Analysis
+  + 1.3 Extract Common Period from Different Time Series
+  + 1.4 Fill Gaps (rainfall data gaps)
+  + 1.5 Seasonal and Monthly Precipitation
+2. Forecasting
+  + 2.1 Plot Spatial Map
+  + 2.2 Add Background (catchment and gauging stations)
+    + 2.2.1 Add catchment shape file.
+    + 2.2.2 Add station locations
+  + 2.3 Precipitation Bar Plot
+  + 2.4 Analysis and Comparison
+    + 2.4.1 Spatial Map
+    + 2.4.2 Bar Plot
+3. Anarbe Case
+
+
 # 1. Hydrology
 
 ##### Note
@@ -38,7 +59,7 @@ If you are an experienced R user, and know how to read data in R, deal with data
 
 ## 1.1 Data Preparation
 
-### 1.1.1 Frome File
+### 1.1.1 From File
 
 `hyfo` does provide a common tool for collecting data from different type of files, including "txt", 
 
@@ -198,7 +219,7 @@ head(df_filled)
 
 
 
-## 1.5 Seasonal and Monthly Precipitation.
+## 1.5 Seasonal and Monthly Precipitation
 
 Sometimes we need to know not only the annual precipitation, but also the precipitation of a certain month or certain season.
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
@@ -240,6 +261,10 @@ a <- getMeanPreci(TS[, 2], method = 'annual', yearIndex = year, monthIndex = mon
 
 # 2. Forecasting
 
+##### Note
+
+If an ensemble forecasting data is loaded, there will be one dimension called  "member", by default, `hyfo` will calculate the mean of different members. If you want to see a special member, add `member` argument to `getSpatialMap`, e.g., `getSpatialMap(tgridData, method = 'meanAnnual', member = 3)`, `getPreciBar(tgridData, method = 'annual', member = 14)`
+
 ## 2.1 Plot Spatial Map
 
 As described at the start of the mannual, `hyfo` is mainly in charge of the post processing of the forecast data. Input of `hyfo` should be the result from  `loadGridData{ecomsUDG.Raccess}` or `loadECOMS{ecomsUDG.Raccess}`. An example is included in the package. 
@@ -272,7 +297,7 @@ a <- getSpatialMap(tgridData, method = 'meanAnnual', scale = 'sqrt',
 
 The default background is the world map, while if you have other backgrounds like catchment shape file and station location file, you are welcome to import them as background.
 
-### 2.2.1 Add catchment shape file.
+### 2.2.1 Add catchment shape file
 
 Catchment shape file needs to be processed with a very simple step. It's based on the package `rgdal`, details can be found by `?shp2cat`
 
@@ -289,7 +314,7 @@ Then the catchment file `cat` can be inputed as background.
 a <- getSpatialMap(tgridData, method = 'meanAnnual', catchment = cat)
 ```
 
-### 2.2.2 Add station locations.
+### 2.2.2 Add station locations
 
 Points file needs to be read into dataframe, and special column has to be assigned, details can be found by `?getSpatialMap_mat`
 ```{r, fig.show='hold', fig.height=6, fig.width=7}
@@ -340,6 +365,11 @@ There are three different kinds of output from `getSpatialMap` and `getPreciBar`
 
 `output = 'plot'` is used when a layer output is needed. the output can be directly printed, and can be mannually combined by the plot arrange functions, e.g., `grid.arrange()`
 
+##### Note:
+**All the comparisons must be comparable, e.g.,**
+
+* For `getSpatialMap_comb`, the maps to be compared should be with same size and resolution, in other words, they should be fully overlapped by each other. Check `?getSpatialMap_comb` for details.
+* For `getPreciBar_comb`, the bar plots to be compared should belong to the same kind, e.g., spring and winter, January and December, and couldn't be spring and annual. Details can be found by `?getPreciBar_comb`
 
 ### 2.4.1 Spatial Map
 
@@ -433,6 +463,27 @@ c <- lapply(1:12, function(x) getPreciBar(tgridData, method = x, output = 'ggplo
 
 ```{r, fig.show='hold', fig.height=6, fig.width=7}
 getPreciBar_comb(list = c, nrow = 4)
+```
+
+## 3. Anarbe Case
+
+The functions with anarbe case end with `_anarbe`, all of them are used to collect different available published data in anarbe catchment in Spain. The data comes from two website: [linked phrase](http://meteo.navarra.es/estaciones/mapadeestaciones.cfm) and [linked phrase](http://www4.gipuzkoa.net/oohh/web/esp/02.asp), there are precipitation or discharge data on those website, and can be downloaded directly. 
+
+Since the available files on those website are arranged by a year or five years, for long term data collection, a tools is necessary for collecting data from different files.
+
+##### Note:
+For excel files, if you have access to the dam regulation excel file of the dam anarbe, you can use  `collectData_excel_anarbe` in the package, but this function is commented in the original code, cannot be used directly. Go to original file in the library or go to github [linked phrase](https://github.com/Yuanchao-Xu/hyfo/blob/master/R/collectData_excel.R), copy the original code.
+
+There are two csv files and txt files included in the package, which can be used as examples.
+
+```{r}
+file <- system.file("extdata", "1999.csv", package = "hyfo")
+folder <- strsplit(file, '1999')[[1]][1] # get the folder name
+
+a <- collectData_csv_anarbe(folder, output = TRUE)
+str(a)
+b <- collectData_txt_anarbe(folder, output = TRUE)
+str(b)
 ```
 
 
