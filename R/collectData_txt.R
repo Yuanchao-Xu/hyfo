@@ -14,6 +14,7 @@
 #' @source http://www4.gipuzkoa.net/oohh/web/esp/02.asp
 #' @return The collected data from different txt files.
 #' @export
+#' @importFrom utils tail
 collectData_txt_anarbe <- function(folderName, output = TRUE, rangeWord = c('Ene       ', -1, 
                                                                    'Total     ', -6)){
   #All the code should be ASCII encode, so there should be no strange symbol.
@@ -86,6 +87,7 @@ anarbe_txt <- function(dataset, x1, x2){
   return(output)
   }
 
+#'@importFrom utils read.fwf
 readColumn_txt_anarbe <- function(fileName, keyword = NULL, rangeWord = NULL){
   
   a <- read.fwf(fileName, widths = rep(10,13))#read file with fixed width

@@ -83,6 +83,7 @@ extractPeriod_dataset <- function(dataset, startDate, endDate) {
   return(output)  
 }
 
+#' @importFrom utils tail
 extractPeriod_getDate <- function(dataset) {
   
   if (!grepl('-|/', dataset[1, 1])) {

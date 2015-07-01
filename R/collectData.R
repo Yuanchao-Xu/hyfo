@@ -79,7 +79,7 @@ readTxt <- function(fileName, range){
 
 
 
-
+#'@importFrom utils read.csv
 readCsv <- function(fileName, range){
   
   data <- read.csv(fileName, skip = range[1] - 1, header = FALSE)

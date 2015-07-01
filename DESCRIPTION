@@ -1,6 +1,6 @@
 Package: hyfo
 Type: Package
-Title: Hydrology and forecasting tools for data analysis and visualization.
+Title: Hydrology and Forecasting Tools for Data Analysis and Visualization.
 Version: 1.0.0
 Date: 2015-06-03
 Author: Yuanchao Xu
@@ -17,9 +17,10 @@ Imports: ggplot2 (>= 1.0.1),
     moments,
     lmom,
     maps
-Suggests: ecomsUDG.Raccess,
-    downscaleR,
-    gridExtra,
+Suggests: gridExtra,
     knitr
 VignetteBuilder: knitr
 LazyData: true
+URL: https://github.com/Yuanchao-Xu/hyfo
+Additional_repositories: https://github.com/SantanderMetGroup/ecomsUDG.Raccess,
+    https://github.com/SantanderMetGroup/downscaleR

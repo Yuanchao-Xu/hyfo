@@ -1,0 +1,17 @@
+{
+    "contents" : "#' Get a catchment object from selected shape file.\n#' @param filePath A string representing the path of the shape file.\n#' @return A catchment object can be used in \\code{getSpatialMap()}.\n#' @export\n#' @details This function is based on the package \\code{rgdal} and \\code{sp}, and the output comes from the package \n#' \\code{sp}\n#' @examples\n#' #open internal file\n#' file <- system.file(\"extdata\", \"testCat.shp\", package = \"hyfo\")\n#' catchment <- shp2cat(file)\n#' @references rgdal package and the \n#' @import rgdal\n#' @importFrom utils tail\nshp2cat <- function(filePath) {\n  #if the path <- file.choose(), the seperator is '\\\\'\n  if (grepl('\\\\\\\\', filePath)) {\n    catName <- tail(strsplit(filePath,'\\\\\\\\')[[1]], 1)#needs to be four \\, caused by some window system problem\n    catName1 <- strsplit(catName, '\\\\.')[[1]][1]\n    catName2 <- paste('\\\\\\\\', catName, sep = '')\n    folderName <- strsplit(filePath, catName2)[[1]]\n    n <- list.files(folderName, pattern = catName1)\n    if (length(n) == 1) stop('Please place the shp file in the folder containing \n                             full related files, not only the shape file')\n  #the other seperator is '/'  \n  } else if (grepl('/', filePath)) {\n    catName <- tail(strsplit(filePath,'/')[[1]], 1)#needs to be four \\, caused by some window system problem\n    catName1 <- strsplit(catName, '\\\\.')[[1]][1]\n    catName2 <- paste('/', catName, sep = '')\n    folderName <- strsplit(filePath, catName2)[[1]]\n    n <- list.files(folderName, pattern = catName1)\n    if (length(n) == 1) stop('Please place the shp file in the folder containing \n                             full related files, not only the shape file')\n  }\n  \n  if (length(folderName) == 0) stop('No shape file found, make sure the shp file is selected.')\n  catchment <- readOGR(folderName, catName1)\n  return(catchment)\n}\n",
+    "created" : 1435737725154.000,
+    "dirty" : false,
+    "encoding" : "ASCII",
+    "folds" : "",
+    "hash" : "3793892201",
+    "id" : "E5B87D25",
+    "lastKnownWriteTime" : 1435737752,
+    "path" : "~/hyfo/R/shp2cat.R",
+    "project_path" : "R/shp2cat.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

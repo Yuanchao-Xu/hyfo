@@ -10,6 +10,7 @@
 #' catchment <- shp2cat(file)
 #' @references rgdal package and the 
 #' @import rgdal
+#' @importFrom utils tail
 shp2cat <- function(filePath) {
   #if the path <- file.choose(), the seperator is '\\'
   if (grepl('\\\\', filePath)) {

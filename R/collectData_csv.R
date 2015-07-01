@@ -12,6 +12,7 @@
 #' @references http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
 #' @source http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
 #' @export
+#' @importFrom utils tail
 collectData_csv_anarbe <- function(folderName, output = TRUE){
   
   fileNames <- list.files(folderName, pattern='*.csv', full.names = TRUE)

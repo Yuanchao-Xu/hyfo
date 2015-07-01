@@ -5,6 +5,7 @@
 #' @param output A boolean showing whether the output is given.
 #' @return The collected data from different excel files.
 #' @export
+#' @importFrom utils write.table
 collectData_excel_anarbe <- function(folderName, keyword = NULL, output = TRUE){
   
   newFileName <- file.choose(new = TRUE)
@@ -64,7 +65,7 @@ readTable_excel_anarbe <- function(fileName){
   return(data)
 }
 
-
+#'@importFrom utils tail
 readColumn_excel_anarbe <- function(fileName, keyword = NULL){
   
   index <- tail(strsplit(fileName, '\\.|\\ ')[[1]],3)
