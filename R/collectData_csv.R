@@ -4,6 +4,7 @@
 #' @param output A boolean showing whether the output is given, default is T.
 #' @return The collected data from different csv files.
 #' @examples
+#' 
 #' #use internal data as an example.
 #' file <- system.file("extdata", "1999.csv", package = "hyfo")
 #' folder <- strsplit(file, '1999')[[1]][1]

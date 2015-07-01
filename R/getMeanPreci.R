@@ -97,11 +97,11 @@ getMeanPreci <- function(inputTS, method = NULL, yearIndex = NULL, monthIndex = 
       
       matrix <- tapply(inputTS, INDEX = list(monthIndex, yearIndex), FUN = sum, na.rm = omitNA)
       col <- colnames(matrix)
-      dec <- matrix[12,] # extract December.
+      dec <- matrix['12',] # extract December.
       dec <- c(NA, dec[1:length(dec) - 1]) # rearrange December order to push it to next year.
       names(dec) <- col
-      matrix <- rbind(dec, matrix[1:11, ])      
-      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[1:3]))
+      matrix <- rbind(dec, matrix[rownames(matrix) != '12', ])      
+      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[c('dec', '1', '2')]))
       
       if (fullResults == TRUE) output <- seasonalPreci else output <- mean(seasonalPreci, na.rm = TRUE)  
       
@@ -111,22 +111,24 @@ getMeanPreci <- function(inputTS, method = NULL, yearIndex = NULL, monthIndex = 
 #       springYear <- yearIndex[springIndex]
 #       inputTS <- inputTS[springIndex]
 #       seasonalPreci <- tapply(inputTS, INDEX = springYear, FUN = sum, na.rm = omitNA)
+      
+      
       matrix <- tapply(inputTS, INDEX = list(monthIndex, yearIndex), FUN = sum, na.rm = omitNA)
-      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[3:5]))
+      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[c(3, 4, 5)]))
       
       if (fullResults == TRUE) output <- seasonalPreci else output <- mean(seasonalPreci, na.rm = TRUE)
       
     } else if (method == 'summer') {
       
       matrix <- tapply(inputTS, INDEX = list(monthIndex, yearIndex), FUN = sum, na.rm = omitNA)
-      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[6:8]))
+      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[c(6, 7, 8)]))
       
       if (fullResults == TRUE) output <- seasonalPreci else output <- mean(seasonalPreci, na.rm = TRUE)
       
     } else if (method == 'autumn') {
       
       matrix <- tapply(inputTS, INDEX = list(monthIndex, yearIndex), FUN = sum, na.rm = omitNA)
-      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[9:11]))
+      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[c(9, 10, 11)]))
 
       if (fullResults == TRUE) output <- seasonalPreci else output <- mean(seasonalPreci, na.rm = TRUE)
       
@@ -134,7 +136,7 @@ getMeanPreci <- function(inputTS, method = NULL, yearIndex = NULL, monthIndex = 
       
       month <- method
       monthlyPreci <- tapply(inputTS, INDEX = list(yearIndex, monthIndex), 
-                             FUN = sum, na.rm = omitNA)[, month]
+                             FUN = sum, na.rm = omitNA)[, toString(month)]
       
       if (fullResults == TRUE) output <- monthlyPreci else output <- mean(monthlyPreci, na.rm = TRUE)
     }

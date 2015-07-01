@@ -97,6 +97,10 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, memb
     
   } else if (method == 'annual') {  
     
+    if (length(unique(monthIndex)) < 12) {
+      warning ('There are less than 12 months in a year, the results may be inaccurate.')
+    }
+    
     annualPreci <- tapply(TS, INDEX = yearIndex, FUN = sum, na.rm = TRUE)
     title <- 'Annual Precipitation'
     xlab <- 'Year'
@@ -110,7 +114,7 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, memb
   } else if (is.numeric(method)) {
     
     month <- method
-    monthlyPreci <- tapply(TS, INDEX = list(yearIndex, monthIndex), FUN = sum)[, month]
+    monthlyPreci <- tapply(TS, INDEX = list(yearIndex, monthIndex), FUN = sum)[, toString(month)]
     
     plotPreci <- data.frame(Index = names(monthlyPreci), Preci = monthlyPreci)
     plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
@@ -120,6 +124,12 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, memb
     ylim <- c(0, max(monthlyPreci, na.rm = TRUE) * 1.1)
     
   } else if (method == 'spring') {   
+    
+    wm <- match(c(3, 4, 5), unique(monthIndex))
+    if (length(which(!is.na(wm))) < 3) {
+      stop ('Spring has less than 3 months, check data and try to calculate every month
+  seperately or choose another season.')
+    }
     
     seasonalPreci <- getMeanPreci(TS, method = 'spring', yearIndex = yearIndex,
                               monthIndex = monthIndex, fullResults = TRUE)
@@ -133,6 +143,12 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, memb
     
   } else if (method == 'summer') {
     
+    wm <- match(c(6, 7, 8), unique(monthIndex))
+    if (length(which(!is.na(wm))) < 3) {
+      stop ('Summer has less than 3 months, check data and try to calculate every month
+  seperately or choose another season.')
+    }
+    
     seasonalPreci <- getMeanPreci(TS, method = 'summer', yearIndex = yearIndex,
                                   monthIndex = monthIndex, fullResults = TRUE)
     plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
@@ -144,6 +160,11 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, memb
     
     
   } else if (method == 'autumn') {
+    wm <- match(c(9, 10, 11), unique(monthIndex))
+    if (length(which(!is.na(wm))) < 3) {
+      stop ('Autumn has less than 3 months, check data and try to calculate every month
+  seperately or choose another season.')
+    }
     
     seasonalPreci <- getMeanPreci(TS, method = 'autumn', yearIndex = yearIndex,
                                   monthIndex = monthIndex, fullResults = TRUE)
@@ -155,6 +176,11 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, memb
     ylim <- c(0, max(seasonalPreci, na.rm = TRUE) * 1.1)
     
   } else if (method == 'winter') {
+    wm <- match(c(12, 1, 2), unique(monthIndex))
+    if (length(which(!is.na(wm))) < 3) {
+      stop ('Winter has less than 3 months, check data and try to calculate every month
+  seperately or choose another season.')
+    }
     
     seasonalPreci <- getMeanPreci(TS, method = 'winter', yearIndex = yearIndex,
                                   monthIndex = monthIndex, fullResults = TRUE)

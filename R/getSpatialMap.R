@@ -79,6 +79,9 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
   } else if (method == 'meanAnnual') { 
     #mean value of the annual precipitation over the period of the data 
     #time <- proc.time()
+    if (length(unique(monthIndex)) < 12) {
+      warning ('There are less than 12 months in a year, the results may be inaccurate.')
+    }
     data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex,  method = 'annual')
     #newTime <- proc.time() - time
     title_d  <- 'Mean Annual Precipitation (mm / year)'
@@ -86,24 +89,45 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
   } else if (method == 'winter') {
     #mean value of the seasonal precipitation, in this case, winter 
     #time <- proc.time()
+    wm <- match(c(12, 1, 2), unique(monthIndex))
+    if (length(which(!is.na(wm))) < 3) {
+      stop ('Winter has less than 3 months, check data and try to calculate every month
+  seperately or choose another season.')
+    }
     data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'winter')
     #newTime <- proc.time() - time
     title_d <- 'Mean Winter Precipitation (mm / winter)'
     
   } else if (method == 'spring') {
+    wm <- match(c(3, 4, 5), unique(monthIndex))
+    if (length(which(!is.na(wm))) < 3) {
+      stop ('Spring has less than 3 months, check data and try to calculate every month
+  seperately or choose another season.')
+    }
     
     data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'spring')    
     title_d <- 'Mean Spring Precipitation (mm / spring)'
     
   } else if (method == 'summer') {
+    wm <- match(c(6, 7, 8), unique(monthIndex))
+    if (length(which(!is.na(wm))) < 3) {
+      stop ('Summer has less than 3 months, check data and try to calculate every month
+  seperately or choose another season.')
+    }
     
     data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'summer')    
     title_d <- 'Mean Summer Precipitation (mm / summer)'
     
   } else if (method == 'autumn') {
+    
+    wm <- match(c(9, 10, 11), unique(monthIndex))
+    if (length(which(!is.na(wm))) < 3) {
+      stop ('Autumn has less than 3 months, check data and try to calculate every month
+  seperately or choose another season.')
+    }
     
     data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'autumn')    

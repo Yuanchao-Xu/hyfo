@@ -66,22 +66,21 @@ If you are an experienced R user, and know how to read data in R, deal with data
 "csv" and "excel", which has to be assigned to the argument `fileType`.
 
 Now let's use internal data as an example.
-```{r, fig.show='hold'}
 
+```{r}
 library(hyfo)#load the package.
-
-file <- system.file("extdata", "1999.csv", package = "hyfo")
 # get the folder containing different csv (or other type) files.
-folder <- strsplit(file, '1999')[[1]][1] 
+file <- system.file("extdata", "1999.csv", package = "hyfo")
+folder <- strsplit(file, '1999')[[1]][1]
 
 # Extract and combine content from different files and in each file, the extracted zone is 
 # from row 10 to row 20, Column 1 to column2.
-a <- collectData(folder, fileType = 'csv', range = c(10, 20, 1,2))
+a <- collectData(folder, fileType = 'csv', range = c(10, 20, 1, 2))
 str(a)
 ```
 
 `a` cannot be directly inputed in `hyfo`, it still needs some process.
-```{r, fig.show = 'hold', fig.height = 4, fig.width = 7}
+```{r}
 # Check the date to see if it follows the format in ?as.Date(), if not, 
 # use as.Date to convert. 
 a <- data.frame(a)
@@ -110,6 +109,7 @@ getAnnual(datalist)
 Following example shows a simple way to generate dataframe with start date, end date, and the value. Here in the example, `sample()` is used to generate random values, while in real case it will be a vector containing time series values.
 ```{r, fig.show = 'hold', fig.height = 4, fig.width = 7}
 # Generate timeseries datalist. Each data frame consists of a Date and a value.
+library(hyfo)
 AAA <- data.frame(
   Date = seq(as.Date('1990-10-28'), as.Date('1997-4-1'), 1), # Date column
   AAA = sample(1:10, length(seq(as.Date('1990-10-28'), # value column
@@ -478,7 +478,7 @@ There are two csv files and txt files included in the package, which can be used
 
 ```{r}
 file <- system.file("extdata", "1999.csv", package = "hyfo")
-folder <- strsplit(file, '1999')[[1]][1] # get the folder name
+folder <- strsplit(file, '1999')[[1]][1]
 
 a <- collectData_csv_anarbe(folder, output = TRUE)
 str(a)

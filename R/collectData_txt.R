@@ -4,8 +4,10 @@
 #' @param output A boolean showing whether the result is given.
 #' @param rangeWord A list containing the keyword and the shift. 
 #' defaut is set to be used in spain gauging station.
-#' @examples 
+#' @examples
+#'   
 #' #use internal data as an example.
+#' 
 #' file <- system.file("extdata", "1999.csv", package = "hyfo")
 #' folder <- strsplit(file, '1999')[[1]][1]
 #' a <- collectData_txt_anarbe(folder)

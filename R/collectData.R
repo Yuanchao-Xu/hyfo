@@ -1,4 +1,5 @@
 #' Collect data from different csv files.
+#' 
 #' @param folderName A string showing the path of the folder holding different csv files.
 #' @param fileType A string showing the file type, e.g. "txt", "csv", "excel".
 #' @param range A vector containing startRow, endRow, startColumn, endColumn, e.g., 
@@ -6,11 +7,13 @@
 #' @param sheetIndex A number showing the sheetIndex in the excel file, if fileType is excel,
 #' sheetIndex has to be provided, default is 1.
 #' @return The collected data from different files in the folder.
-#' @examples
+#' @examples 
 #' 
 #' #use internal data as an example.
-#' file <- system.file("extdata", "1999.csv", package = "hyfo")
-#' folder <- strsplit(file, '1999')[[1]][1]
+#' folder <- file.path(path.package("hyfo"), 'extdata')
+#' # file may vary with different environment, it if doesn't work, use local way to get
+#' # folder path.
+#' 
 #' a <- collectData(folder, fileType = 'csv', range = c(10, 20, 1,2))
 #' 
 #' @export

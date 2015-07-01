@@ -3,11 +3,11 @@ Type: Package
 Title: Hydrology and Forecasting Tools for Data Analysis and Visualization.
 Version: 1.0.0
 Date: 2015-06-03
-Author: Yuanchao Xu
+Author: Yuanchao Xu <xuyuanchao37@gmail.com>
 Maintainer: Yuanchao Xu <xuyuanchao37@gmail.com>
 Description: Hydrology and Forecasting Tools for Data Analysis and Visualization.
 License: GPL-2
-Depends: R (>= 3.0.1), stats
+Depends: R (>= 3.0.1), stats, utils
 Imports: ggplot2 (>= 1.0.1),
     reshape2 (>= 1.4.1),
     zoo,
@@ -21,5 +21,3 @@ Suggests: gridExtra,
 VignetteBuilder: knitr
 LazyData: true
 URL: https://github.com/Yuanchao-Xu/hyfo
-Additional_repositories: https://github.com/SantanderMetGroup/ecomsUDG.Raccess,
-    https://github.com/SantanderMetGroup/downscaleR

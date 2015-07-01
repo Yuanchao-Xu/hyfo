@@ -25,8 +25,10 @@ Collect data from different csv files.
 }
 \examples{
 #use internal data as an example.
-file <- system.file("extdata", "1999.csv", package = "hyfo")
-folder <- strsplit(file, '1999')[[1]][1]
+folder <- file.path(path.package("hyfo"), 'extdata')
+# file may vary with different environment, it if doesn't work, use local way to get
+# folder path.
+
 a <- collectData(folder, fileType = 'csv', range = c(10, 20, 1,2))
 }
 
