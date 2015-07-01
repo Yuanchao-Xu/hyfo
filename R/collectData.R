@@ -43,16 +43,23 @@ collectData <- function(folderName, fileType = NULL, range = NULL, sheetIndex = 
     data <- lapply(fileNames, readTxt, range = range)
     data <- unlist(data)
     
+#   In order not to introduce too much trouble to user, this part has been hiden
+#   Because it needs java environment installed.
+#
   } else if (fileType == 'excel') {
-    fileNames <- list.files(folderName, pattern = '*.xlsx', full.names = TRUE)
-    if (length(fileNames) == 0){
-      fileNames <- list.files(folderName, pattern = '*.xls', full.names = TRUE)
-    }
     
-    if (length(fileNames) == 0) stop('No excel in the folder.')
-    data <- lapply(fileNames, readExcel, range = range, sheetIndex = sheetIndex)
-    checkBind(data, 'rbind')
-    data <- do.call('rbind', data)
+    message('This part needs java installed in your computer, so it is commentted in
+            the original file, check the original R file or https://github.com/Yuanchao-Xu/hyfo/blob/master/R/collectData.R
+            for ideas.')
+#     fileNames <- list.files(folderName, pattern = '*.xlsx', full.names = TRUE)
+#     if (length(fileNames) == 0){
+#       fileNames <- list.files(folderName, pattern = '*.xls', full.names = TRUE)
+#     }
+#     
+#     if (length(fileNames) == 0) stop('No excel in the folder.')
+#     data <- lapply(fileNames, readExcel, range = range, sheetIndex = sheetIndex)
+#     checkBind(data, 'rbind')
+#     data <- do.call('rbind', data)
   }else{
     stop('fileType should be "txt", "csv" or "excel".')
   }
@@ -62,14 +69,15 @@ collectData <- function(folderName, fileType = NULL, range = NULL, sheetIndex = 
   
 }
 
-readExcel <- function(fileName, range, sheetIndex){
-  data <- xlsx::read.xlsx(fileName, sheetIndex = sheetIndex, rowIndex = seq(range[1], range[2]),
-                          colIndex = seq(range[3], range[4])) 
-  colnames(data) <- seq(1, dim(data)[2])
-  
-  message(fileName) 
-  return(data)
-}
+# #importFrom xlsx read.xls
+# readExcel <- function(fileName, range, sheetIndex){
+#   data <- read.xls(fileName, sheetIndex = sheetIndex, rowIndex = seq(range[1], range[2]),
+#                           colIndex = seq(range[3], range[4])) 
+#   colnames(data) <- seq(1, dim(data)[2])
+#   
+#   message(fileName) 
+#   return(data)
+# }
 
 readTxt <- function(fileName, range){
   data <- readLines(fileName)
