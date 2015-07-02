@@ -206,7 +206,7 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
 #' getSpatialMap_mat(a6)
 #' 
 #' @export
-#' @import ggplot2 rgdal plyr maps
+#' @import ggplot2 plyr maps maptools rgeos
 getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points = NULL, output = 'data', 
                               info = TRUE, scale = 'identity', ...) {
   #check input
@@ -321,10 +321,10 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
 #' #The output should be 'ggplot'
 #' a1 <- getSpatialMap(tgridData, method = 'summer', output = 'ggplot')
 #' a2 <- getSpatialMap(tgridData, method = 'winter', output = 'ggplot')
-#' a3 <- getSpatialMap(tgridData, method = 'mean', output = 'ggplot')
-#' a4 <- getSpatialMap(tgridData, method = 'max', output = 'ggplot')
-#' getSpatialMap_comb(a1, a2, a3, a4)
-#' getSpatialMap_comb(a1, a2, a3, a4, nrow = 2)
+#'# a3 <- getSpatialMap(tgridData, method = 'mean', output = 'ggplot')
+#'# a4 <- getSpatialMap(tgridData, method = 'max', output = 'ggplot')
+#' getSpatialMap_comb(a1, a2)
+#' getSpatialMap_comb(a1, a2, nrow = 2)
 #' @details
 #' For \code{getSpatialMap_comb}, the maps to be compared should be with same size and resolution, 
 #' in other words, they should be fully overlapped by each other.

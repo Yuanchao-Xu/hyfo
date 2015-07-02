@@ -1,23 +1,26 @@
 Package: hyfo
 Type: Package
-Title: Hydrology and Forecasting Tools for Data Analysis and Visualization.
+Title: Hydrology and Forecasting Tools for Data Analysis and Visualization
 Version: 1.0.0
-Date: 2015-06-03
+Date: 2015-07-02
 Author: Yuanchao Xu <xuyuanchao37@gmail.com>
 Maintainer: Yuanchao Xu <xuyuanchao37@gmail.com>
 Description: Hydrology and Forecasting Tools for Data Analysis and Visualization.
 License: GPL-2
-Depends: R (>= 3.0.1), stats, utils
+Depends: R (>= 3.1.0), stats (>= 3.1.3), utils(>= 3.1.3)
 Imports: ggplot2 (>= 1.0.1),
     reshape2 (>= 1.4.1),
-    zoo,
+    zoo (>= 1.7-12),
     rgdal (>= 0.9-3),
     plyr (>= 1.8.3),
-    moments,
-    lmom,
-    maps
+    moments (>= 0.14),
+    lmom (>= 2.5),
+    maps(>= 2.3-9),
+    maptools (>= 0.8-36),
+    rgeos (>= 0.3-8)
 Suggests: gridExtra,
     knitr
 VignetteBuilder: knitr
 LazyData: true
 URL: https://github.com/Yuanchao-Xu/hyfo
+Repository: CRAN

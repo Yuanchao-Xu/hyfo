@@ -11,6 +11,7 @@
     "project_path" : "README.md",
     "properties" : {
     },
+    "relative_order" : 0,
     "source_on_save" : false,
     "type" : "markdown"
 }
