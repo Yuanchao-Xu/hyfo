@@ -149,6 +149,7 @@ fillGap_cor <- function(data, corPeriod = 'daily', Date) {
   
 } 
 
+#'@importFrom utils combn
 fillGap_lmCoef <- function(data, corOrder) {
   l <- dim(data)[2]
   m <- diag(l)# m is the coeficients matrix

@@ -19,6 +19,7 @@ readData_folder <- function(folderName, keyword) {
 }
 
 
+#'@importFrom utils choose.dir
 readData <- function(keyword) {
   message('Choose the main folder that, in it, there are different folders representing different gauging stations,
            all the gauging stations have precipitation data, some of them also have discharge data,

@@ -7,7 +7,9 @@
 #' @param monthIndex A numeric list showing the month index of the time series.
 #' @param fullResults A boolean showing whether the full results are shown, default is FALSE. If 
 #' FALSE, only mean value will be returned, if TRUE, the sequence of values will be returned.
-#' @param omitNA in the calculation, whether NA is omitted, default is FALSE.
+#' @param omitNA A boolean showing in the calculation, whether NA is omitted, default is FALSE.
+#' @param plot A boolean showing whether the results will be plotted.
+#' @param ..., \code{title, x, y} showing the title and x and y axis of the plot, shoud be a string.
 #' @details
 #' There are following methods to be selected, 
 #' "annual": annual rainfall of each year is plotted.  
@@ -50,7 +52,7 @@
 #'
 #' @export
 getMeanPreci <- function(inputTS, method = NULL, yearIndex = NULL, monthIndex = NULL,
-                         fullResults = FALSE, omitNA = FALSE) {
+                         fullResults = FALSE, omitNA = FALSE, plot = FALSE, ...) {
   # First check if all the records are NA.
   if (any(!is.na(inputTS))) {
     #converting daily preci to the wanted preci.
@@ -145,5 +147,21 @@ getMeanPreci <- function(inputTS, method = NULL, yearIndex = NULL, monthIndex = 
     output <- NA
   }
 
+  if (plot == TRUE) {
+    a <- data.frame(Date = names(output), value = output)
+    
+    theme_set(theme_bw())
+    mainLayer <- with(a, {
+      ggplot(a) +
+      geom_bar(aes(x = Date, y = value), stat = 'identity', fill = 'cyan') +
+      labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
+      theme(plot.title = element_text(size = rel(1.3), face = 'bold'),
+            axis.title.x = element_text(size = rel(1.2)),
+            axis.title.y = element_text(size = rel(1.2)))
+    })
+      
+    print (mainLayer)
+  }
+  
   return(output)
 }

@@ -5,7 +5,7 @@
 \title{Get mean rainfall data, e.g. mean annual rainfall, mean monthly rainfall and mean winter rainfall.}
 \usage{
 getMeanPreci(inputTS, method = NULL, yearIndex = NULL, monthIndex = NULL,
-  fullResults = FALSE, omitNA = FALSE)
+  fullResults = FALSE, omitNA = FALSE, plot = FALSE, ...)
 }
 \arguments{
 \item{inputTS}{A time series with only data column (1 column).}
@@ -20,7 +20,11 @@ more information please refer to details.}
 \item{fullResults}{A boolean showing whether the full results are shown, default is FALSE. If
 FALSE, only mean value will be returned, if TRUE, the sequence of values will be returned.}
 
-\item{omitNA}{in the calculation, whether NA is omitted, default is FALSE.}
+\item{omitNA}{A boolean showing in the calculation, whether NA is omitted, default is FALSE.}
+
+\item{plot}{A boolean showing whether the results will be plotted.}
+
+\item{...,}{\code{title, x, y} showing the title and x and y axis of the plot, shoud be a string.}
 }
 \value{
 The mean value of the input time series or the full results before calculating mean.

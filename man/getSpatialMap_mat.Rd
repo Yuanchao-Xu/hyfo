@@ -27,7 +27,8 @@ will be returned.}
 
 \item{scale}{A string showing the plot scale, 'identity' or 'sqrt'.}
 
-\item{...}{\code{title, y} showing the title and x and y axis of the plot, default is about precipitation.}
+\item{...}{\code{title, x, y} showing the title and x and y axis of the plot, should be string,
+default is about precipitation.}
 }
 \value{
 A matrix representing the raster map is returned, and the map is plotted.

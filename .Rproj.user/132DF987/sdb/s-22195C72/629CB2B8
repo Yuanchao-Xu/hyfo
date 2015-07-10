@@ -1,0 +1,17 @@
+{
+    "contents" : "library(hyfo)\n\n\n\n# calculating the mean precipitation on the catchment. since in each catchment, the rainfall is\n#weighted\n\na <- dget(file.choose())\na2 <- extractPeriod(a, comm = T)\na3 <- list2Dataframe(a2)\na3 <- fillGap(a3)\n\nDCAT1 <- 0.111 * a3[2] + 0.124 * a3[3] + 0.542 * a3[6] + 0.227 * a3[4] + 0.166 * a3[5]\nANA <- 0.265 * a3[2] + 0.782 * a3[3]\nDCAT2 <- 0.111 * a3[2] + 0.124 * a3[3] + 0.542 * a3[6] + 0.227 * a3[4] + 0.166 * a3[5]\nERE <- 0.111 * a3[2] + 0.124 * a3[3] + 0.542 * a3[6] + 0.227 * a3[4] + 0.166 * a3[5]\nDSC <- 0.111 * a3[2] + 0.124 * a3[3] + 0.542 * a3[6] + 0.227 * a3[4] + 0.166 * a3[5]\n\ntotalPre <- (DCAT1 * 1.65 + ANA * 48.85 + DCAT2 * 12.11 + ERE * 152.17 + DSC * 56.98) / \n  (1.65 + 48.85 + 12.11 + 152.17 + 56.98)\n\ntotalPre[2] <- a3[1]\ntotalPre <- totalPre[, c(2,1)]\n\ngetAnnual_dataframe(totalPre)\n\n\n# plot the mean rainfall\\\nyear <- format(totalPre[1], format = '%Y')\nmon <- format(totalPre[1], format = '%m')\n\nb <- getMeanPreci(totalPre[, 2], method = 'annual', year = year, mon = mon, full = T, omitNA = T,\n                  plot = T)\n# so the dry year is 2001, wet year is 2013.\n\n\n",
+    "created" : 1436262149110.000,
+    "dirty" : false,
+    "encoding" : "ASCII",
+    "folds" : "",
+    "hash" : "3591647690",
+    "id" : "629CB2B8",
+    "lastKnownWriteTime" : 1436461826,
+    "path" : "C:/DHI_Projects/11811405/Seasonal_Forecasting/R/Data_Analysis/Analysis.R",
+    "project_path" : null,
+    "properties" : {
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

@@ -4,7 +4,7 @@
         "filePatterns" : [
         ],
         "path" : "~/hyfo",
-        "query" : "folder",
+        "query" : "readData",
         "regex" : false
     }
 }

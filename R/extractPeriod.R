@@ -69,6 +69,7 @@ extractPeriod <- function(datalist, startDate = NULL, endDate = NULL, commonPeri
 #' @param startDate A date representing the start date.
 #' @param endDate A date representing the end date.
 #' @return The extracted dataframe between \code{startDate} and \code{endDate}.
+#' @export
 extractPeriod_dataset <- function(dataset, startDate, endDate) {
   
   dataset[, 1] <- as.Date(dataset[, 1])
