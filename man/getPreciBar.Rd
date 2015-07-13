@@ -4,8 +4,8 @@
 \alias{getPreciBar}
 \title{get mean rainfall bar plot of the input dataset}
 \usage{
-getPreciBar(dataset, method, output = "data", plotRange = TRUE,
-  member = NULL, ...)
+getPreciBar(dataset, method, cell = "mean", output = "data",
+  plotRange = TRUE, member = NULL, ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using
@@ -13,6 +13,9 @@ getPreciBar(dataset, method, output = "data", plotRange = TRUE,
 
 \item{method}{A string showing the calculating method of the input time series. More information
 please refer to the details.}
+
+\item{cell}{A vector containing the locaton of the cell, e.g. c(2, 3), default is "mean", representing
+the spatially averaged value. Check details for more information.}
 
 \item{output}{A string showing the type of the output, if \code{output = 'ggplot'}, the returned
 data can be used in ggplot and \code{getPreciBar_comb()}; if \code{output = 'plot'}, the returned data is the plot containing all
@@ -42,6 +45,11 @@ Month(number 1 to 12): month rainfall of each year is plotted, e.g. march rainfa
 
 #Since "winter" is a crossing year, 12, 1, 2, 12 is in former year, and 1, 2 are in latter year.
 #so winter belongs to the latter year.
+
+
+\code{cell} representing the location of the cell, NOTE: this location means the index of the cell,
+IT IS NOT THE LONGITUDE AND LATITUDE. e.g., \code{cell = c(2, 3)}, the program will take the 2nd longitude
+and 3rd latitude, by the increasing order. Longitude comes first.
 }
 \examples{
 #gridData provided by package is the result of \\code{loadGridData{ecomsUDG.Raccess}}

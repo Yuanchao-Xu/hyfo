@@ -4,6 +4,8 @@
 #' \code{library(ecomsUDG.Raccess)}, e.g., \code{loadGridData{ecomsUDG.Raccess}}
 #' @param method A string showing the calculating method of the input time series. More information
 #' please refer to the details.
+#' @param cell A vector containing the locaton of the cell, e.g. c(2, 3), default is "mean", representing
+#' the spatially averaged value. Check details for more information.
 #' @param output A string showing the type of the output, if \code{output = 'ggplot'}, the returned 
 #' data can be used in ggplot and \code{getPreciBar_comb()}; if \code{output = 'plot'}, the returned data is the plot containing all 
 #' layers' information, and can be plot directly or used in grid.arrange; if not set, the data
@@ -24,6 +26,9 @@
 #' #so winter belongs to the latter year.
 #' 
 #' 
+#' \code{cell} representing the location of the cell, NOTE: this location means the index of the cell,
+#' IT IS NOT THE LONGITUDE AND LATITUDE. e.g., \code{cell = c(2, 3)}, the program will take the 2nd longitude
+#' and 3rd latitude, by the increasing order. Longitude comes first.
 #' 
 #' @examples
 #' #gridData provided by package is the result of \code{loadGridData{ecomsUDG.Raccess}}
@@ -33,7 +38,8 @@
 #' 
 #' @return The calculated mean value of the input time series and the plot of the result.
 #' @export
-getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, member = NULL, ...) {
+getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', plotRange = TRUE, 
+                        member = NULL, ...) {
   
   
   #check input dataset
@@ -51,7 +57,7 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, memb
   # Dimension needs to be arranged. Make sure first and second dimension is lat and lon.
   att <- attributes(data)$dimensions
   dimIndex <- seq(1, length(att))
-  dimIndex1 <- match(c('lat', 'lon', 'time'), att)# match can apply to simple cases
+  dimIndex1 <- match(c('lon', 'lat', 'time'), att)# match can apply to simple cases
   dimIndex2 <- dimIndex[-dimIndex1]# choose nomatch
   
   
@@ -62,9 +68,12 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, memb
   if (is.null(member) & any(attributes(data)$dimensions == 'member')) {
     dimIndex3 <- which(attributes(data)$dimensions != 'member')
     data <- apply(data, MARGIN = dimIndex3, FUN = mean, na.rm = TRUE)
-  } else if (any(attributes(data)$dimensions == 'member')) {
+  } else if (!is.null(member) & any(attributes(data)$dimensions == 'member')) {
     dimIndex3 <- which(attributes(data)$dimensions == 'member')
     data <- chooseDim(data, dimIndex3, member, drop = TRUE)
+  } else if (!is.null(member) & !any(attributes(data)$dimensions == 'member')){
+    stop('There is no member part in the dataset, but you choose one, check the input
+         dataset or change your arguments.')
   }
   
   TS <- apply(data, MARGIN = 3, FUN = mean, na.rm = TRUE) 
@@ -127,7 +136,7 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, memb
     
     wm <- match(c(3, 4, 5), unique(monthIndex))
     if (length(which(!is.na(wm))) < 3) {
-      stop ('Spring has less than 3 months, check data and try to calculate every month
+      stop('Spring has less than 3 months, check data and try to calculate every month
   seperately or choose another season.')
     }
     
@@ -145,7 +154,7 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, memb
     
     wm <- match(c(6, 7, 8), unique(monthIndex))
     if (length(which(!is.na(wm))) < 3) {
-      stop ('Summer has less than 3 months, check data and try to calculate every month
+      stop('Summer has less than 3 months, check data and try to calculate every month
   seperately or choose another season.')
     }
     
@@ -162,7 +171,7 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, memb
   } else if (method == 'autumn') {
     wm <- match(c(9, 10, 11), unique(monthIndex))
     if (length(which(!is.na(wm))) < 3) {
-      stop ('Autumn has less than 3 months, check data and try to calculate every month
+      stop('Autumn has less than 3 months, check data and try to calculate every month
   seperately or choose another season.')
     }
     
@@ -178,7 +187,7 @@ getPreciBar <- function(dataset, method, output = 'data', plotRange = TRUE, memb
   } else if (method == 'winter') {
     wm <- match(c(12, 1, 2), unique(monthIndex))
     if (length(which(!is.na(wm))) < 3) {
-      stop ('Winter has less than 3 months, check data and try to calculate every month
+      stop('Winter has less than 3 months, check data and try to calculate every month
   seperately or choose another season.')
     }
     

@@ -52,7 +52,7 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
   # Dimension needs to be arranged. Make sure first and second dimension is lat and lon.
   att <- attributes(data)$dimensions
   dimIndex <- seq(1, length(att))
-  dimIndex1 <- match(c('lat', 'lon', 'time'), att)# match can apply to simple cases
+  dimIndex1 <- match(c('lon', 'lat', 'time'), att)# match can apply to simple cases
   dimIndex2 <- dimIndex[-dimIndex1]# choose nomatch
   
   
@@ -63,9 +63,12 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
   if (is.null(member) & any(attributes(data)$dimensions == 'member')) {
     dimIndex3 <- which(attributes(data)$dimensions != 'member')
     data <- apply(data, MARGIN = dimIndex3, FUN = mean, na.rm = TRUE)
-  } else if (any(attributes(data)$dimensions == 'member')) {
+  } else if (!is.null(member) & any(attributes(data)$dimensions == 'member')) {
     dimIndex3 <- which(attributes(data)$dimensions == 'member')
     data <- chooseDim(data, dimIndex3, member, drop = TRUE)
+  } else if (!is.null(member) & !any(attributes(data)$dimensions == 'member')){
+    stop('There is no member part in the dataset, but you choose one, check the input
+         dataset or change your arguments.')
   }
   
   
@@ -82,7 +85,7 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
     if (length(unique(monthIndex)) < 12) {
       warning ('There are less than 12 months in a year, the results may be inaccurate.')
     }
-    data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex,  method = 'annual')
+    data_new <- apply(data, MARGIN = c(2, 1), FUN = getMeanPreci, yearIndex = yearIndex,  method = 'annual')
     #newTime <- proc.time() - time
     title_d  <- 'Mean Annual Precipitation (mm / year)'
     
@@ -94,7 +97,7 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
       stop ('Winter has less than 3 months, check data and try to calculate every month
   seperately or choose another season.')
     }
-    data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
+    data_new <- apply(data, MARGIN = c(2, 1), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'winter')
     #newTime <- proc.time() - time
     title_d <- 'Mean Winter Precipitation (mm / winter)'
@@ -106,7 +109,7 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
   seperately or choose another season.')
     }
     
-    data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
+    data_new <- apply(data, MARGIN = c(2, 1), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'spring')    
     title_d <- 'Mean Spring Precipitation (mm / spring)'
     
@@ -117,7 +120,7 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
   seperately or choose another season.')
     }
     
-    data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
+    data_new <- apply(data, MARGIN = c(2, 1), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'summer')    
     title_d <- 'Mean Summer Precipitation (mm / summer)'
     
@@ -129,29 +132,29 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
   seperately or choose another season.')
     }
     
-    data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
+    data_new <- apply(data, MARGIN = c(2, 1), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = 'autumn')    
     title_d <- 'Mean Autumn Precipitation (mm / autumn)'
     
   } else if (method == 'mean') {
     
     #sum value of the dataset, this procedure is to get the mean value
-    data_new <- apply(data, MARGIN = c(1, 2), FUN = mean)
+    data_new <- apply(data, MARGIN = c(2, 1), FUN = mean)
     title_d <- 'Mean Daily Precipitation (mm / day)'
     
   } else if (method == 'max') {
     
-    data_new <- apply(data, MARGIN = c(1, 2), FUN = max)
+    data_new <- apply(data, MARGIN = c(2, 1), FUN = max)
     title_d <- 'Max Daily Precipitation (mm / day)'
     
   } else if (method == 'min') {
     
-    data_new <- apply(data, MARGIN = c(1, 2), FUN = min)
+    data_new <- apply(data, MARGIN = c(2, 1), FUN = min)
     title_d <- 'Min Daily Precipitation (mm / day)'
     
   } else if (is.numeric(method)) {
     
-    data_new <- apply(data, MARGIN = c(1, 2), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
+    data_new <- apply(data, MARGIN = c(2, 1), FUN = getMeanPreci, yearIndex = yearIndex, monthIndex = monthIndex, 
                       method = method)    
     title_d <- paste(month.abb[method], 'Precipitation (mm / month)', sep = ' ')
     
@@ -368,15 +371,19 @@ chooseDim <- function(array, dim, value, drop = FALSE) {
   indices <- rep(list(bquote()), length(dim(array)))
   indices[[dim]] <- value
   
+  if (dim(array)[dim] < value) {
+    stop('Chosen member exceeds the member range of the dataset.')
+  }
+  
   # Generate the call to [
   call <- as.call(c(
     list(as.name("["), quote(array)),
     indices,
     list(drop = drop)))
   # Print it, just to make it easier to see what's going on
-  print(call)
+  # Print(call)
   
   # Finally, evaluate it
-  eval(call)
+  return(eval(call))
 }
 

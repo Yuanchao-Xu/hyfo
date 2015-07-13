@@ -6,9 +6,6 @@ output:
   pdf_document:
     toc: true
     toc_depth: 3
-  html_document:
-    toc: true
-    toc_depth: 3
   html_vignette:
     toc: true
     toc_depth: 3
@@ -36,7 +33,7 @@ vignette: >
 ##### Note
 * For the hydrology tools part, the minimum time unit is a day, i.e., it mainly focuses on water resource and some long term analysis. For flood analysis part, it will be added in future.
 
-* For the forecasting tools part, `hyfo` mainly focuses on the post processing of the gridData derived from forecasts or other sources. The input is a list file, usually a result from  `loadGridData{ecomsUDG.Raccess}` or `loadECOMS{ecomsUDG.Raccess}`. Pacakage`{ecomsUDG.Raccess}`is designed for getting access to different dataset, and also can load grid file (like netcdf file) directly.
+* For the forecasting tools part, `hyfo` mainly focuses on the post processing of the gridData derived from forecasts or other sources. The input is a list file, usually a result from  `loadGridData{ecomsUDG.Raccess}` or `loadECOMS{ecomsUDG.Raccess}`. Pacakage[`{ecomsUDG.Raccess}`](https://github.com/SantanderMetGroup/ecomsUDG.Raccess)is designed for getting access to different dataset, and also can load grid file (like netcdf file) directly.
 
 * The functions end with `_anarbe` are the functions designed specially for some case in Spain, those functions mostly are about data collection of the anarbe catchment, which will be introduced in the end fo this mannual.
 
@@ -262,7 +259,7 @@ a <- getMeanPreci(TS[, 2], method = 'annual', yearIndex = year, monthIndex = mon
                   fullResults = TRUE,omitNA = TRUE, plot = TRUE, x = 'aaa', title = 'aaa')
 ```
 
-## 1.6 Hydrological forecasting with historical data
+## 1.6 Get ensemble hydrological forecast from historical data
 
 
 The basic forecasts are made from the historical data, to see, how the historical data act in the same situation. Using the same period from the historical data to generate an ensemble forcast. 
@@ -511,6 +508,21 @@ c <- lapply(1:12, function(x) getPreciBar(tgridData, method = x, output = 'ggplo
 ```{r, fig.show='hold', fig.height=6, fig.width=7}
 getPreciBar_comb(list = c, nrow = 4)
 ```
+
+## 2.5 Get ensemble forecast from forecasting dataset
+
+If there are different members existing in the dataset, `hyfo` can extract them and generate a dataframe for the easy input to the model.
+
+```
+# There is no example data in this test
+a <- getFrcEnsem(dataset)
+```
+The default output is spatially averaged, if there are more than one cells in the dataset, the mean value of the cells will be calculated. While if you are interested in special cell, you can assign the cell value, for how to assign, please check the details in `?getFrcEnsem`
+
+```
+a <- getFrcEnsem(dataset, cell = c(2,3))
+```
+Also, if no plot is needed, you can cancel the plot by the argument `plot = FALSE`
 
 # 3. Anarbe Case
 

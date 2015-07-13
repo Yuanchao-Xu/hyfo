@@ -6,13 +6,15 @@
 #' e.g. \code{example = c('1994-3-1', '1996-1-2')}, meaning the example period is from 1994-3-1 to 1996-1-2. And 
 #' the program will extract every possible period in TS you provided to generate the ensemble. Check details for 
 #' more information.
-#' @param  interval A number representing the interval of each ensemble member. NOTE: "interval" takes
+#' @param interval A number representing the interval of each ensemble member. NOTE: "interval" takes
 #' 365 as a year, and 30 as a month, regardless of leap year and months with 31 days. So if you want the interval 
 #' to be 2 years, set \code{interval = 730}, which equals 2 * 365 ; if two months, set \code{interval = 60}; 
 #' 2 days, \code{interval = 2}, for other numbers that cannot be divided by 365 or 30 without remainder, it will treat the 
 #' number as days.By defualt interval is set to be 365, a year.
-#' @param  buffer A number showing how many days are used as buffer period for models. Check details for more
+#' @param buffer A number showing how many days are used as buffer period for models. Check details for more
 #' information.
+#' 
+#' @param plot A boolean showing whether the plot will be shown, default is TRUE.
 #' 
 #' @details 
 #' 
@@ -66,11 +68,14 @@
 #' 
 #' # Default interval is one year, can be set to other values, check help for information.
 #' 
-#' b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 120) # take 4 months as interval
-#' 
+#' # Take 7 months as interval
+#' b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210) 
+#' # Take 30 days as buffer
+#' b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210, buffer = 30)
+#' @import reshape2 ggplot2
 #' @export
 
-getHisEnsem <- function (TS, example, interval = 365, buffer = 0) {
+getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = TRUE) {
   if (!grepl('-|/', TS[1, 1])) {
     stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
          and use as.Date to convert.')
@@ -141,16 +146,119 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0) {
     } else if (buffer < 0) {
       stop ('Buffer should be positive, or reset example.')
     }
-      
+    
+    
     output <- list2Dataframe(data)
     colnames(output) <- c('Date', as.character(startDate))
-    firstC <- seq(from = example[1] - buffer, to = example[2], by = 1)
-    output$Date <- firstC
     
-    message('Column names represent the starting date of each member.')
+    # Rearrange dataframe to make example the first column.
+    ind <- match(c('Date', as.character(example[1])), colnames(output))
+    output <- cbind(output[ind], output[-ind])
+    ex_date <- seq(from = example[1] - buffer, to = example[2], by = 1)
+    output$Date <- ex_date
+    colnames(output)[2] <- 'Example'
     
-    return (output)
+    if (plot == TRUE) {
+      
+      data_ggplot <- melt(output, id.var = 'Date')
+      
+      mainLayer <- with(data_ggplot, {
+        ggplot(data = data_ggplot) +
+          aes(x = Date, y = value, color = variable, group = variable) +
+          geom_line(size = 0.3) +
+          geom_line(data = data_ggplot[data_ggplot$variable == 'Example', ], size = 2)
+            
+      })
+      print(mainLayer)
+    }
+    
+    return(output)
   }
 }
 
+
+
+
+
+
+#' getFrcEnsem extract different members' timeseries from forecasting data, if forecasting data has a member session.
+#' 
+#' @param dataset A list containing different information, should be the result of reading netcdf file using
+#' \code{library(ecomsUDG.Raccess)}, there should be a member part in the data part of the dataset.
+#' @param cell A vector containing the locaton of the cell, e.g. c(2, 3), default is "mean", representing
+#' the spatially averaged value. Check details for more information.
+#' @param plot A boolean showing whether the plot will be shown, default is TRUE.
+#' 
+#' @details 
+#' 
+#' \code{cell} representing the location of the cell, NOTE: this location means the index of the cell,
+#' IT IS NOT THE LONGITUDE AND LATITUDE. e.g., \code{cell = c(2, 3)}, the program will take the 2nd longitude
+#' and 3rd latitude, by the increasing order. Longitude comes first.
+#' 
+#' 
+#' @return A ensemble time series extracted from forecating data.
+#' 
+#' @import reshape2 ggplot2
+#' @export
+getFrcEnsem <- function(dataset, cell = 'mean', plot = TRUE) {
+  # cell should be a vector showing the location, or mean representing the loacation averaged.
+  
+  checkWord <- c('Data', 'xyCoords', 'Dates')
+  if (any(is.na(match(checkWord, attributes(dataset)$names)))) {
+    stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
+         check help for details.')
+  }
+  
+  Date <- as.Date(dataset$Dates$start)
+  data <- dataset$Data
+  
+  # Dimension needs to be arranged. Make sure first and second dimension is lat and lon.
+  att <- attributes(data)$dimensions
+  dimIndex <- seq(1, length(att))
+  dimIndex1 <- match(c('lon', 'lat', 'time'), att)# match can apply to simple cases
+  dimIndex2 <- dimIndex[-dimIndex1]# choose nomatch
+  
+  data <- aperm(data, c(dimIndex1, dimIndex2))
+  attributes(data)$dimensions <- att[c(dimIndex1, dimIndex2)]
+  
+  if (!any(attributes(data)$dimensions == 'member')){
+    stop('There is no member part in the dataset, check the input
+         dataset or change your arguments.')
+  }
+  
+  
+  if (length(cell) == 2) {
+    data_ensem <- data[cell[1], cell[2], , ]
+    meanV <- apply(data_ensem, MARGIN = 1, FUN = mean, na.rm = TRUE)
+    data_ensem <- data.frame('mean' = meanV, data_ensem) 
+    
+  } else if (cell == 'mean') {
+    data_ensem <- apply(data, MARGIN = c(3, 4), FUN = mean, na.rm = TRUE)
+#    colnames <- 1:ncol(data_ensem)
+    meanV <- apply(data_ensem, MARGIN = 1, FUN = mean, na.rm = TRUE)
+    data_ensem <- data.frame('mean' = meanV, data_ensem)
+    
+  } else {
+    stop('Wrong cell input, check help for information.')
+  }
+  
+  output <- data.frame(Date, data_ensem)
+  
+  if (plot == TRUE) {
+    
+    data_ggplot <- melt(output, id.var = 'Date')
+    
+    mainLayer <- with(data_ggplot, {
+      ggplot(data = data_ggplot) +
+        aes(x = Date, y = value, color = variable) +
+        geom_line(size = 0.3) +
+        geom_line(data = data_ggplot[data_ggplot$variable == 'mean', ], size = 2)
+      
+    })
+    print(mainLayer)
+  }
+  
+  return(output)
+  
+}
 

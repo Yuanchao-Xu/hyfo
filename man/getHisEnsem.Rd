@@ -4,7 +4,7 @@
 \alias{getHisEnsem}
 \title{getHisEnsem use historical data as the forecasting input time series.}
 \usage{
-getHisEnsem(TS, example, interval = 365, buffer = 0)
+getHisEnsem(TS, example, interval = 365, buffer = 0, plot = TRUE)
 }
 \arguments{
 \item{TS}{A time series dataframe, with first column Date, and second column value.}
@@ -23,6 +23,8 @@ number as days.By defualt interval is set to be 365, a year.}
 
 \item{buffer}{A number showing how many days are used as buffer period for models. Check details for more
 information.}
+
+\item{plot}{A boolean showing whether the plot will be shown, default is TRUE.}
 }
 \value{
 A ensemble time series using historical data as forecast.
@@ -78,6 +80,9 @@ b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'))
 
 # Default interval is one year, can be set to other values, check help for information.
 
-b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 120) # take 4 months as interval
+# Take 7 months as interval
+b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210)
+# Take 30 days as buffer
+b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210, buffer = 30)
 }
 

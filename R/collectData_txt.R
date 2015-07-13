@@ -21,7 +21,7 @@ collectData_txt_anarbe <- function(folderName, output = TRUE, rangeWord = c('Ene
                                                                    'Total     ', -6)){
   #All the code should be ASCII encode, so there should be no strange symbol.
   if (is.null(rangeWord)) {
-    stop ('rangeWord consists of 4 elements:
+    stop('rangeWord consists of 4 elements:
           1. start word which program can recognise.
           2. shift1, the shift needs to be made. E.g. start word is in line 7, and program
           should read file from line 9, then shift is 9-7 = 2.

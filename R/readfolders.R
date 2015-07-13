@@ -20,14 +20,13 @@ readData_folder <- function(folderName, keyword) {
 
 
 #'@importFrom utils choose.dir
-readData <- function(keyword) {
+readData <- function(keyword, folderName) {
   message('Choose the main folder that, in it, there are different folders representing different gauging stations,
            all the gauging stations have precipitation data, some of them also have discharge data,
            this function is to open different gauging folders and read the data, arragen them together.')
   message('\n\n
            new file is a list based file and needs to be read by dget()')
   
-  folderName <- choose.dir()
   fileNames <- list.files(folderName, full.names = TRUE)
   data <- lapply(fileNames, FUN = readData_folder, keyword = keyword)
   
