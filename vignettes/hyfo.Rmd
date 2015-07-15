@@ -39,16 +39,15 @@ vignette: >
 
 ##### Installation
 
-You can go to [here](https://github.com/Yuanchao-Xu/hyfo/releases) to download different releases, and use IDE like Rstudio to install from file, both `tar.gz` and `zip` formats are provided.
+You can go [here](http://yuanchao-xu.github.io/hyfo/) to download installation file, and use IDE like Rstudio to install from file, both `tar.gz` and `zip` formats are provided.
 
 Also you can use the following code to install the latest version.
-```
+```{r, results='hide'}
   install.packages('devtools')
   # ignore the warning that Rtool is not installed, unless you want other function from devtools.
   
   devtools::install_github('Yuanchao-Xu/hyfo')
 ```
-
 
 # 1. Hydrology
 
@@ -68,7 +67,7 @@ If you are an experienced R user, and know how to read data in R, deal with data
 
 Now let's use internal data as an example.
 
-```{r}
+```{r, }
 library(hyfo)#load the package.
 # get the folder containing different csv (or other type) files.
 file <- system.file("extdata", "1999.csv", package = "hyfo")

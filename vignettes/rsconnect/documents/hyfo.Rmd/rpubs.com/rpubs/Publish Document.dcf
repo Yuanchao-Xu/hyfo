@@ -1,0 +1,7 @@
+name: Publish Document
+account: rpubs
+server: rpubs.com
+bundleId:
+        https://api.rpubs.com/api/v1/document/92496/040a160fa5224f5fb19213862827453a
+url: http://rpubs.com/rankthefirst/92496
+when: 1436973348.07702
