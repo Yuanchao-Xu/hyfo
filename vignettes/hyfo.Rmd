@@ -3,7 +3,7 @@ title: "hyfo Easy Start"
 author: "Yuanchao Xu"
 date: "`r Sys.Date()`"
 output: 
-  pdf_document:
+  html_document:
     toc: true
     toc_depth: 3
   html_vignette:
@@ -42,10 +42,10 @@ vignette: >
 You can go [here](http://yuanchao-xu.github.io/hyfo/) to download installation file, and use IDE like Rstudio to install from file, both `tar.gz` and `zip` formats are provided.
 
 Also you can use the following code to install the latest version.
-```{r, results='hide'}
+```{}
   install.packages('devtools')
-  # ignore the warning that Rtool is not installed, unless you want other function from devtools.
-  
+  # Ignore the warning that Rtool is not installed, unless you want other function from devtools.
+  # If you have "devtools" installed already, you just need to run the following code.
   devtools::install_github('Yuanchao-Xu/hyfo')
 ```
 
