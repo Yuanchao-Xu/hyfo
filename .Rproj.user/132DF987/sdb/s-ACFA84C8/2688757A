@@ -1,12 +1,12 @@
 {
-    "contents" : "# hyfo\nhyfo provides convenient Hydrological and Forecasting Tools\n\nlook at [here](http://yuanchao-xu.github.io/hyfo/)",
+    "contents" : "# hyfo\nhyfo provides convenient Hydrological and Forecasting Tools\n\nIntroduction and user manual please click [here](http://yuanchao-xu.github.io/hyfo/)",
     "created" : 1436976289194.000,
     "dirty" : false,
     "encoding" : "ASCII",
     "folds" : "",
-    "hash" : "889512595",
+    "hash" : "459912787",
     "id" : "2688757A",
-    "lastKnownWriteTime" : 1436976306,
+    "lastKnownWriteTime" : 1437134709,
     "path" : "~/hyfo/README.md",
     "project_path" : "README.md",
     "properties" : {
