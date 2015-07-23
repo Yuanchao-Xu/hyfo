@@ -118,7 +118,7 @@ fillGap_column <- function(i, data, corOrder, lmCoef) {
 }
 
 
-#' @import stats
+#' @importFrom stats cor na.omit
 fillGap_cor <- function(data, corPeriod = 'daily', Date) {
   
   names <- colnames(data)
@@ -150,6 +150,7 @@ fillGap_cor <- function(data, corPeriod = 'daily', Date) {
 } 
 
 #'@importFrom utils combn
+#'@importFrom stats coef lm
 fillGap_lmCoef <- function(data, corOrder) {
   l <- dim(data)[2]
   m <- diag(l)# m is the coeficients matrix

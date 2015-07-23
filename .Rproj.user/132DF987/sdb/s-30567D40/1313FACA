@@ -1,0 +1,17 @@
+{
+    "contents" : "#' Convert a list of different time series to a dataframe. Usually the list is the output of\n#' \\code{extractPeriod}\n#' NOTE: Since it's dataframe, so the dataframes in the input datalist should have the same \n#' date, if not, please use  \\code{extractPeriod} to process.\n#'\n#' @param datalist A list containing different time series, each sub list has to have the same length.\n#' @return The converted dataframe\n#' \n#' @examples\n#' # open file attached in the package.\n#' file <- system.file(\"extdata\", \"testdl.txt\", package = \"hyfo\")\n#' datalist <- dget(file) # read list file.\n#' datalist_new <- extractPeriod(datalist, commonPeriod = TRUE)\n#' \n#' dataframe <- list2Dataframe(datalist_new)\n#' \n#' @export\nlist2Dataframe <- function(datalist) {\n  \n  data <- lapply(datalist, function(x) x[, 2])\n  names <- lapply(datalist, function(x) colnames(x)[2])\n  names <- do.call('cbind', names)\n  Date <- datalist[[1]][, 1]\n  data <- data.frame(data)\n  colnames(data) <- names\n  data <- data.frame(cbind(Date, data))\n  \n  return(data)\n}",
+    "created" : 1437565733687.000,
+    "dirty" : false,
+    "encoding" : "ASCII",
+    "folds" : "",
+    "hash" : "3041148526",
+    "id" : "1313FACA",
+    "lastKnownWriteTime" : 1435452302,
+    "path" : "~/hyfo/R/list2dataframe.R",
+    "project_path" : "R/list2dataframe.R",
+    "properties" : {
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

@@ -1,0 +1,17 @@
+{
+    "contents" : "\n#' get L moment analysis of the input distribution\n#' \n#' @param dis A distribution, for hydrology usually a time series with only data column without time.\n#' @return The mean, L-variation, L-skewness and L-kurtosis of the input distribution\n#' @examples\n#' dis <- seq(1, 100)\n#' getLMom(dis)\n#' @export\n#' @importFrom lmom samlmu\n#' \ngetLMom <- function(dis){\n  \n  LMom <- samlmu(dis, nmom = 4, ratios = TRUE)\n  \n  mean <- LMom[1]\n  LCV <- LMom[2]/LMom[1]\n  Lskew <- LMom[3]\n  Lkur <- LMom[4]\n  \n  output <- data.frame(mean = mean, Lcv = LCV, Lskew = Lskew, Lkur = Lkur)\n  return(output)\n}\n\n#' get moment analysis of the input distribution\n#' \n#' @param dis A distribution, for hydrology usually a time series with only data column without time.\n#' @return The mean, variation, skewness and kurtosis of the input distribution\n#' @examples\n#' dis <- seq(1, 100)\n#' getMoment(dis)\n#' @export\n#' @importFrom moments skewness kurtosis\n#' @importFrom stats var\ngetMoment <- function(dis) {\n  mean <- mean(dis, na.rm = TRUE)\n  variance <- var(dis, na.rm = TRUE)\n  skewness <- skewness(dis, na.rm = TRUE)\n  kurtosis <- kurtosis(dis, na.rm = TRUE)\n  \n  output <- data.frame(mean=mean, Variance = variance, Skewness = skewness, Kurtosis = kurtosis)\n  \n  return(output)\n}\n",
+    "created" : 1437577265419.000,
+    "dirty" : false,
+    "encoding" : "ASCII",
+    "folds" : "",
+    "hash" : "1561029314",
+    "id" : "FAF7A4F9",
+    "lastKnownWriteTime" : 1437577415,
+    "path" : "~/hyfo/R/analyzeTS.R",
+    "project_path" : "R/analyzeTS.R",
+    "properties" : {
+    },
+    "relative_order" : 11,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

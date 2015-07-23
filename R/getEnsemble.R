@@ -14,7 +14,9 @@
 #' @param buffer A number showing how many days are used as buffer period for models. Check details for more
 #' information.
 #' 
-#' @param plot A boolean showing whether the plot will be shown, default is TRUE.
+#' @param plot A string showing whether the plot will be shown, e.g., 'norm' means normal plot (without any process), 
+#' 'cum' means cummulative plot, default is 'norm'. For other words there will be no plot.
+#' #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #' 
 #' @details 
 #' 
@@ -69,13 +71,14 @@
 #' # Default interval is one year, can be set to other values, check help for information.
 #' 
 #' # Take 7 months as interval
-#' b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210) 
+#' b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210, plot = 'cum') 
 #' # Take 30 days as buffer
 #' b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210, buffer = 30)
-#' @import reshape2 ggplot2
+#' @importFrom reshape2 melt 
+#' @import ggplot2
 #' @export
 
-getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = TRUE) {
+getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm', ...) {
   if (!grepl('-|/', TS[1, 1])) {
     stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
          and use as.Date to convert.')
@@ -153,24 +156,41 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = TRUE) {
     
     # Rearrange dataframe to make example the first column.
     ind <- match(c('Date', as.character(example[1])), colnames(output))
-    output <- cbind(output[ind], output[-ind])
+    # when use cbind, to ensure the output is also a dataframe, one inside cbind should be dataframe
+    # Even output is alread a dataframe, but when ind is a single number, then output[ind] will
+    # not be a dataframe, but an array.
+    output <- cbind(data.frame(output[ind]), output[-ind])
     ex_date <- seq(from = example[1] - buffer, to = example[2], by = 1)
     output$Date <- ex_date
     colnames(output)[2] <- 'Example'
     
-    if (plot == TRUE) {
+    meanV <- apply(output[, 2:ncol(output)], MARGIN = 1, FUN = mean, na.rm = TRUE)
+    
+    output <- cbind(data.frame(Date = output[, 1]), Mean = meanV, output[, 2:ncol(output)])
+    
+    theme_set(theme_bw())
+    
+    if (plot == 'norm') {
       
       data_ggplot <- melt(output, id.var = 'Date')
       
-      mainLayer <- with(data_ggplot, {
-        ggplot(data = data_ggplot) +
-          aes(x = Date, y = value, color = variable, group = variable) +
-          geom_line(size = 0.3) +
-          geom_line(data = data_ggplot[data_ggplot$variable == 'Example', ], size = 2)
-            
-      })
-      print(mainLayer)
+    } else if (plot == 'cum') {
+        cum <- cbind(data.frame(Date = output$Date), cumsum(output[2:ncol(output)]))
+        
+        data_ggplot <- melt(cum, id.var = 'Date')
+    } else {
+      stop('plot can only be "norm" or "cum", do not assign other words')
     }
+    
+    mainLayer <- with(data_ggplot, {
+      ggplot(data = data_ggplot) +
+        aes(x = Date, y = value, color = variable, group = variable) +
+        geom_line(size = 0.3) +
+        geom_line(data = data_ggplot[data_ggplot$variable == 'Example', ], size = 2) +
+        geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 2) +
+        labs(empty = NULL, ...)#in order to pass "...", arguments shouldn't be empty.
+    })
+    print(mainLayer)
     
     return(output)
   }
@@ -187,7 +207,9 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = TRUE) {
 #' \code{library(ecomsUDG.Raccess)}, there should be a member part in the data part of the dataset.
 #' @param cell A vector containing the locaton of the cell, e.g. c(2, 3), default is "mean", representing
 #' the spatially averaged value. Check details for more information.
-#' @param plot A boolean showing whether the plot will be shown, default is TRUE.
+#' @param plot A string showing whether the plot will be shown, e.g., 'norm' means normal plot (without any process), 
+#' 'cum' means cummulative plot, default is 'norm'. For other words there will be no plot.
+#' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #' 
 #' @details 
 #' 
@@ -198,9 +220,10 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = TRUE) {
 #' 
 #' @return A ensemble time series extracted from forecating data.
 #' 
-#' @import reshape2 ggplot2
+#' @import ggplot2
+#' @importFrom reshape2 melt
 #' @export
-getFrcEnsem <- function(dataset, cell = 'mean', plot = TRUE) {
+getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', ...) {
   # cell should be a vector showing the location, or mean representing the loacation averaged.
   
   checkWord <- c('Data', 'xyCoords', 'Dates')
@@ -230,13 +253,13 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = TRUE) {
   if (length(cell) == 2) {
     data_ensem <- data[cell[1], cell[2], , ]
     meanV <- apply(data_ensem, MARGIN = 1, FUN = mean, na.rm = TRUE)
-    data_ensem <- data.frame('mean' = meanV, data_ensem) 
+    data_ensem <- data.frame('Mean' = meanV, data_ensem) 
     
   } else if (cell == 'mean') {
     data_ensem <- apply(data, MARGIN = c(3, 4), FUN = mean, na.rm = TRUE)
 #    colnames <- 1:ncol(data_ensem)
     meanV <- apply(data_ensem, MARGIN = 1, FUN = mean, na.rm = TRUE)
-    data_ensem <- data.frame('mean' = meanV, data_ensem)
+    data_ensem <- data.frame('Mean' = meanV, data_ensem)
     
   } else {
     stop('Wrong cell input, check help for information.')
@@ -244,19 +267,31 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = TRUE) {
   
   output <- data.frame(Date, data_ensem)
   
-  if (plot == TRUE) {
+  
+  
+  theme_set(theme_bw())
+  
+  if (plot == 'norm') {
     
     data_ggplot <- melt(output, id.var = 'Date')
     
-    mainLayer <- with(data_ggplot, {
-      ggplot(data = data_ggplot) +
-        aes(x = Date, y = value, color = variable) +
-        geom_line(size = 0.3) +
-        geom_line(data = data_ggplot[data_ggplot$variable == 'mean', ], size = 2)
-      
-    })
-    print(mainLayer)
+  } else if (plot == 'cum') {
+    cum <- cbind(data.frame(Date = output$Date), cumsum(output[2:ncol(output)]))
+    
+    data_ggplot <- melt(cum, id.var = 'Date')
+    
   }
+  
+  mainLayer <- with(data_ggplot, {
+    ggplot(data = data_ggplot) +
+      aes(x = Date, y = value, color = variable) +
+      geom_line(size = 0.3) +
+      geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 2) +
+      labs(empty = NULL, ...)#in order to pass "...", arguments shouldn't be empty.
+    
+  })
+  print(mainLayer)
+  
   
   return(output)
   

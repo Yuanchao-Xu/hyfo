@@ -7,10 +7,11 @@
 #' dis <- seq(1, 100)
 #' getLMom(dis)
 #' @export
-#' @import moments
+#' @importFrom lmom samlmu
+#' 
 getLMom <- function(dis){
   
-  LMom <- lmom::samlmu(dis, nmom = 4, ratios = TRUE)
+  LMom <- samlmu(dis, nmom = 4, ratios = TRUE)
   
   mean <- LMom[1]
   LCV <- LMom[2]/LMom[1]
@@ -29,6 +30,8 @@ getLMom <- function(dis){
 #' dis <- seq(1, 100)
 #' getMoment(dis)
 #' @export
+#' @importFrom moments skewness kurtosis
+#' @importFrom stats var
 getMoment <- function(dis) {
   mean <- mean(dis, na.rm = TRUE)
   variance <- var(dis, na.rm = TRUE)

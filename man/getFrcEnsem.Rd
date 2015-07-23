@@ -4,7 +4,7 @@
 \alias{getFrcEnsem}
 \title{getFrcEnsem extract different members' timeseries from forecasting data, if forecasting data has a member session.}
 \usage{
-getFrcEnsem(dataset, cell = "mean", plot = TRUE)
+getFrcEnsem(dataset, cell = "mean", plot = "norm", ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using
@@ -13,7 +13,10 @@ getFrcEnsem(dataset, cell = "mean", plot = TRUE)
 \item{cell}{A vector containing the locaton of the cell, e.g. c(2, 3), default is "mean", representing
 the spatially averaged value. Check details for more information.}
 
-\item{plot}{A boolean showing whether the plot will be shown, default is TRUE.}
+\item{plot}{A string showing whether the plot will be shown, e.g., 'norm' means normal plot (without any process),
+'cum' means cummulative plot, default is 'norm'. For other words there will be no plot.}
+
+\item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}}
 }
 \value{
 A ensemble time series extracted from forecating data.

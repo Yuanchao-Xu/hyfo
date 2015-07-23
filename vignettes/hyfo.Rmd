@@ -2,14 +2,12 @@
 title: "hyfo Easy Start"
 author: "Yuanchao Xu"
 date: "`r Sys.Date()`"
-output: 
-  html_document:
+output:
+
+  pdf_vignette:
     toc: true
     toc_depth: 3
   html_vignette:
-    toc: true
-    toc_depth: 3
-  pdf_vignette:
     toc: true
     toc_depth: 3
     
@@ -18,9 +16,10 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{ASCII}
 ---
-# hyfo 
 
-#### is designed for hydrology and forecasting anaylasis, containing a number of tools including data extration, data processing and data visulization. There are two main parts in the package, as well as in this mannual:
+# Introduction 
+
+#### hyfo is designed for hydrology and forecasting anaylasis, containing a number of tools including data extration, data processing and data visulization. There are two main parts in the package, as well as in this mannual:
 
 1. Hydrology
 * Providing tools from raw data extration to final precipitation data used by model.
@@ -35,19 +34,24 @@ vignette: >
 
 * For the forecasting tools part, `hyfo` mainly focuses on the post processing of the gridData derived from forecasts or other sources. The input is a list file, usually a result from  `loadGridData{ecomsUDG.Raccess}` or `loadECOMS{ecomsUDG.Raccess}`. Pacakage[`{ecomsUDG.Raccess}`](https://github.com/SantanderMetGroup/ecomsUDG.Raccess)is designed for getting access to different dataset, and also can load grid file (like netcdf file) directly.
 
-* The functions end with `_anarbe` are the functions designed specially for some case in Spain, those functions mostly are about data collection of the anarbe catchment, which will be introduced in the end fo this mannual.
+* The functions end with `_anarbe` are the functions designed specially for some case in Spain, those functions mostly are about data collection of the anarbe catchment, which will be introduced in the end of this mannual.
 
 ##### Installation
 
 You can go [here](http://yuanchao-xu.github.io/hyfo/) to download installation file, and use IDE like Rstudio to install from file, both `tar.gz` and `zip` formats are provided.
 
 Also you can use the following code to install the latest version.
-```{}
+```{r, eval=FALSE}
   install.packages('devtools')
   # Ignore the warning that Rtool is not installed, unless you want other function from devtools.
   # If you have "devtools" installed already, you just need to run the following code.
   devtools::install_github('Yuanchao-Xu/hyfo')
 ```
+
+
+
+
+
 
 # 1. Hydrology
 
@@ -57,7 +61,16 @@ If you are an experienced R user, and know how to read data in R, deal with data
 
 
 
-## 1.1 Data Preparation
+
+
+
+
+## 1.1 Start from Raw Data
+
+
+
+
+
 
 ### 1.1.1 From File
 
@@ -104,6 +117,13 @@ getAnnual(datalist)
 ```
 
 
+
+
+
+
+
+
+
 ### 1.1.2 Mannually
 
 Following example shows a simple way to generate dataframe with start date, end date, and the value. Here in the example, `sample()` is used to generate random values, while in real case it will be a vector containing time series values.
@@ -131,7 +151,17 @@ a <- getAnnual(datalist)
 
 
 
-## 1.2 Rainfall Analysis
+
+
+
+
+
+
+
+
+## 1.2 Raw Data Analysis (Based on Annual Data)
+
+After having the raw data, usually we need to have an overview of the rainfall in order to further process the data, `getAnnual` can provide the information based on annual rainfall.
 
 Assuming we have three gauging stations named "AAA", "BBB", "CCC", the precipitation information can be get by the following:
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
@@ -168,7 +198,18 @@ a
 
 
 
-## 1.3 Extract Common Period from Different Time Series
+
+
+
+
+
+
+
+
+
+## 1.3 Further Process for Model Input
+
+### 1.3.1 Extract Common Period from Different Time Series
 
 Now we have the general information of the precipitation, if we want to use them in a model, we have to extract the common period of them, and use the common period precipitation to analyze.
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
@@ -186,7 +227,14 @@ str(testdl_new)
 
 
 
-## 1.4 Fill Gaps (rainfall data gaps)
+
+
+
+
+
+
+
+### 1.3.2 Fill Gaps (rainfall data gaps)
 
 Although we have got the precipitation of the common period, we can still see that there are some missing values inside, which we should fill.
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
@@ -219,7 +267,104 @@ head(df_filled)
 
 
 
-## 1.5 Seasonal and Monthly Precipitation
+
+
+
+
+
+
+
+
+### 1.3.3 Get Ensemble Hydrological Forecast from Historical Data
+
+
+The basic forecasts are made from the historical data, to see, how the historical data act in the same situation. Using the same period from the historical data to generate an ensemble forcast. 
+
+E.g., we have a period of data from 2000 to 2007, we assume 2004 to be the forecast year. Then, use 2004 as an example, the data in 2000, 2001, 2002, 2003, 2005, 2006, 2007 will be taken to generate an ensemble forecast of 6 members(except 2004).
+
+Set example year, e.g., year 1994.
+```{r}
+data(testdl)
+
+a <- testdl[[1]]
+a1 <- getHisEnsem(a, example = c('1994-1-1', '1994-12-31'))
+
+```
+
+Both cumulative and normal plot are provided, default is "norm", means normal plot without any process. If words other that "norm", "plot", there will be no plot. If there are missing values inside, cumulative plot will stop when finds missing values. As can be seen from below.
+
+```{r}
+a2 <- getHisEnsem(a, example = c('1995-1-1', '1996-3-1'))# Default is plot = 'norm'
+a3 <- getHisEnsem(a, example = c('1995-1-1', '1995-3-1'), plot = 'cum')
+```
+
+
+Example period can be any time, can be a year or some months.
+```{r}
+a2 <- getHisEnsem(a, example = c('1995-1-1', '1996-3-1'))
+a3 <- getHisEnsem(a, example = c('1995-1-1', '1995-8-11'))
+```
+
+`interval` means the interval between each member. Check `?getHisEnsem` for detailed instruction. Default is 365, representing one year.
+```{r}
+# If interval is two years.
+a2 <- getHisEnsem(a, example = c('1995-1-1', '1996-3-1'), interval = 730)
+str(a2)
+# If interval is three months.
+a3 <- getHisEnsem(a, example = c('1995-1-1', '1995-8-11'), interval = 90)
+str(a3)
+# If interval is 171 days.
+a4 <- getHisEnsem(a, example = c('1995-1-1', '1995-8-11'), interval = 171)
+str(a4)
+```
+
+For some models, like MIKE NAM, it's necessary to run model a few days before the forecasting time, to warm up the model. In this case `buffer` is needed to generate the "warm up period".
+```{r}
+# If the model needs 14 days to warm up.
+a2 <- getHisEnsem(a, example = c('1995-1-1', '1996-3-1'), interval = 730, buffer = 14)
+str(a2)
+```
+
+From `str(a2)` we can see that the data has 14 more rows, and the start date is changed to "1994-12-18"
+
+Also, if costomized title and xy axis are needed, you can set yourself
+
+```{r}
+a2 <- getHisEnsem(a, example = c('1995-1-1', '1996-3-1'), title = 'aaa', x = 'a')
+```
+
+
+
+### 1.3.4 Monthly Data and Daily Data Conversion
+
+Sometimes you have the monthly data, and want to generate the daily data, sometimes the opposite situation. `monDay` can help you with the conversion.
+
+If you have daily data and want to convert it to a monthly data.
+```{r}
+data(testdl)
+TS <- testdl[[2]] # Get daily data
+TS_new <- monDay(TS, method = 'day2mon')
+```
+
+If you have monthly data and want to convert it to a daily data.
+
+```{r}
+# First generate a monthly data.
+TS <- data.frame(Date = seq(as.Date('1999-9-15'), length = 30, by = '1 month'), stats::runif(30, 3, 10))
+TS_new <- monDay(TS, method = 'mon2day')
+```
+
+More information please check `?monDay`.
+
+
+
+
+
+
+
+
+
+## 1.4 Seasonal and Monthly Precipitation Analysis
 
 Sometimes we need to know not only the annual precipitation, but also the precipitation of a certain month or certain season.
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
@@ -258,57 +403,31 @@ a <- getMeanPreci(TS[, 2], method = 'annual', yearIndex = year, monthIndex = mon
                   fullResults = TRUE,omitNA = TRUE, plot = TRUE, x = 'aaa', title = 'aaa')
 ```
 
-## 1.6 Get ensemble hydrological forecast from historical data
 
 
-The basic forecasts are made from the historical data, to see, how the historical data act in the same situation. Using the same period from the historical data to generate an ensemble forcast. 
 
-E.g., we have a period of data from 2000 to 2007, we assume 2004 to be the forecast year. Then, use 2004 as an example, the data in 2000, 2001, 2002, 2003, 2005, 2006, 2007 will be taken to generate an ensemble forecast of 6 members(except 2004).
 
-Set example year, e.g., year 1994.
-```{r}
-data(testdl)
 
-a <- testdl[[1]]
-a1 <- getHisEnsem(a, example = c('1994-1-1', '1994-12-31'))
 
-```
 
-Example period can be any time, can be a year or some months.
-```{r}
-a2 <- getHisEnsem(a, example = c('1995-1-1', '1996-3-1'))
-a3 <- getHisEnsem(a, example = c('1995-1-1', '1995-8-11'))
-```
 
-`interval` means the interval between each member. Check `?getHisEnsem` for detailed instruction. Default is 365, representing one year.
-```{r}
-# If interval is two years.
-a2 <- getHisEnsem(a, example = c('1995-1-1', '1996-3-1'), interval = 730)
-str(a2)
-# If interval is three months.
-a3 <- getHisEnsem(a, example = c('1995-1-1', '1995-8-11'), interval = 90)
-str(a3)
-# If interval is 171 days.
-a4 <- getHisEnsem(a, example = c('1995-1-1', '1995-8-11'), interval = 171)
-str(a4)
-```
 
-For some models, like MIKE NAM, it's necessary to run model a few days before the forecasting time, to warm up the model. In this case `buffer` is needed to generate the "warm up period".
-```{r}
-# If the model needs 14 days to warm up.
-a2 <- getHisEnsem(a, example = c('1995-1-1', '1996-3-1'), interval = 730, buffer = 14)
-str(a2)
-```
 
-From `str(a2)` we can see that the data has 14 more rows, and the start date is changed to "1994-12-18"
-
-# 2. Forecasting
+# 2. Climate Model Forecasting
 
 ##### Note
 
-If an ensemble forecasting data is loaded, there will be one dimension called  "member", by default, `hyfo` will calculate the mean of different members. If you want to see a special member, add `member` argument to `getSpatialMap`, e.g., `getSpatialMap(tgridData, method = 'meanAnnual', member = 3)`, `getPreciBar(tgridData, method = 'annual', member = 14)`
+If an **ensemble forecast** data is loaded, there will be one dimension called  "member", by default, `hyfo` will calculate the mean of different members. If you want to see a special member, add `member` argument to `getSpatialMap`, e.g., `getSpatialMap(tgridData, method = 'meanAnnual', member = 3)`, `getPreciBar(tgridData, method = 'annual', member = 14)`
 
-## 2.1 Plot Spatial Map
+
+
+
+
+
+
+
+
+## 2.1 Spatial Map Plot
 
 As described at the start of the mannual, `hyfo` is mainly in charge of the post processing of the forecast data. Input of `hyfo` should be the result from  `loadGridData{ecomsUDG.Raccess}` or `loadECOMS{ecomsUDG.Raccess}`. An example is included in the package. 
 
@@ -336,9 +455,29 @@ a <- getSpatialMap(tgridData, method = 'meanAnnual', scale = 'sqrt',
                    title = 'aaa', x = 'aaa', y = 'aaa')
 ```
 
+
+
+
+
+
+
+
+
+
 ## 2.2 Add Background (catchment and gauging stations)
 
+
+
+
+
+
 The default background is the world map, while if you have other backgrounds like catchment shape file and station location file, you are welcome to import them as background.
+
+
+
+
+
+
 
 ### 2.2.1 Add catchment shape file
 
@@ -357,6 +496,12 @@ Then the catchment file `cat` can be inputed as background.
 a <- getSpatialMap(tgridData, method = 'meanAnnual', catchment = cat)
 ```
 
+
+
+
+
+
+
 ### 2.2.2 Add station locations
 
 Points file needs to be read into dataframe, and special column has to be assigned, details can be found by `?getSpatialMap_mat`
@@ -370,8 +515,16 @@ getSpatialMap(tgridData, method = 'winter', points = points, catchment = cat)
 
 As can be seen above, the color of the points represents the elevation, the size of the points represents the value, e.g., rainfall value.
 
+You can generate your own point file and use it as background, or you can also find the original file in the package, and replace the old information with your information.
 
-## 2.3 Precipitation Bar Plot
+
+
+
+
+
+
+
+## 2.3 Variable Bar Plot 
 
 Bisides spatial map, bar plot can also be plotted. The value in the bar plot is spatially averaged, i.e. the value in the bar plot is the mean value over the region.
 
@@ -396,6 +549,13 @@ a <- getPreciBar(tgridData, method = 'spring')# spring precipitation for each ye
 a <- getPreciBar(tgridData, method = 3) # march precipitation for each year
 ```
 
+
+
+
+
+
+
+
 ## 2.4 Analysis and Comparison
 
 For some cases, analysis and comparison are necesssary, which are also provided by `hyfo`. 
@@ -413,6 +573,11 @@ There are three different kinds of output from `getSpatialMap` and `getPreciBar`
 
 * For `getSpatialMap_comb`, the maps to be compared should be with same size and resolution, in other words, they should be fully overlapped by each other. Check `?getSpatialMap_comb` for details.
 * For `getPreciBar_comb`, the bar plots to be compared should belong to the same kind, e.g., spring and winter, January and December, and couldn't be spring and annual. Details can be found by `?getPreciBar_comb`
+
+
+
+
+
 
 ### 2.4.1 Spatial Map
 
@@ -485,6 +650,14 @@ Then they are combined.
 getSpatialMap_comb(list = c, nrow = 4)
 ```
 
+
+
+
+
+
+
+
+
 ### 2.4.2 Bar Plot
 
 Basically, bar plot follows the same rule as part 2.4.1 spatial map, only a few cases that needs to pay attention.
@@ -508,20 +681,36 @@ c <- lapply(1:12, function(x) getPreciBar(tgridData, method = x, output = 'ggplo
 getPreciBar_comb(list = c, nrow = 4)
 ```
 
-## 2.5 Get ensemble forecast from forecasting dataset
+
+
+
+
+
+
+
+## 2.5 Model Input
+
+### 2.5.1 Get Ensemble Forecast from Forecasting Dataset (extracting members)
 
 If there are different members existing in the dataset, `hyfo` can extract them and generate a dataframe for the easy input to the model.
 
-```
+```{r, eval=FALSE}
 # There is no example data in this test
 a <- getFrcEnsem(dataset)
 ```
 The default output is spatially averaged, if there are more than one cells in the dataset, the mean value of the cells will be calculated. While if you are interested in special cell, you can assign the cell value, for how to assign, please check the details in `?getFrcEnsem`
 
-```
+```{r, eval=FALSE}
 a <- getFrcEnsem(dataset, cell = c(2,3))
 ```
-Also, if no plot is needed, you can cancel the plot by the argument `plot = FALSE`
+Plot rules are just the same as described in 1.3.3, please check if needed.
+
+
+
+
+
+
+
 
 # 3. Anarbe Case
 

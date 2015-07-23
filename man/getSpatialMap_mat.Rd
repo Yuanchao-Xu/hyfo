@@ -27,7 +27,7 @@ will be returned.}
 
 \item{scale}{A string showing the plot scale, 'identity' or 'sqrt'.}
 
-\item{...}{\code{title, x, y} showing the title and x and y axis of the plot, should be string,
+\item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 default is about precipitation.}
 }
 \value{

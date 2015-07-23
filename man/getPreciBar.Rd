@@ -28,7 +28,7 @@ will be returned.}
 is NULL, if no member assigned, and there is a "member" in dimensions, the mean value of the members will be
 taken.}
 
-\item{...}{\code{title, x, y} showing the title and x and y axis of the plot.}
+\item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}}
 }
 \value{
 The calculated mean value of the input time series and the plot of the result.

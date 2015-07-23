@@ -190,7 +190,7 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
 #' will be returned.
 #' @param info A boolean showing whether the information of the map, e.g., max, mean ..., default is T.
 #' @param scale A string showing the plot scale, 'identity' or 'sqrt'.
-#' @param ... \code{title, x, y} showing the title and x and y axis of the plot, should be string,
+#' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #'default is about precipitation.
 #' @return A matrix representing the raster map is returned, and the map is plotted.
 #' @examples
@@ -211,6 +211,7 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
 #' 
 #' @export
 #' @import ggplot2 plyr maps maptools rgeos
+#' @importFrom stats median
 getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points = NULL, output = 'data', 
                               info = TRUE, scale = 'identity', ...) {
   #check input

@@ -14,7 +14,7 @@
 #' @param member A number showing which member is selected to get, if the dataset has a "member" dimension. Default
 #' is NULL, if no member assigned, and there is a "member" in dimensions, the mean value of the members will be
 #' taken.
-#' @param ... \code{title, x, y} showing the title and x and y axis of the plot.
+#' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #' @details
 #' There are following methods to be selected, 
 #' "annual": annual rainfall of each year is plotted.  
@@ -35,6 +35,8 @@
 #' data(tgridData)
 #' b1 <- getPreciBar(tgridData, method = 'annual')
 #' b2 <- getPreciBar(tgridData, method = 'meanMonthly')
+#' 
+#' @importFrom stats median
 #' 
 #' @return The calculated mean value of the input time series and the plot of the result.
 #' @export

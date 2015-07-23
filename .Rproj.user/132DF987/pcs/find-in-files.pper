@@ -3,8 +3,8 @@
         "caseSensitive" : false,
         "filePatterns" : [
         ],
-        "path" : "~/hyfo",
-        "query" : "mapply",
+        "path" : "~/hyfo/R",
+        "query" : "import reshape2",
         "regex" : false
     }
 }

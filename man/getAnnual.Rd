@@ -16,7 +16,7 @@ year(365 days), if \code{minRecords = 360}, it means if a year has less than 360
 of a year, it will be ignored in the mean annual value calculation. Only valid
 when \code{output = "mean"}, default is 355.}
 
-\item{...}{\code{title, x, y} showing the title and x and y axis of the plot.}
+\item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}}
 }
 \value{
 The annual rainfall and the number of missing data of each year and each rainfall gauge, which

@@ -6,7 +6,7 @@
 #' year(365 days), if \code{minRecords = 360}, it means if a year has less than 360 records
 #' of a year, it will be ignored in the mean annual value calculation. Only valid 
 #' when \code{output = "mean"}, default is 355.
-#' @param ... \code{title, x, y} showing the title and x and y axis of the plot.
+#' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #' @return The annual rainfall and the number of missing data of each year and each rainfall gauge, which 
 #' will also be plotted. If output "mean" is seleted, the mean annual rainfall will be returned.
 #' @examples
@@ -18,7 +18,9 @@
 #' c <- getAnnual(testdl, output = 'mean', minRecords = 365)
 #' 
 #' @export
-#' @import ggplot2 reshape2 stats
+#' @import ggplot2 
+#' @importFrom reshape2 melt
+#' @importFrom stats aggregate
 getAnnual <- function(datalist, output = 'series', minRecords = 355, ...) {
   
   data <- lapply(datalist, FUN = getAnnual_dataframe)

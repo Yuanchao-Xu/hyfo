@@ -39,7 +39,7 @@
 #' datalist_com1 <- extractPeriod(testdl, startDate = '1994-1-1', endDate = '1995-10-1')
 #' 
 #' 
-#' @import zoo
+#' @importFrom zoo as.Date
 #' @export
 extractPeriod <- function(datalist, startDate = NULL, endDate = NULL, commonPeriod = FALSE) {
   
