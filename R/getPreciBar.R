@@ -281,6 +281,7 @@ getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', plotRan
 #' 
 #' @param nrow A number showing the number of rows.
 #' @param list If input is a list containing different ggplot data, use l\code{list = inputlist}.
+#' NOTE: yOU HAVE TO PUT A \code{list = }, before your list.
 #' @return A combined barplot.
 #' @examples
 #' 
@@ -301,7 +302,10 @@ getPreciBar_comb <- function(..., list = NULL, nrow = 1) {
     bars <- list(...)
     data_ggplot <- do.call('rbind', bars)
   }
-
+  if (!class(data_ggplot) == 'data.frame') {
+    warning('Your input is probably a list, but you forget to add "list = " before it.
+            Try again, or check help for more information.')
+  }
   data_ggplot$Name <- factor(data_ggplot$Name, levels = data_ggplot$Name, ordered = TRUE)
   
   theme_set(theme_bw())
@@ -309,7 +313,8 @@ getPreciBar_comb <- function(..., list = NULL, nrow = 1) {
   mainLayer <- with(data_ggplot, {
     mainLayer <- ggplot(data_ggplot)+
       geom_bar(aes(x = Index, y = Preci),fill = 'cyan', stat = 'identity', colour = 'black', width = .6)+
-      facet_wrap( ~ Name, nrow = nrow)
+      facet_wrap( ~ Name, nrow = nrow) +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1))
   })
 
   

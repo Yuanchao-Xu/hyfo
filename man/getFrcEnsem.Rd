@@ -4,7 +4,8 @@
 \alias{getFrcEnsem}
 \title{getFrcEnsem extract different members' timeseries from forecasting data, if forecasting data has a member session.}
 \usage{
-getFrcEnsem(dataset, cell = "mean", plot = "norm", ...)
+getFrcEnsem(dataset, cell = "mean", plot = "norm", output = "data",
+  name = NULL, ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using
@@ -15,6 +16,14 @@ the spatially averaged value. Check details for more information.}
 
 \item{plot}{A string showing whether the plot will be shown, e.g., 'norm' means normal plot (without any process),
 'cum' means cummulative plot, default is 'norm'. For other words there will be no plot.}
+
+\item{output}{A string showing which type of output you want. Default is "data", if "ggplot", the
+data that can be directly plotted by ggplot2 will be returned, which is easier for you to make series
+plots afterwards.}
+
+\item{name}{A string showing the name of the ggplot output, in order to differentiate from other
+ggplot output. Please see details. Only when \code{output = 'ggplot'}, name is valid, default is
+the system time.}
 
 \item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}}
 }
@@ -28,5 +37,11 @@ getFrcEnsem extract different members' timeseries from forecasting data, if fore
 \code{cell} representing the location of the cell, NOTE: this location means the index of the cell,
 IT IS NOT THE LONGITUDE AND LATITUDE. e.g., \code{cell = c(2, 3)}, the program will take the 2nd longitude
 and 3rd latitude, by the increasing order. Longitude comes first.
+
+\code{name}
+Assuming you have two ggplot outputs, you want to plot them together. In this situation, you
+need a name column to differentiate one ggplot output from the other. You can assigne this name
+by the argument directly, If name is not assigned and \code{output = 'ggplot'} is selected, then
+the system time will be selected as name column.
 }
 

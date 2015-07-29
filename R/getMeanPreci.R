@@ -157,7 +157,8 @@ getMeanPreci <- function(inputTS, method = NULL, yearIndex = NULL, monthIndex = 
       labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
       theme(plot.title = element_text(size = rel(1.3), face = 'bold'),
             axis.title.x = element_text(size = rel(1.2)),
-            axis.title.y = element_text(size = rel(1.2)))
+            axis.title.y = element_text(size = rel(1.2))) + 
+      theme(axis.text.x = element_text(angle = 90, hjust = 1))
     })
       
     print (mainLayer)

@@ -1,0 +1,133 @@
+#' Get variable name in the NetCDF file. After knowning the name, you can use \code{loadNcdf} to load
+#' the target variable.
+#' 
+#' @param filePath A path pointing to the netCDF file.
+#' @return The names of the varialbes in the file.
+#' @import ncdf
+#' @export
+getNcdfVar <- function(filePath) {
+  nc <- open.ncdf(filePath)
+  names <- names(nc$var)
+  return(names)
+}
+
+
+#' Load NetCDF file
+#' 
+#' @param filePath A path pointing to the NetCDF file, version3.
+#' @param varname A character representing the variable name, you can use \code{getNcdfVar} to
+#' get the basic information about the variables and select the target.
+#' @return A list object from \code{hyfo} containing the information to be used in the analysis, 
+#' or biascorrection.
+#' 
+#' @export
+#'@import ncdf
+loadNcdf <- function(filePath, varname) {
+  nc <- open.ncdf(filePath)
+  
+  var <- nc$var
+  # Use name to locate the variable
+  call_1 <- as.call(c(
+    list(as.name('$'), var, varname)
+  ))
+  var <- eval(call_1)
+  if(is.null(var)) stop('No such variable name, check source file.')
+  
+  # First needs to identify the variable name, load the right data
+  message('Loading data...')
+  nc_data <- get.var.ncdf(nc, var)
+  message('Processing...')
+  
+  dimNames <- unlist(lapply(1:length(var$dim), function(x) var$dim[[x]]$name))
+  
+  # Only deals with the most common dimensions, futher dimensions will be added in future.
+  dimIndex <- match(c('lon', 'lat', 'time', 'member'), dimNames)
+  
+  gridData <- list()
+  gridData$Variable$varName <- varname
+  gridData$xyCoords$x <- var$dim[[dimIndex[1]]]$vals
+  gridData$xyCoords$y <- var$dim[[dimIndex[2]]]$vals
+  
+  # Time part needs to be taken seperately
+  DateDiff <- var$dim[[dimIndex[3]]]$vals
+  # To get real time, time since when has to be grabbed from the dataset.
+  timeSince <- as.POSIXlt(strsplit(var$dim[[dimIndex[3]]]$units, split = 'since')[[1]][2])
+  Date <- rep(timeSince, length(DateDiff))
+  Date$mday <- Date$mday + DateDiff
+  gridData$Dates$start <- as.character(Date)
+  
+  # Assing data to grid data
+  gridData$Data <- nc_data
+  attributes(gridData$Data)$dimensions <- dimNames
+  
+  if (!is.na(dimIndex[4])) gridData$Members <- var$dim[[dimIndex[4]]]$vals
+  
+  gridData$Source <- 'from hyfo package, http://yuanchao-xu.github.io/hyfo/'
+  
+  return(gridData)
+  
+}
+
+#' Write to NetCDF file using hyfo list file
+#' @param gridData A hyfo list file or the list file from \code{loadECOMS{ecomsUDG.Raccess}}
+#'  or \code{loadGridData{ecomsUDG.Raccess}}
+#' @param filePath A path of the new NetCDF file, should end with ".nc"
+#' @return An NetCDF version 3 file.
+#' @export 
+#' @import ncdf
+writeNcdf <- function(gridData, filePath) {
+  
+  name <- gridData$Variable$varName
+  # First defines dimensions.
+  dimLon <- dim.def.ncdf('lon', 'degree', gridData$xyCoords$x)
+  dimLat <- dim.def.ncdf('lat', 'degree', gridData$xyCoords$y)
+  dimMem <- NULL
+  if (!is.null(gridData$Members)) {
+    dimMem <- dim.def.ncdf('member', 'members', 1:length(gridData$Members))
+  }
+  
+  
+  # Time needs to be treated seperately
+  dates <- as.POSIXlt(gridData$Dates$start)
+  time <- difftime(dates, dates[1], units = 'days')
+  timeUnits <- paste('days since', dates[1])
+  dimTime <- dim.def.ncdf('time', timeUnits, time)
+  
+  
+  
+  # Depending on whether there is a member part of the dataset.
+  
+  dimList <- list(dimLon, dimLat, dimTime, dimMem)
+  # delete the NULL list, in order that there is no member part in the data.
+  dimList <- Filter(Negate(is.null), dimList)
+  # Then difines data
+  var <- var.def.ncdf( name, "units", dimList, 1e20 )
+  
+  nc <- create.ncdf(filePath, var)
+  
+  #   This part comes from the library downscaleR
+  #   att.put.ncdf(nc, "time", "standard_name","time")
+  #   att.put.ncdf(nc, "time", "axis","T")
+  #   att.put.ncdf(nc, "time", "_CoordinateAxisType","Time")
+  #   #att.put.ncdf(nc, "time", "_ChunkSize",1)
+  #   att.put.ncdf(nc, "lon", "standard_name","longitude")
+  #   att.put.ncdf(nc, "lon", "_CoordinateAxisType","Lon")
+  #   att.put.ncdf(nc, "lat", "standard_name","latitude")
+  #   att.put.ncdf(nc, "lat", "_CoordinateAxisType","Lat")
+  
+  att.put.ncdf(nc, 0, "Conventions","CF-1.4")
+  
+  dimIndex <- match(c('lon', 'lat', 'time', 'member'), attributes(gridData$Data)$dimensions)
+  dimIndex <- na.omit(dimIndex)
+  data <- aperm(gridData$Data, dimIndex)
+  put.var.ncdf(nc, name, data)
+  close.ncdf(nc)
+  
+}
+
+#'@import ncdf
+getExtralDim <- function(...) {
+  dimList <- list(...)
+  
+  
+}

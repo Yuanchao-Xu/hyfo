@@ -3,10 +3,6 @@ title: "hyfo Easy Start"
 author: "Yuanchao Xu"
 date: "`r Sys.Date()`"
 output:
-
-  pdf_vignette:
-    toc: true
-    toc_depth: 3
   html_vignette:
     toc: true
     toc_depth: 3
@@ -33,6 +29,8 @@ vignette: >
 * For the hydrology tools part, the minimum time unit is a day, i.e., it mainly focuses on water resource and some long term analysis. For flood analysis part, it will be added in future.
 
 * For the forecasting tools part, `hyfo` mainly focuses on the post processing of the gridData derived from forecasts or other sources. The input is a list file, usually a result from  `loadGridData{ecomsUDG.Raccess}` or `loadECOMS{ecomsUDG.Raccess}`. Pacakage[`{ecomsUDG.Raccess}`](https://github.com/SantanderMetGroup/ecomsUDG.Raccess)is designed for getting access to different dataset, and also can load grid file (like netcdf file) directly.
+
+* Most data visualization tool provides the output that can be directly re-plot by `ggplot2`, if `output = 'ggplot'` is assigned in the argument of the function, which will be easier for the users to generated series/multiple plots afterwards. 
 
 * The functions end with `_anarbe` are the functions designed specially for some case in Spain, those functions mostly are about data collection of the anarbe catchment, which will be introduced in the end of this mannual.
 
@@ -275,7 +273,7 @@ head(df_filled)
 
 
 
-### 1.3.3 Get Ensemble Hydrological Forecast from Historical Data
+### 1.3.3 Get Ensemble Hydrological Forecast from Historical Data (ESP method)
 
 
 The basic forecasts are made from the historical data, to see, how the historical data act in the same situation. Using the same period from the historical data to generate an ensemble forcast. 
@@ -321,13 +319,13 @@ str(a4)
 For some models, like MIKE NAM, it's necessary to run model a few days before the forecasting time, to warm up the model. In this case `buffer` is needed to generate the "warm up period".
 ```{r}
 # If the model needs 14 days to warm up.
-a2 <- getHisEnsem(a, example = c('1995-1-1', '1996-3-1'), interval = 730, buffer = 14)
+a2 <- getHisEnsem(a, example = c('1995-1-1', '1996-3-1'), interval = 730, buffer = 14, plot = 'cum')
 str(a2)
 ```
 
 From `str(a2)` we can see that the data has 14 more rows, and the start date is changed to "1994-12-18"
 
-Also, if costomized title and xy axis are needed, you can set yourself
+Also, if costomized title and xy axis are needed, you can set yourself.
 
 ```{r}
 a2 <- getHisEnsem(a, example = c('1995-1-1', '1996-3-1'), title = 'aaa', x = 'a')
@@ -400,7 +398,7 @@ a
 We can also get annual precipitation, plot figure and assign title ans axis.
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
 a <- getMeanPreci(TS[, 2], method = 'annual', yearIndex = year, monthIndex = month,
-                  fullResults = TRUE,omitNA = TRUE, plot = TRUE, x = 'aaa', title = 'aaa')
+                  fullResults = TRUE, omitNA = TRUE, plot = TRUE, x = 'aaa', title = 'aaa')
 ```
 
 
@@ -640,7 +638,7 @@ getSpatialMap_comb(a1, a2, a3, a4, nrow = 4)
 
 ```
 
-`getSpatialMap_comb` accepts list (using `list =`) object too, which is easier for multi-plot. First list of 12 months are got.
+`getSpatialMap_comb` accepts list (using `list =`) object too, which is easier for multi-plot. First list of 12 months are got. **NOTE: If input is a list, the argument should be `list = yourlist`, not directly put the list in the argument.**
 ```{r, fig.show='hide'}
 c <- lapply(1:12, function(x) getSpatialMap(tgridData, method = x, output = 'ggplot') )
 ```

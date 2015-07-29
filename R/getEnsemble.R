@@ -16,7 +16,14 @@
 #' 
 #' @param plot A string showing whether the plot will be shown, e.g., 'norm' means normal plot (without any process), 
 #' 'cum' means cummulative plot, default is 'norm'. For other words there will be no plot.
-#' #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
+#' @param output A string showing which type of output you want. Default is "data", if "ggplot", the 
+#' data that can be directly plotted by ggplot2 will be returned, which is easier for you to make series
+#' plots afterwards.
+#' 
+#' @param name A string showing the name of the ggplot output, in order to differentiate from other
+#' ggplot output. Please see details. Only when \code{output = 'ggplot'}, name is valid, default is 
+#' the system time.
+#' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #' 
 #' @details 
 #' 
@@ -57,6 +64,13 @@
 #' only some important parameters. In this case, the model needs to run for some time, to make other parameters ready
 #' for the simulation.
 #' 
+#' 
+#' \code{name}
+#' Assuming you have two ggplot outputs, you want to plot them together. In this situation, you
+#' need a name column to differentiate one ggplot output from the other. You can assigne this name
+#' by the argument directly, If name is not assigned and \code{output = 'ggplot'} is selected, then
+#' the system time will be selected as name column.
+#' 
 #' @return A ensemble time series using historical data as forecast.
 #' 
 #' @examples
@@ -78,7 +92,8 @@
 #' @import ggplot2
 #' @export
 
-getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm', ...) {
+getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm', output = 'data', 
+                         name = NULL, ...) {
   if (!grepl('-|/', TS[1, 1])) {
     stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
          and use as.Date to convert.')
@@ -151,31 +166,32 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
     }
     
     
-    output <- list2Dataframe(data)
-    colnames(output) <- c('Date', as.character(startDate))
+    data_output <- list2Dataframe(data)
+    colnames(data_output) <- c('Date', as.character(startDate))
     
     # Rearrange dataframe to make example the first column.
-    ind <- match(c('Date', as.character(example[1])), colnames(output))
+    ind <- match(c('Date', as.character(example[1])), colnames(data_output))
     # when use cbind, to ensure the output is also a dataframe, one inside cbind should be dataframe
     # Even output is alread a dataframe, but when ind is a single number, then output[ind] will
     # not be a dataframe, but an array.
-    output <- cbind(data.frame(output[ind]), output[-ind])
+    data_output <- cbind(data.frame(data_output[ind]), data_output[-ind])
     ex_date <- seq(from = example[1] - buffer, to = example[2], by = 1)
-    output$Date <- ex_date
-    colnames(output)[2] <- 'Example'
+    data_output$Date <- ex_date
+    colnames(data_output)[2] <- 'Example'
     
-    meanV <- apply(output[, 2:ncol(output)], MARGIN = 1, FUN = mean, na.rm = TRUE)
+    meanV <- apply(data_output[, 2:ncol(data_output)], MARGIN = 1, FUN = mean, na.rm = TRUE)
     
-    output <- cbind(data.frame(Date = output[, 1]), Mean = meanV, output[, 2:ncol(output)])
+    data_output <- cbind(data.frame(Date = data_output[, 1]), Mean = meanV, 
+                         data_output[, 2:ncol(data_output)])
     
     theme_set(theme_bw())
     
     if (plot == 'norm') {
       
-      data_ggplot <- melt(output, id.var = 'Date')
+      data_ggplot <- melt(data_output, id.var = 'Date')
       
     } else if (plot == 'cum') {
-        cum <- cbind(data.frame(Date = output$Date), cumsum(output[2:ncol(output)]))
+        cum <- cbind(data.frame(Date = data_output$Date), cumsum(data_output[2:ncol(data_output)]))
         
         data_ggplot <- melt(cum, id.var = 'Date')
     } else {
@@ -192,7 +208,14 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
     })
     print(mainLayer)
     
-    return(output)
+    if (output == 'ggplot') {
+      if (is.null(name)) name <- Sys.time()
+      
+      data_ggplot$name <- rep(name, nrow(data_ggplot)) 
+      return(data_ggplot)
+    } else {
+      return(data_output)
+    }
   }
 }
 
@@ -209,6 +232,13 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
 #' the spatially averaged value. Check details for more information.
 #' @param plot A string showing whether the plot will be shown, e.g., 'norm' means normal plot (without any process), 
 #' 'cum' means cummulative plot, default is 'norm'. For other words there will be no plot.
+#' @param output A string showing which type of output you want. Default is "data", if "ggplot", the 
+#' data that can be directly plotted by ggplot2 will be returned, which is easier for you to make series
+#' plots afterwards.
+#' @param name A string showing the name of the ggplot output, in order to differentiate from other
+#' ggplot output. Please see details. Only when \code{output = 'ggplot'}, name is valid, default is 
+#' the system time.
+#' 
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #' 
 #' @details 
@@ -217,13 +247,19 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
 #' IT IS NOT THE LONGITUDE AND LATITUDE. e.g., \code{cell = c(2, 3)}, the program will take the 2nd longitude
 #' and 3rd latitude, by the increasing order. Longitude comes first.
 #' 
+#' \code{name}
+#' Assuming you have two ggplot outputs, you want to plot them together. In this situation, you
+#' need a name column to differentiate one ggplot output from the other. You can assigne this name
+#' by the argument directly, If name is not assigned and \code{output = 'ggplot'} is selected, then
+#' the system time will be selected as name column.
 #' 
 #' @return A ensemble time series extracted from forecating data.
 #' 
 #' @import ggplot2
 #' @importFrom reshape2 melt
 #' @export
-getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', ...) {
+getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', name = NULL, 
+                        ...) {
   # cell should be a vector showing the location, or mean representing the loacation averaged.
   
   checkWord <- c('Data', 'xyCoords', 'Dates')
@@ -265,7 +301,7 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', ...) {
     stop('Wrong cell input, check help for information.')
   }
   
-  output <- data.frame(Date, data_ensem)
+  data_output <- data.frame(Date, data_ensem)
   
   
   
@@ -273,10 +309,10 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', ...) {
   
   if (plot == 'norm') {
     
-    data_ggplot <- melt(output, id.var = 'Date')
+    data_ggplot <- melt(data_output, id.var = 'Date')
     
   } else if (plot == 'cum') {
-    cum <- cbind(data.frame(Date = output$Date), cumsum(output[2:ncol(output)]))
+    cum <- cbind(data.frame(Date = data_output$Date), cumsum(data_output[2:ncol(data_output)]))
     
     data_ggplot <- melt(cum, id.var = 'Date')
     
@@ -292,8 +328,13 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', ...) {
   })
   print(mainLayer)
   
-  
-  return(output)
-  
+  if (output == 'ggplot') {
+    if (is.null(name)) name <- Sys.time()
+    
+    data_ggplot$name <- rep(name, nrow(data_ggplot)) 
+    return(data_ggplot)
+  } else {
+    return(data_output)
+  }
 }
 

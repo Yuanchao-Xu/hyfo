@@ -4,7 +4,8 @@
 \alias{getHisEnsem}
 \title{getHisEnsem use historical data as the forecasting input time series.}
 \usage{
-getHisEnsem(TS, example, interval = 365, buffer = 0, plot = "norm", ...)
+getHisEnsem(TS, example, interval = 365, buffer = 0, plot = "norm",
+  output = "data", name = NULL, ...)
 }
 \arguments{
 \item{TS}{A time series dataframe, with first column Date, and second column value.}
@@ -25,8 +26,15 @@ number as days.By defualt interval is set to be 365, a year.}
 information.}
 
 \item{plot}{A string showing whether the plot will be shown, e.g., 'norm' means normal plot (without any process),
-'cum' means cummulative plot, default is 'norm'. For other words there will be no plot.
-#'}
+'cum' means cummulative plot, default is 'norm'. For other words there will be no plot.}
+
+\item{output}{A string showing which type of output you want. Default is "data", if "ggplot", the
+data that can be directly plotted by ggplot2 will be returned, which is easier for you to make series
+plots afterwards.}
+
+\item{name}{A string showing the name of the ggplot output, in order to differentiate from other
+ggplot output. Please see details. Only when \code{output = 'ggplot'}, name is valid, default is
+the system time.}
 
 \item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}}
 }
@@ -73,6 +81,13 @@ should start from '1990-1-6'.
 Buffer is mainly used for the model hotstart. Sometimes the hot start file cannot contain all the parameters needed,
 only some important parameters. In this case, the model needs to run for some time, to make other parameters ready
 for the simulation.
+
+
+\code{name}
+Assuming you have two ggplot outputs, you want to plot them together. In this situation, you
+need a name column to differentiate one ggplot output from the other. You can assigne this name
+by the argument directly, If name is not assigned and \code{output = 'ggplot'} is selected, then
+the system time will be selected as name column.
 }
 \examples{
 data(testdl)

@@ -24,7 +24,9 @@
 getAnnual <- function(datalist, output = 'series', minRecords = 355, ...) {
   
   data <- lapply(datalist, FUN = getAnnual_dataframe)
-  data <- do.call('rbind', data)   
+  data <- do.call('rbind', data)
+#  After melting, factor level has to be reassigned in order to be well plotted.
+  data$Year <- factor(data$Year, levels = sort(unique(data$Year)), ordered = TRUE)
   rownames(data) <- NULL   
   theme_set(theme_bw())
   
@@ -47,20 +49,22 @@ getAnnual <- function(datalist, output = 'series', minRecords = 355, ...) {
   } else {
     
     plotData <- with(data, {
-      subset(data, select = -recordNum)
+      subset(data, select = c(Year, Name, NANum, AnnualPreci))
     })
-      
+    
     plotData <- melt(plotData, var.id = c('Year', 'Name'))
     
+    
     mainLayer <- with(plotData, {
-      ggplot(plotData)+
-      geom_bar(aes(x = as.Date(Year, format = '%Y'), y = value , fill = Name), 
-               stat = 'identity')+
-      facet_grid(variable ~ Name, scales = 'free')+
-      xlab('Year')+
-      ylab(NULL)+
-      labs(empty = NULL, ...)+#in order to pass "...", arguments shouldn't be empty.
-      theme(plot.title = element_text(size = 20, face = 'bold', vjust = 1))
+      ggplot(plotData) +
+      geom_bar(aes(x = Year, y = value , fill = Name), 
+               stat = 'identity') +
+      facet_grid(variable ~ Name, scales = 'free') +
+      xlab('Year') +
+      ylab(NULL) +
+      labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
+      theme(plot.title = element_text(size = 20, face = 'bold', vjust = 1)) +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1))
       #      grid.arrange(mainLayer, ncol = 4)
         
     })
@@ -92,6 +96,7 @@ getAnnual_dataframe <- function(dataset) {
   Date <- as.Date(dataset[, 1])
   year <- format(Date, '%Y')
   yearUnique <- unique(year)
+#  yearUnique <- factor(yearUnique, levels = yearUnique, ordered = TRUE)
   calcuNum <- c(1:length(yearUnique))
   
   
@@ -101,8 +106,10 @@ getAnnual_dataframe <- function(dataset) {
 
 
   name <- rep(colnames(dataset)[2], length(calcuNum))
-  output <- data.frame(Year = yearUnique, Name = name, AnnualPreci = annualPreci,
+  output <- data.frame(Year = as.numeric(yearUnique), Name = name, AnnualPreci = annualPreci,
                         recordNum, NANum)
+  
+  #output$Year <- factor(output$Year, levels = output$Year, ordered = TRUE)
   return(output)
 }
 
