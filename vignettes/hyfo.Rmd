@@ -28,7 +28,9 @@ vignette: >
 ##### Note
 * For the hydrology tools part, the minimum time unit is a day, i.e., it mainly focuses on water resource and some long term analysis. For flood analysis part, it will be added in future.
 
-* For the forecasting tools part, `hyfo` mainly focuses on the post processing of the gridData derived from forecasts or other sources. The input is a list file, usually a result from  `loadGridData{ecomsUDG.Raccess}` or `loadECOMS{ecomsUDG.Raccess}`. Pacakage[`{ecomsUDG.Raccess}`](https://github.com/SantanderMetGroup/ecomsUDG.Raccess)is designed for getting access to different dataset, and also can load grid file (like netcdf file) directly.
+* For the forecasting tools part, `hyfo` mainly focuses on the post processing of the gridData derived from forecasts or other sources. The input is a list file, usually an NetCDF file. There are `getNcdfVar()`, `loadNcdf()` and `writeNcdf()` prepared in hyfo, for you to deal with NetCDF file. 
+
+You can also use `loadGridData{ecomsUDG.Raccess}` or `loadECOMS{ecomsUDG.Raccess}` to load NetCDF file, their input and output can cope with hyfo.  Pacakage[`{ecomsUDG.Raccess}`](https://github.com/SantanderMetGroup/ecomsUDG.Raccess)is designed for getting access to different dataset, and also can load grid file (like netcdf file) directly.
 
 * Most data visualization tool provides the output that can be directly re-plot by `ggplot2`, if `output = 'ggplot'` is assigned in the argument of the function, which will be easier for the users to generated series/multiple plots afterwards. 
 

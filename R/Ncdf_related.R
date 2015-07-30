@@ -49,20 +49,43 @@ loadNcdf <- function(filePath, varname) {
   gridData$xyCoords$y <- var$dim[[dimIndex[2]]]$vals
   
   # Time part needs to be taken seperately
+  
+  timeUnit <- strsplit(var$dim[[dimIndex[3]]]$units, split = ' since')[[1]][1]
   DateDiff <- var$dim[[dimIndex[3]]]$vals
   # To get real time, time since when has to be grabbed from the dataset.
   timeSince <- as.POSIXlt(strsplit(var$dim[[dimIndex[3]]]$units, split = 'since')[[1]][2])
+  
+  timeDiff <- paste(DateDiff, timeUnit)
+  
   Date <- rep(timeSince, length(DateDiff))
-  Date$mday <- Date$mday + DateDiff
+  
+  if (grepl('day', timeUnit)) {
+
+    Date$mday <- Date$mday + DateDiff
+  } else if (grepl('second', timeUnit)) {
+    Date$sec <- Date$sec + DateDiff
+  }
+  
+  
+  if (length(Date) == 1) {
+    warning("Only one time step is taken, time dimension is dropped in the original data.
+            But after loading, the time dimension (with length : 1) will be added.")
+  }
   gridData$Dates$start <- as.character(Date)
   
   # Assing data to grid data
+  # At leaset should be 3 dimensions, lon, lat, time. So if less than 3, 
+  
+  if (length(dim(nc_data)) < 3) {
+    dim(nc_data) <- c(dim(nc_data), 1) 
+    message('Time dimension is added, make sure in your original data, only time dimension is dropped.')
+  }
   gridData$Data <- nc_data
   attributes(gridData$Data)$dimensions <- dimNames
   
   if (!is.na(dimIndex[4])) gridData$Members <- var$dim[[dimIndex[4]]]$vals
   
-  gridData$Source <- 'from hyfo package, http://yuanchao-xu.github.io/hyfo/'
+  gridData$Loaded <- 'by hyfo package, http://yuanchao-xu.github.io/hyfo/'
   
   return(gridData)
   
@@ -72,10 +95,12 @@ loadNcdf <- function(filePath, varname) {
 #' @param gridData A hyfo list file or the list file from \code{loadECOMS{ecomsUDG.Raccess}}
 #'  or \code{loadGridData{ecomsUDG.Raccess}}
 #' @param filePath A path of the new NetCDF file, should end with ".nc"
+#' @param missingValue A number representing the missing value in the NetCDF file, default
+#' is 1e20
 #' @return An NetCDF version 3 file.
 #' @export 
 #' @import ncdf
-writeNcdf <- function(gridData, filePath) {
+writeNcdf <- function(gridData, filePath, missingValue = 1e20) {
   
   name <- gridData$Variable$varName
   # First defines dimensions.
@@ -101,21 +126,30 @@ writeNcdf <- function(gridData, filePath) {
   # delete the NULL list, in order that there is no member part in the data.
   dimList <- Filter(Negate(is.null), dimList)
   # Then difines data
-  var <- var.def.ncdf( name, "units", dimList, 1e20 )
+  var <- var.def.ncdf( name, "units", dimList, missingValue)
   
   nc <- create.ncdf(filePath, var)
   
-  #   This part comes from the library downscaleR
-     att.put.ncdf(nc, "time", "standard_name","time")
-     att.put.ncdf(nc, "time", "axis","T")
-     att.put.ncdf(nc, "time", "_CoordinateAxisType","Time")
-     #att.put.ncdf(nc, "time", "_ChunkSize",1)
-     att.put.ncdf(nc, "lon", "standard_name","longitude")
-     att.put.ncdf(nc, "lon", "_CoordinateAxisType","Lon")
-     att.put.ncdf(nc, "lat", "standard_name","latitude")
-     att.put.ncdf(nc, "lat", "_CoordinateAxisType","Lat")
+  # This part comes from the library downscaleR, can be deleted if you don't 
+  # use {ecomsUDG.Raccess}, by adding this, the file can be read by the package {ecomsUDG.Raccess}
+  att.put.ncdf(nc, "time", "standard_name","time")
+  att.put.ncdf(nc, "time", "axis","T")
+  att.put.ncdf(nc, "time", "_CoordinateAxisType","Time")
+  #att.put.ncdf(nc, "time", "_ChunkSize",1)
+  att.put.ncdf(nc, "lon", "standard_name","longitude")
+  att.put.ncdf(nc, "lon", "_CoordinateAxisType","Lon")
+  att.put.ncdf(nc, "lat", "standard_name","latitude")
+  att.put.ncdf(nc, "lat", "_CoordinateAxisType","Lat")
+  if (!is.null(dimMem)){
+    att.put.ncdf(nc, "member", "standard_name","realization")
+    att.put.ncdf(nc, "member", "_CoordinateAxisType","Ensemble")
+    #att.put.ncdf(nc, "member", "ref","http://www.uncertml.org/samples/realisation")
+  }
   
+  
+  # This part has to be put
   att.put.ncdf(nc, 0, "Conventions","CF-1.4")
+  att.put.ncdf(nc, 0, 'WrittenBy', 'hyfo(http://yuanchao-xu.github.io/hyfo/)')
   
   dimIndex <- match(c('lon', 'lat', 'time', 'member'), attributes(gridData$Data)$dimensions)
   dimIndex <- na.omit(dimIndex)

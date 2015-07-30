@@ -231,7 +231,8 @@ getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', plotRan
     labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
     theme(plot.title = element_text(size = rel(1.3), face = 'bold'),
           axis.title.x = element_text(size = rel(1.2)),
-          axis.title.y = element_text(size = rel(1.2))) +
+          axis.title.y = element_text(size = rel(1.2)),
+          axis.text.x = element_text(angle = 90, hjust = 1)) +
 #    geom_text(x = min(xlim) + 0.95 * (max(xlim) - min(xlim)), y = min(ylim) + 0.15 * (max(ylim) - min(ylim)),
 #              label = word)+
     geom_hline(yintercept = meanValue) +

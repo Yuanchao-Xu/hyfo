@@ -4,13 +4,16 @@
 \alias{writeNcdf}
 \title{Write to NetCDF file using hyfo list file}
 \usage{
-writeNcdf(gridData, filePath)
+writeNcdf(gridData, filePath, missingValue = 1e+20)
 }
 \arguments{
 \item{gridData}{A hyfo list file or the list file from \code{loadECOMS{ecomsUDG.Raccess}}
 or \code{loadGridData{ecomsUDG.Raccess}}}
 
 \item{filePath}{A path of the new NetCDF file, should end with ".nc"}
+
+\item{missingValue}{A number representing the missing value in the NetCDF file, default
+is 1e20}
 }
 \value{
 An NetCDF version 3 file.
