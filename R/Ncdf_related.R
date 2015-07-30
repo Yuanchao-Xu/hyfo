@@ -106,14 +106,14 @@ writeNcdf <- function(gridData, filePath) {
   nc <- create.ncdf(filePath, var)
   
   #   This part comes from the library downscaleR
-  #   att.put.ncdf(nc, "time", "standard_name","time")
-  #   att.put.ncdf(nc, "time", "axis","T")
-  #   att.put.ncdf(nc, "time", "_CoordinateAxisType","Time")
-  #   #att.put.ncdf(nc, "time", "_ChunkSize",1)
-  #   att.put.ncdf(nc, "lon", "standard_name","longitude")
-  #   att.put.ncdf(nc, "lon", "_CoordinateAxisType","Lon")
-  #   att.put.ncdf(nc, "lat", "standard_name","latitude")
-  #   att.put.ncdf(nc, "lat", "_CoordinateAxisType","Lat")
+     att.put.ncdf(nc, "time", "standard_name","time")
+     att.put.ncdf(nc, "time", "axis","T")
+     att.put.ncdf(nc, "time", "_CoordinateAxisType","Time")
+     #att.put.ncdf(nc, "time", "_ChunkSize",1)
+     att.put.ncdf(nc, "lon", "standard_name","longitude")
+     att.put.ncdf(nc, "lon", "_CoordinateAxisType","Lon")
+     att.put.ncdf(nc, "lat", "standard_name","latitude")
+     att.put.ncdf(nc, "lat", "_CoordinateAxisType","Lat")
   
   att.put.ncdf(nc, 0, "Conventions","CF-1.4")
   
