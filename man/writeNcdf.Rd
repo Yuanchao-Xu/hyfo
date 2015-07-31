@@ -4,7 +4,8 @@
 \alias{writeNcdf}
 \title{Write to NetCDF file using hyfo list file}
 \usage{
-writeNcdf(gridData, filePath, missingValue = 1e+20)
+writeNcdf(gridData, filePath, missingValue = 1e+20, tz = "GMT",
+  units = NULL)
 }
 \arguments{
 \item{gridData}{A hyfo list file or the list file from \code{loadECOMS{ecomsUDG.Raccess}}
@@ -13,7 +14,15 @@ or \code{loadGridData{ecomsUDG.Raccess}}}
 \item{filePath}{A path of the new NetCDF file, should end with ".nc"}
 
 \item{missingValue}{A number representing the missing value in the NetCDF file, default
-is 1e20}
+is 1e20
+#'}
+
+\item{tz}{A string representing the time zone, default is GMT, if you know what time zone is
+you can assign it in the argument. If \code{tz = ''}, current time zone will be taken.}
+
+\item{units}{A string showing in which unit you are putting in the NetCDF file, it can be
+seconds or days and so on. If not specified, the function will pick up the possible largest
+time units from \code{c('weeks', 'days', 'hours', 'mins', 'secs')}}
 }
 \value{
 An NetCDF version 3 file.

@@ -4,13 +4,16 @@
 \alias{loadNcdf}
 \title{Load NetCDF file}
 \usage{
-loadNcdf(filePath, varname)
+loadNcdf(filePath, varname, tz = "GMT")
 }
 \arguments{
 \item{filePath}{A path pointing to the NetCDF file, version3.}
 
 \item{varname}{A character representing the variable name, you can use \code{getNcdfVar} to
 get the basic information about the variables and select the target.}
+
+\item{tz}{A string representing the time zone, default is GMT, if you know what time zone is
+you can assign it in the argument. If \code{tz = ''}, current time zone will be taken.}
 }
 \value{
 A list object from \code{hyfo} containing the information to be used in the analysis,

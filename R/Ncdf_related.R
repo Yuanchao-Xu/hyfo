@@ -17,12 +17,14 @@ getNcdfVar <- function(filePath) {
 #' @param filePath A path pointing to the NetCDF file, version3.
 #' @param varname A character representing the variable name, you can use \code{getNcdfVar} to
 #' get the basic information about the variables and select the target.
+#' @param tz A string representing the time zone, default is GMT, if you know what time zone is 
+#' you can assign it in the argument. If \code{tz = ''}, current time zone will be taken.
 #' @return A list object from \code{hyfo} containing the information to be used in the analysis, 
 #' or biascorrection.
 #' 
 #' @export
 #'@import ncdf
-loadNcdf <- function(filePath, varname) {
+loadNcdf <- function(filePath, varname, tz = 'GMT') {
   nc <- open.ncdf(filePath)
   
   var <- nc$var
@@ -51,21 +53,25 @@ loadNcdf <- function(filePath, varname) {
   # Time part needs to be taken seperately
   
   timeUnit <- strsplit(var$dim[[dimIndex[3]]]$units, split = ' since')[[1]][1]
-  DateDiff <- var$dim[[dimIndex[3]]]$vals
+  timeDiff <- var$dim[[dimIndex[3]]]$vals
   # To get real time, time since when has to be grabbed from the dataset.
-  timeSince <- as.POSIXlt(strsplit(var$dim[[dimIndex[3]]]$units, split = 'since')[[1]][2])
+  timeSince <- as.POSIXlt(strsplit(var$dim[[dimIndex[3]]]$units, split = 'since')[[1]][2], tz = tz)
   
-  timeDiff <- paste(DateDiff, timeUnit)
   
-  Date <- rep(timeSince, length(DateDiff))
+#  Date <- rep(timeSince, length(timeDiff))
   
-  if (grepl('day', timeUnit)) {
-
-    Date$mday <- Date$mday + DateDiff
-  } else if (grepl('second', timeUnit)) {
-    Date$sec <- Date$sec + DateDiff
-  }
   
+  unitDic <- data.frame(weeks = 'weeks', days = 'days', hours = 'hours',
+                        minutes = 'mins', seconds = 'secs')
+  
+  timeDiff <- as.difftime(timeDiff, units = as.character(unitDic[1, timeUnit]))
+  
+#   if (grepl('day', timeUnit)) {
+#     Date$mday <- Date$mday + timeDiff
+#   } else if (grepl('second', timeUnit)) {
+#     Date$sec <- Date$sec + timeDiff
+#   }
+  Date <- timeSince + timeDiff
   
   if (length(Date) == 1) {
     warning("Only one time step is taken, time dimension is dropped in the original data.
@@ -97,10 +103,15 @@ loadNcdf <- function(filePath, varname) {
 #' @param filePath A path of the new NetCDF file, should end with ".nc"
 #' @param missingValue A number representing the missing value in the NetCDF file, default
 #' is 1e20
+#' #' @param tz A string representing the time zone, default is GMT, if you know what time zone is 
+#' you can assign it in the argument. If \code{tz = ''}, current time zone will be taken.
+#' @param units A string showing in which unit you are putting in the NetCDF file, it can be 
+#' seconds or days and so on. If not specified, the function will pick up the possible largest 
+#' time units from \code{c('weeks', 'days', 'hours', 'mins', 'secs')}
 #' @return An NetCDF version 3 file.
 #' @export 
 #' @import ncdf
-writeNcdf <- function(gridData, filePath, missingValue = 1e20) {
+writeNcdf <- function(gridData, filePath, missingValue = 1e20, tz = 'GMT', units = NULL) {
   
   name <- gridData$Variable$varName
   # First defines dimensions.
@@ -113,11 +124,15 @@ writeNcdf <- function(gridData, filePath, missingValue = 1e20) {
   
   
   # Time needs to be treated seperately
-  dates <- as.POSIXlt(gridData$Dates$start)
-  time <- difftime(dates, dates[1], units = 'days')
-  timeUnits <- paste('days since', dates[1])
+  dates <- as.POSIXlt(gridData$Dates$start, tz = tz)
+  if (is.null(units)) {
+    units <- getTimeUnit(dates)
+    time <- difftime(dates, dates[1], units = units)
+  } else {
+    time <- difftime(dates, dates[1], units = units)
+  }
+  timeUnits <- paste(units, 'since', dates[1])
   dimTime <- dim.def.ncdf('time', timeUnits, time)
-  
   
   
   # Depending on whether there is a member part of the dataset.
@@ -159,6 +174,23 @@ writeNcdf <- function(gridData, filePath, missingValue = 1e20) {
   
 }
 
+# For internaluse by writeNcdf
+getTimeUnit <- function(dates) {
+  units <- c('weeks', 'days', 'hours', 'mins', 'secs')
+  output <- NULL
+  for (unit in units) {
+    time <- difftime(dates, dates[1], units = unit)
+    rem <- sapply(time, function(x) x%%1)
+    if (!any(rem != 0)) {
+      output <- unit
+      break
+    }
+  } 
+  return(output)
+}
+
+
+# Save for future use. 
 #'@import ncdf
 getExtralDim <- function(...) {
   dimList <- list(...)
