@@ -15,6 +15,9 @@
 #' layers' information, and can be plot directly or used in grid.arrange; if not set, the data
 #' will be returned.
 #' @param plotRange A boolean showing whether the range will be plotted.
+#' @param name A name representing the name of the output, only usefull when you want to
+#' make multiplot with \code{getPreciBar_comb()}, name will be used to differentiate different
+#' outputs.
 #' @param member A number showing which member is selected to get, if the dataset has a "member" dimension. Default
 #' is NULL, if no member assigned, and there is a "member" in dimensions, the mean value of the members will be
 #' taken.
@@ -46,7 +49,7 @@
 #' @return The calculated mean value of the input time series and the plot of the result.
 #' @export
 getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'data', plotRange = TRUE, 
-                        member = NULL, omitNA = TRUE, ...) {
+                        member = NULL, omitNA = TRUE, name = NULL, ...) {
   
   
   if (is.null(TS)) {
@@ -276,7 +279,8 @@ getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'dat
   if (output == 'plot') {
     return(mainLayer)
   } else if (output == 'ggplot') {
-    plotPreci$Name <- rep(title, dim(plotPreci)[1])
+    if (is.null(name)) name <- title
+    plotPreci$Name <- rep(name, dim(plotPreci)[1])
     return(plotPreci)
   } else {
     return(plotPreci)
@@ -319,10 +323,15 @@ getPreciBar_comb <- function(..., list = NULL, nrow = 1) {
     checkBind(bars, 'rbind')
     data_ggplot <- do.call('rbind', bars)
   }
+  
   if (!class(data_ggplot) == 'data.frame') {
     warning('Your input is probably a list, but you forget to add "list = " before it.
             Try again, or check help for more information.')
+  } else if (is.null(data_ggplot$Name)) {
+    stop('No "Name" column in the input data, check the arguments in getPreciBar(), if 
+         output = "ggplot" is assigned, more info please check ?getPreciBar.')
   }
+  
   data_ggplot$Name <- factor(data_ggplot$Name, levels = data_ggplot$Name, ordered = TRUE)
   
   theme_set(theme_bw())
@@ -333,6 +342,13 @@ getPreciBar_comb <- function(..., list = NULL, nrow = 1) {
       facet_wrap( ~ Name, nrow = nrow) +
       theme(axis.text.x = element_text(angle = 90, hjust = 1))
   })
+  
+  if (grepl('maxValue', colnames(data_ggplot)) & grepl('minValue', colnames(data_ggplot))) {
+    rangeLayer <- with(data_ggplot, {
+      geom_errorbar(aes(x = Index, ymax = maxValue, ymin = minValue), width = 0.3)
+    })       
+    print(mainLayer + rangeLayer)
+  }
 
   
   suppressWarnings(print(mainLayer))

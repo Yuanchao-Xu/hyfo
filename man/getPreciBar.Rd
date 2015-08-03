@@ -5,7 +5,7 @@
 \title{get mean rainfall bar plot of the input dataset or time series.}
 \usage{
 getPreciBar(dataset, TS = NULL, method, cell = "mean", output = "data",
-  plotRange = TRUE, member = NULL, omitNA = TRUE, ...)
+  plotRange = TRUE, member = NULL, omitNA = TRUE, name = NULL, ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using
@@ -34,6 +34,10 @@ is NULL, if no member assigned, and there is a "member" in dimensions, the mean 
 taken.}
 
 \item{omitNA}{A boolean showing whether the missing value is omitted.}
+
+\item{name}{A name representing the name of the output, only usefull when you want to
+make multiplot with \code{getPreciBar_comb()}, name will be used to differentiate different
+outputs.}
 
 \item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}}
 }
