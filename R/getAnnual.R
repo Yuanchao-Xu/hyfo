@@ -6,6 +6,9 @@
 #' year(365 days), if \code{minRecords = 360}, it means if a year has less than 360 records
 #' of a year, it will be ignored in the mean annual value calculation. Only valid 
 #' when \code{output = "mean"}, default is 355.
+#' @param dataframe A dataframe with first column Date and the rest columns the value of different
+#' gauging stations. Usually an output of \code{list2Dataframe}. When you input dataframe, you have
+#' to put \code{dataframe =}, or it will take the input as a datalist.
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #' @return The annual rainfall and the number of missing data of each year and each rainfall gauge, which 
 #' will also be plotted. If output "mean" is seleted, the mean annual rainfall will be returned.
@@ -17,17 +20,43 @@
 #' b <- getAnnual(testdl, output = 'mean', minRecords = 350)
 #' c <- getAnnual(testdl, output = 'mean', minRecords = 365)
 #' 
+#' a1 <- extractPeriod(testdl, comm = TRUE)
+#' a2 <- list2Dataframe(a1)
+#' getAnnual(dataframe = a2)
+#' 
+#' a3 <- fillGap(a2)
+#' getAnnual(dataframe = a3)
+#' 
 #' @export
 #' @import ggplot2 
 #' @importFrom reshape2 melt
 #' @importFrom stats aggregate
-getAnnual <- function(datalist, output = 'series', minRecords = 355, ...) {
+getAnnual <- function(datalist, output = 'series', minRecords = 355, dataframe = NULL, ...) {
   
-  data <- lapply(datalist, FUN = getAnnual_dataframe)
+  # First check is dataframe input is empty.
+  if (!is.null(dataframe)) {
+    Date <- as.POSIXlt(dataframe[, 1])
+    # Calculate how many gauging stations.
+    stations <- colnames(dataframe)[2:ncol(dataframe)]
+    
+    data <- lapply(stations, function(x) {
+      dataframe_new <- data.frame(Date, dataframe[, x])
+      colnames(dataframe_new)[2] <- x
+      getAnnual_dataframe(dataframe_new)
+    })
+    
+  } else {
+    data <- lapply(datalist, FUN = getAnnual_dataframe)
+  }
+  
+  
+  
   data <- do.call('rbind', data)
-#  After melting, factor level has to be reassigned in order to be well plotted.
+#  After rbind, factor level has to be reassigned in order to be well plotted.
   data$Year <- factor(data$Year, levels = sort(unique(data$Year)), ordered = TRUE)
-  rownames(data) <- NULL   
+  rownames(data) <- NULL
+  
+  
   theme_set(theme_bw())
   
   if (output == 'mean') {
@@ -82,11 +111,10 @@ getAnnual <- function(datalist, output = 'series', minRecords = 355, ...) {
 #' @param dataset A dataframe containing one time series, e.g., rainfall from one gauging station.
 #' the time should follow the format : "1990-1-1"
 #' @return The annual rainfall of each year of the input station.
-#' @examples
-#' data(testdl)
-#' getAnnual_dataframe(testdl[[1]])
+# @examples
+# data(testdl)
+# getAnnual_dataframe(testdl[[1]])
 #' 
-#' @export
 getAnnual_dataframe <- function(dataset) {
   
   if (!grepl('-|/', dataset[1, 1])) {

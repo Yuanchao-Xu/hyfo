@@ -15,15 +15,11 @@ vignette: >
 
 # Introduction 
 
-#### hyfo is designed for hydrology and forecasting anaylasis, containing a number of tools including data extration, data processing and data visulization. There are two main parts in the package, as well as in this mannual:
+hyfo is designed for hydrology and forecasting anaylasis, containing a number of tools including data extration, data processing and data visulization. There are two main parts in the package, as well as in this mannual:
 
-1. Hydrology
-* Providing tools from raw data extration to final precipitation data used by model.
-* e.g., data extraction from file, precipitation gap filler, annual precipitation calculation.
+**If you feel hyfo is of a little help, please cite it as following:**
 
-2. Forecasting
-* Providing tools from forecasting data visulization and analysis.
-* e.g., get spatial maps, data analysis and bias analysis.
+Xu, Yuanchao(2015). hyfo: Hydrology and Forecasting R Package for Data Analysis and Visualization. Retrieved from http://yuanchao-xu.github.io/hyfo/
 
 ##### Note
 * For the hydrology tools part, the minimum time unit is a day, i.e., it mainly focuses on water resource and some long term analysis. For flood analysis part, it will be added in future.
@@ -32,7 +28,7 @@ vignette: >
 
 You can also use `loadGridData{ecomsUDG.Raccess}` or `loadECOMS{ecomsUDG.Raccess}` to load NetCDF file, their input and output can cope with hyfo.  Pacakage[`{ecomsUDG.Raccess}`](https://github.com/SantanderMetGroup/ecomsUDG.Raccess)is designed for getting access to different dataset, and also can load grid file (like netcdf file) directly.
 
-* Most data visualization tool provides the output that can be directly re-plot by `ggplot2`, if `output = 'ggplot'` is assigned in the argument of the function, which will be easier for the users to generated series/multiple plots afterwards. 
+* Most data visualization tool provides the output that can be directly re-plot by `ggplot2`, if `output = 'ggplot'` is assigned in the argument of the function, which will be easier for the users to generated series/multiple plots afterwards, hyfo also provides different multiplot tools end with `_comb`, details can be found in the user mannual.
 
 * The functions end with `_anarbe` are the functions designed specially for some case in Spain, those functions mostly are about data collection of the anarbe catchment, which will be introduced in the end of this mannual.
 
@@ -190,9 +186,9 @@ If you are not satisfied with the title and x axis and y axis, you can assign th
 a <- getAnnual(testdl, output = 'mean', title = 'aaa', x = 'aaa', y = 'aaa')
 ```
 
-If you want to calculate annual rainfall for a single dataframe containing one time series.
+If you want to calculate annual rainfall for a single dataframe containing one time series. You can use the argument `dataframe =`. NOTE, if you don't put `dataframe =`, hyfo may take it as a list, which will give an error.
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
-a <- getAnnual_dataframe(testdl[[1]])
+a <- getAnnual(dataframe = testdl[[1]])
 a
 ```
 
@@ -371,36 +367,31 @@ Sometimes we need to know not only the annual precipitation, but also the precip
 data(testdl)
 # year and mon can be extracted from date.
 TS  <- testdl[[1]]
-year = as.numeric(format(TS[, 1], '%Y'))
-month = as.numeric(format(TS[, 1], '%m'))
+
 ```
 Get the mean spring precipitation.
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
-a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month)
+a <- getPreciBar(TS = TS, method = 'spring', fullResults = FALSE)
 a
 ```
-Get the series of spring precipitation, set `fullResults = TRUE`.
+Get the series of spring precipitation, keep default.
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
-a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month,
-                  fullResults = TRUE)
+a <- getPreciBar(TS = TS, method = 'spring')
 a
 ```
-If missing value is excluded, set omitNA = TRUE.
+If missing value is wanted, set `omitNA = FALSE`.
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
-a <- getMeanPreci(TS[, 2], method = 'winter', yearIndex = year, monthIndex = month,
-                  omitNA = TRUE, fullResults = TRUE)
+a <- getPreciBar(TS = TS, method = 'winter', omitNA = FALSE)
 a
 ```
 Get special month precipitation, e.g. march.
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
-a <- getMeanPreci(TS[, 2], method = 3, yearIndex = year, monthIndex = month,
-                  fullResults = TRUE)
+a <-getPreciBar(TS = TS, method = 3)
 a
 ```
 We can also get annual precipitation, plot figure and assign title ans axis.
 ```{r, fig.show='hold', fig.height=4, fig.width=7}
-a <- getMeanPreci(TS[, 2], method = 'annual', yearIndex = year, monthIndex = month,
-                  fullResults = TRUE, omitNA = TRUE, plot = TRUE, x = 'aaa', title = 'aaa')
+a <- getPreciBar(TS = TS, method = 'annual', x = 'aaa', title = 'aaa')
 ```
 
 

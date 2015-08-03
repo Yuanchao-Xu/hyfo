@@ -5,7 +5,7 @@
 \title{getHisEnsem use historical data as the forecasting input time series.}
 \usage{
 getHisEnsem(TS, example, interval = 365, buffer = 0, plot = "norm",
-  output = "data", name = NULL, ...)
+  output = "data", name = NULL, mv = 0, ...)
 }
 \arguments{
 \item{TS}{A time series dataframe, with first column Date, and second column value.}
@@ -30,11 +30,15 @@ information.}
 
 \item{output}{A string showing which type of output you want. Default is "data", if "ggplot", the
 data that can be directly plotted by ggplot2 will be returned, which is easier for you to make series
-plots afterwards.}
+plots afterwards. NOTE: If \code{output = 'ggplot'}, the missing value in the data will
+be replaced by \code{mv}, if assigned, default mv is 0.}
 
 \item{name}{A string showing the name of the ggplot output, in order to differentiate from other
 ggplot output. Please see details. Only when \code{output = 'ggplot'}, name is valid, default is
 the system time.}
+
+\item{mv}{A number showing representing the missing value. When calculating the cumulative value,
+missing value will be replaced by mv, default is 0.}
 
 \item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}}
 }

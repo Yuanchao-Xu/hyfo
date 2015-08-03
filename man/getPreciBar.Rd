@@ -2,14 +2,19 @@
 % Please edit documentation in R/getPreciBar.R
 \name{getPreciBar}
 \alias{getPreciBar}
-\title{get mean rainfall bar plot of the input dataset}
+\title{get mean rainfall bar plot of the input dataset or time series.}
 \usage{
-getPreciBar(dataset, method, cell = "mean", output = "data",
-  plotRange = TRUE, member = NULL, ...)
+getPreciBar(dataset, TS = NULL, method, cell = "mean", output = "data",
+  plotRange = TRUE, member = NULL, omitNA = TRUE, ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using
-\code{library(ecomsUDG.Raccess)}, e.g., \code{loadGridData{ecomsUDG.Raccess}}}
+\code{loadNcdf}, or load functions from \code{ecomsUDG.Raccess}}
+
+\item{TS}{A time series, with first column the Date, second the value. If TS is not empty,
+hyfo will take data from TS, not consider dataset, so you should only have one input, dataset
+or the time series. If your input is a time series, \code{TS = yourTS} has to be put as an argument,
+or the program may take it as a dataet, and will give an error.}
 
 \item{method}{A string showing the calculating method of the input time series. More information
 please refer to the details.}
@@ -28,13 +33,15 @@ will be returned.}
 is NULL, if no member assigned, and there is a "member" in dimensions, the mean value of the members will be
 taken.}
 
+\item{omitNA}{A boolean showing whether the missing value is omitted.}
+
 \item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}}
 }
 \value{
 The calculated mean value of the input time series and the plot of the result.
 }
 \description{
-get mean rainfall bar plot of the input dataset
+get mean rainfall bar plot of the input dataset or time series.
 }
 \details{
 There are following methods to be selected,

@@ -22,7 +22,7 @@ checkBind <- function(data, bind){
     if (length(colLev) != 1) {
       dif <- colLev[2]
       difNum <- which(colNum == dif)
-      stop(sprintf('Different Colomn number in %s th of the data list \n', difNum))
+      stop(sprintf('Different Colomn number in %s th of the input list \n', difNum))
       
     }
     
@@ -32,7 +32,7 @@ checkBind <- function(data, bind){
     if (length(rowLev) != 1) {
       dif <- rowLev[2]
       difNum <- which(rowNum == dif)
-      stop(sprintf('Different row number in %s th of the data list \n', rowNum))
+      stop(sprintf('Different row number in %s th of the input list \n', rowNum))
       
     }
   }

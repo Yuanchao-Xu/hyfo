@@ -9,7 +9,8 @@ fillGap(dataset, corPeriod = "daily")
 \arguments{
 \item{dataset}{A dataframe with first column the time, the rest columns are rainfall data of different gauges}
 
-\item{corPeriod}{A string showing the period used in the correlation computing, e.g. daily, monthly, annual.}
+\item{corPeriod}{A string showing the period used in the correlation computing,
+e.g. daily, monthly, yearly.}
 }
 \value{
 The filled dataframe
@@ -57,6 +58,7 @@ data(testdl)
 a <- extractPeriod(testdl, commonPeriod = TRUE)
 a1 <- list2Dataframe(a)
 a2 <- fillGap(a1)
+a3 <- fillGap(a1, corPeriod = 'monthly')
 }
 \references{
 Gap fiiling method based on correlation and linear regression.

@@ -4,7 +4,8 @@
 \alias{getAnnual}
 \title{Get annual rainfall of different rainfall time series}
 \usage{
-getAnnual(datalist, output = "series", minRecords = 355, ...)
+getAnnual(datalist, output = "series", minRecords = 355, dataframe = NULL,
+  ...)
 }
 \arguments{
 \item{datalist}{A list containing different time series of different rainfall gauges.}
@@ -15,6 +16,10 @@ getAnnual(datalist, output = "series", minRecords = 355, ...)
 year(365 days), if \code{minRecords = 360}, it means if a year has less than 360 records
 of a year, it will be ignored in the mean annual value calculation. Only valid
 when \code{output = "mean"}, default is 355.}
+
+\item{dataframe}{A dataframe with first column Date and the rest columns the value of different
+gauging stations. Usually an output of \code{list2Dataframe}. When you input dataframe, you have
+to put \code{dataframe =}, or it will take the input as a datalist.}
 
 \item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}}
 }
@@ -32,5 +37,12 @@ a <- getAnnual(testdl)
 #set minRecords to control the calculation of annual rainfall.
 b <- getAnnual(testdl, output = 'mean', minRecords = 350)
 c <- getAnnual(testdl, output = 'mean', minRecords = 365)
+
+a1 <- extractPeriod(testdl, comm = TRUE)
+a2 <- list2Dataframe(a1)
+getAnnual(dataframe = a2)
+
+a3 <- fillGap(a2)
+getAnnual(dataframe = a3)
 }
 

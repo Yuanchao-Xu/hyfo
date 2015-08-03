@@ -1,7 +1,8 @@
 #' Fill gaps in the rainfall time series.
 #'
 #' @param dataset A dataframe with first column the time, the rest columns are rainfall data of different gauges
-#' @param corPeriod A string showing the period used in the correlation computing, e.g. daily, monthly, annual.
+#' @param corPeriod A string showing the period used in the correlation computing, 
+#' e.g. daily, monthly, yearly.
 #' @return The filled dataframe
 #' @details
 #' the gap filler follows the rules below:
@@ -43,6 +44,7 @@
 #' a <- extractPeriod(testdl, commonPeriod = TRUE)
 #' a1 <- list2Dataframe(a)
 #' a2 <- fillGap(a1)
+#' a3 <- fillGap(a1, corPeriod = 'monthly')
 #' 
 #' @references
 #' Gap fiiling method based on correlation and linear regression.
@@ -91,7 +93,6 @@ fillGap <- function(dataset, corPeriod = 'daily') {
 #' @param year A list showing the year index of the time series.
 #' @param mon A list showing the mon index of the time series.
 #' @return the monthly rainfall matrix of the rainfall time series.
-#' @export
 monthlyPreci <- function(TS, year, mon) {
   
   # monthly daily mean is used in order not to affected by missing values.

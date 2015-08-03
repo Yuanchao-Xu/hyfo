@@ -10,12 +10,12 @@ getMeanPreci(inputTS, method = NULL, yearIndex = NULL, monthIndex = NULL,
 \arguments{
 \item{inputTS}{A time series with only data column (1 column).}
 
-\item{method}{A string showing the method used to calculate mean value, e.g., "meanAnnualPreci".
+\item{method}{A string showing the method used to calculate mean value, e.g., "annual".
 more information please refer to details.}
 
-\item{yearIndex}{A numeric list showing the year index of the time series.}
+\item{yearIndex}{A NUMERIC ARRAY showing the year index of the time series.}
 
-\item{monthIndex}{A numeric list showing the month index of the time series.}
+\item{monthIndex}{A NUMERIC ARRAY showing the month index of the time series.}
 
 \item{fullResults}{A boolean showing whether the full results are shown, default is FALSE. If
 FALSE, only mean value will be returned, if TRUE, the sequence of values will be returned.}
@@ -37,6 +37,7 @@ There are following methods to be selected,
 "annual": annual rainfall of each year is plotted.
 "winter", "spring", "autumn", "summer": seasonal rainfall of each year is plotted.
 Month(number 1 to 12): month rainfall of each year is plotted, e.g. march rainfall of each year.
+"meanMonthly": the mean monthly rainfall of each month over the whole period.
 
 Since "winter" is a crossing year, 12, 1, 2, 12 is in former year, and 1, 2 are in latter year.
 so winter belongs to the latter year.

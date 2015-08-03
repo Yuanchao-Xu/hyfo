@@ -18,11 +18,14 @@
 #' 'cum' means cummulative plot, default is 'norm'. For other words there will be no plot.
 #' @param output A string showing which type of output you want. Default is "data", if "ggplot", the 
 #' data that can be directly plotted by ggplot2 will be returned, which is easier for you to make series
-#' plots afterwards.
+#' plots afterwards. NOTE: If \code{output = 'ggplot'}, the missing value in the data will
+#' be replaced by \code{mv}, if assigned, default mv is 0.
 #' 
 #' @param name A string showing the name of the ggplot output, in order to differentiate from other
 #' ggplot output. Please see details. Only when \code{output = 'ggplot'}, name is valid, default is 
 #' the system time.
+#' @param mv A number showing representing the missing value. When calculating the cumulative value, 
+#' missing value will be replaced by mv, default is 0.
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #' 
 #' @details 
@@ -93,7 +96,7 @@
 #' @export
 
 getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm', output = 'data', 
-                         name = NULL, ...) {
+                         name = NULL, mv = 0, ...) {
   if (!grepl('-|/', TS[1, 1])) {
     stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
          and use as.Date to convert.')
@@ -102,11 +105,16 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
          and use as.Date to convert.')
   } else {
     
+    
+    
     TS[, 1] <- as.Date(TS[, 1])
     example <- as.Date(example ,tz = '')
     exL <- example[2] - example[1]
+    # Test if example is in the range of the TS
+    a <- which(TS[, 1] == example[1] | TS[, 1] == example[2])
+    if (length(a) < 2) stop('Example is out of the time series, reset example.')
     
-
+    
     
     if (interval %% 365 == 0) {
       d <- interval / 365
@@ -184,34 +192,40 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
     data_output <- cbind(data.frame(Date = data_output[, 1]), Mean = meanV, 
                          data_output[, 2:ncol(data_output)])
     
-    theme_set(theme_bw())
+    data_ggplot <- melt(data_output, id.var = 'Date')
+    NAIndex <- is.na(data_ggplot$value)
+    data_ggplot$nav <- rep(0, nrow(data_ggplot))
+    data_ggplot$nav[NAIndex] <- 1
     
     if (plot == 'norm') {
-      
-      data_ggplot <- melt(data_output, id.var = 'Date')
+      data_ggplot$value[NAIndex] <- mv
       
     } else if (plot == 'cum') {
-        cum <- cbind(data.frame(Date = data_output$Date), cumsum(data_output[2:ncol(data_output)]))
+      data_output[is.na(data_output)] <- mv
+      cum <- cbind(data.frame(Date = data_output$Date), cumsum(data_output[2:ncol(data_output)]))
         
-        data_ggplot <- melt(cum, id.var = 'Date')
+      data_ggplot <- melt(cum, id.var = 'Date')
     } else {
       stop('plot can only be "norm" or "cum", do not assign other words')
     }
-    
+    theme_set(theme_bw())
     mainLayer <- with(data_ggplot, {
       ggplot(data = data_ggplot) +
         aes(x = Date, y = value, color = variable, group = variable) +
         geom_line(size = 0.3) +
         geom_line(data = data_ggplot[data_ggplot$variable == 'Example', ], size = 2) +
         geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 2) +
+        geom_point(data = data_ggplot[NAIndex, ], size = 2, shape = 4, color = 'black') +
         labs(empty = NULL, ...)#in order to pass "...", arguments shouldn't be empty.
     })
     print(mainLayer)
     
     if (output == 'ggplot') {
       if (is.null(name)) name <- Sys.time()
-      
-      data_ggplot$name <- rep(name, nrow(data_ggplot)) 
+      data_ggplot$name <- rep(name, nrow(data_ggplot))       
+      data_ggplot$nav <- rep(0, nrow(data_ggplot))
+      data_ggplot$nav[NAIndex] <- 1
+
       return(data_ggplot)
     } else {
       return(data_output)
@@ -234,11 +248,13 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
 #' 'cum' means cummulative plot, default is 'norm'. For other words there will be no plot.
 #' @param output A string showing which type of output you want. Default is "data", if "ggplot", the 
 #' data that can be directly plotted by ggplot2 will be returned, which is easier for you to make series
-#' plots afterwards.
+#' plots afterwards. NOTE: If \code{output = 'ggplot'}, the missing value in the data will
+#' be replaced by \code{mv}, if assigned, default mv is 0.
 #' @param name A string showing the name of the ggplot output, in order to differentiate from other
 #' ggplot output. Please see details. Only when \code{output = 'ggplot'}, name is valid, default is 
 #' the system time.
-#' 
+#' @param mv A number showing representing the missing value. When calculating the cumulative value, 
+#' missing value will be replaced by mv, default is 0.
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #' 
 #' @details 
@@ -258,8 +274,8 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
 #' @import ggplot2
 #' @importFrom reshape2 melt
 #' @export
-getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', name = NULL, 
-                        ...) {
+getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', name = NULL,
+                        mv = 0, ...) {
   # cell should be a vector showing the location, or mean representing the loacation averaged.
   
   checkWord <- c('Data', 'xyCoords', 'Dates')
@@ -302,27 +318,27 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', 
   }
   
   data_output <- data.frame(Date, data_ensem)
+  data_ggplot <- melt(data_output, id.var = 'Date')
+  NAIndex <- is.na(data_ggplot$value)
   
-  
-  
-  theme_set(theme_bw())
   
   if (plot == 'norm') {
-    
-    data_ggplot <- melt(data_output, id.var = 'Date')
-    
+    data_ggplot$value[NAIndex] <- mv
   } else if (plot == 'cum') {
+    data_output[is.na(data_output)] <- mv
     cum <- cbind(data.frame(Date = data_output$Date), cumsum(data_output[2:ncol(data_output)]))
     
     data_ggplot <- melt(cum, id.var = 'Date')
     
   }
   
+  theme_set(theme_bw())
   mainLayer <- with(data_ggplot, {
     ggplot(data = data_ggplot) +
       aes(x = Date, y = value, color = variable) +
       geom_line(size = 0.3) +
       geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 2) +
+      geom_point(data = data_ggplot[NAIndex, ], size = 2, shape = 4, color = 'black') +
       labs(empty = NULL, ...)#in order to pass "...", arguments shouldn't be empty.
     
   })
@@ -331,10 +347,47 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', 
   if (output == 'ggplot') {
     if (is.null(name)) name <- Sys.time()
     
-    data_ggplot$name <- rep(name, nrow(data_ggplot)) 
+    data_ggplot$name <- rep(name, nrow(data_ggplot))     
+    data_ggplot$nav <- rep(0, nrow(data_ggplot))
+    data_ggplot$nav[NAIndex] <- 1
     return(data_ggplot)
   } else {
     return(data_output)
   }
 }
 
+
+
+#' Combine ensembles together
+#' @param ... different ensembles generated by \code{getHisEnsem(, output = 'ggplot')} 
+#' or \code{getFrcEnsem(, output = 'ggplot')}, see details.
+#' @param nrow A number showing the number of rows.
+#' @param list If input is a list containing different ggplot data, use \code{list = inputlist}.
+#' @return A combined ensemble plot.
+#' @export
+#' @import ggplot2
+
+getEnsem_comb <- function(..., list = NULL, nrow = 1) {
+  
+  if (!is.null(list)) {
+    data_ggplot <- do.call('rbind', list)
+  } else {
+    plots <- list(...)
+    checkBind(plots, 'rbind')
+    data_ggplot <- do.call('rbind', plots)
+  }  
+  #data_ggplot$name <- factor(data_ggplot$name, levels = data_ggplot$name, ordered = TRUE)
+  
+  theme_set(theme_bw())
+  mainLayer <- with(data_ggplot, {
+    ggplot(data = data_ggplot) +
+      aes(x = Date, y = value, color = variable) +
+      geom_line(size = 0.3) +
+      geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 2) +
+      geom_point(data = data_ggplot[data_ggplot$nav == 1, ], size = 2, shape = 4, color = 'black') +
+      facet_wrap( ~ name, nrow = nrow)
+    
+  })
+  print(mainLayer)
+  
+}

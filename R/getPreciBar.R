@@ -1,9 +1,13 @@
-#' get mean rainfall bar plot of the input dataset
+#' get mean rainfall bar plot of the input dataset or time series.
 #' 
 #' @param dataset A list containing different information, should be the result of reading netcdf file using
-#' \code{library(ecomsUDG.Raccess)}, e.g., \code{loadGridData{ecomsUDG.Raccess}}
+#' \code{loadNcdf}, or load functions from \code{ecomsUDG.Raccess}
 #' @param method A string showing the calculating method of the input time series. More information
 #' please refer to the details.
+#' @param TS A time series, with first column the Date, second the value. If TS is not empty, 
+#' hyfo will take data from TS, not consider dataset, so you should only have one input, dataset
+#' or the time series. If your input is a time series, \code{TS = yourTS} has to be put as an argument,
+#' or the program may take it as a dataet, and will give an error.
 #' @param cell A vector containing the locaton of the cell, e.g. c(2, 3), default is "mean", representing
 #' the spatially averaged value. Check details for more information.
 #' @param output A string showing the type of the output, if \code{output = 'ggplot'}, the returned 
@@ -14,6 +18,7 @@
 #' @param member A number showing which member is selected to get, if the dataset has a "member" dimension. Default
 #' is NULL, if no member assigned, and there is a "member" in dimensions, the mean value of the members will be
 #' taken.
+#' @param omitNA A boolean showing whether the missing value is omitted.
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #' @details
 #' There are following methods to be selected, 
@@ -40,49 +45,56 @@
 #' 
 #' @return The calculated mean value of the input time series and the plot of the result.
 #' @export
-getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', plotRange = TRUE, 
-                        member = NULL, ...) {
+getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'data', plotRange = TRUE, 
+                        member = NULL, omitNA = TRUE, ...) {
   
   
-  #check input dataset
-  checkWord <- c('Data', 'xyCoords', 'Dates')
-  if (any(is.na(match(checkWord, attributes(dataset)$names)))) {
-    stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
-          check help for details.')
-  }
+  if (is.null(TS)) {
+    #check input dataset
+    checkWord <- c('Data', 'xyCoords', 'Dates')
+    if (any(is.na(match(checkWord, attributes(dataset)$names)))) {
+      stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
+            check help for details.')
+    }
+    
+    startTime <- as.POSIXlt(dataset$Dates$start, tz = 'GMT')
+    yearIndex <- startTime$year + 1900
+    monthIndex <- startTime$mon + 1
+    data <- dataset$Data
   
-  startTime <- as.POSIXlt(dataset$Dates$start, tz = 'GMT')
-  yearIndex <- startTime$year + 1900
-  monthIndex <- startTime$mon + 1
-  data <- dataset$Data
+    # Dimension needs to be arranged. Make sure first and second dimension is lat and lon.
+    att <- attributes(data)$dimensions
+    dimIndex <- seq(1, length(att))
+    dimIndex1 <- match(c('lon', 'lat', 'time'), att)# match can apply to simple cases
+    dimIndex2 <- dimIndex[-dimIndex1]# choose nomatch
+    
+    
+    data <- aperm(data, c(dimIndex1, dimIndex2))
+    attributes(data)$dimensions <- att[c(dimIndex1, dimIndex2)]
+    
+    # Because in the following part, only 3 dimensions are allowed, so data has to be processed.
+    if (is.null(member) & any(attributes(data)$dimensions == 'member')) {
+      dimIndex3 <- which(attributes(data)$dimensions != 'member')
+      data <- apply(data, MARGIN = dimIndex3, FUN = mean, na.rm = TRUE)
+    } else if (!is.null(member) & any(attributes(data)$dimensions == 'member')) {
+      dimIndex3 <- which(attributes(data)$dimensions == 'member')
+      data <- chooseDim(data, dimIndex3, member, drop = TRUE)
+    } else if (!is.null(member) & !any(attributes(data)$dimensions == 'member')){
+      stop('There is no member part in the dataset, but you choose one, check the input
+           dataset or change your arguments.')
+    }
+    
+    TS <- apply(data, MARGIN = 3, FUN = mean, na.rm = TRUE) 
 
-  # Dimension needs to be arranged. Make sure first and second dimension is lat and lon.
-  att <- attributes(data)$dimensions
-  dimIndex <- seq(1, length(att))
-  dimIndex1 <- match(c('lon', 'lat', 'time'), att)# match can apply to simple cases
-  dimIndex2 <- dimIndex[-dimIndex1]# choose nomatch
-  
-  
-  data <- aperm(data, c(dimIndex1, dimIndex2))
-  attributes(data)$dimensions <- att[c(dimIndex1, dimIndex2)]
-  
-  # Because in the following part, only 3 dimensions are allowed, so data has to be processed.
-  if (is.null(member) & any(attributes(data)$dimensions == 'member')) {
-    dimIndex3 <- which(attributes(data)$dimensions != 'member')
-    data <- apply(data, MARGIN = dimIndex3, FUN = mean, na.rm = TRUE)
-  } else if (!is.null(member) & any(attributes(data)$dimensions == 'member')) {
-    dimIndex3 <- which(attributes(data)$dimensions == 'member')
-    data <- chooseDim(data, dimIndex3, member, drop = TRUE)
-  } else if (!is.null(member) & !any(attributes(data)$dimensions == 'member')){
-    stop('There is no member part in the dataset, but you choose one, check the input
-         dataset or change your arguments.')
+  } else {
+    Date <- as.POSIXlt(TS[, 1])
+    yearIndex <- Date$year + 1900
+    monIndex <- Date$mon + 1
   }
-  
-  TS <- apply(data, MARGIN = 3, FUN = mean, na.rm = TRUE) 
     
   if (method == 'meanMonthly') {
-    monthlypreci <- tapply(TS, INDEX = list(yearIndex, monthIndex), FUN = sum, na.rm = TRUE)
-    meanMonthlyPreci <- apply(monthlypreci, MARGIN = 2, FUN = mean, na.rm = TRUE)
+    meanMonthlyPreci <- getMeanPreci(TS, method = 'meanMonthly', yearIndex = yearIndex,
+                                     monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
     
     title <- 'Mean Monthly Precipitation'
     xlab <- 'Month'
@@ -124,8 +136,8 @@ getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', plotRan
     
   } else if (is.numeric(method)) {
     
-    month <- method
-    monthlyPreci <- tapply(TS, INDEX = list(yearIndex, monthIndex), FUN = sum)[, toString(month)]
+    monthlyPreci <- getMeanPreci(TS, method = method, yearIndex = yearIndex,
+                                 monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
     
     plotPreci <- data.frame(Index = names(monthlyPreci), Preci = monthlyPreci)
     plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
@@ -143,7 +155,7 @@ getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', plotRan
     }
     
     seasonalPreci <- getMeanPreci(TS, method = 'spring', yearIndex = yearIndex,
-                              monthIndex = monthIndex, fullResults = TRUE)
+                              monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
     plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
     plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
     
@@ -161,7 +173,7 @@ getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', plotRan
     }
     
     seasonalPreci <- getMeanPreci(TS, method = 'summer', yearIndex = yearIndex,
-                                  monthIndex = monthIndex, fullResults = TRUE)
+                                  monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
     plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
     plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
     
@@ -178,7 +190,7 @@ getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', plotRan
     }
     
     seasonalPreci <- getMeanPreci(TS, method = 'autumn', yearIndex = yearIndex,
-                                  monthIndex = monthIndex, fullResults = TRUE)
+                                  monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
     plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
     plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
     
@@ -194,7 +206,7 @@ getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', plotRan
     }
     
     seasonalPreci <- getMeanPreci(TS, method = 'winter', yearIndex = yearIndex,
-                                  monthIndex = monthIndex, fullResults = TRUE)
+                                  monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
     plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
     plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
     
@@ -301,6 +313,7 @@ getPreciBar_comb <- function(..., list = NULL, nrow = 1) {
   } else {
     
     bars <- list(...)
+    checkBind(bars, 'rbind')
     data_ggplot <- do.call('rbind', bars)
   }
   if (!class(data_ggplot) == 'data.frame') {
@@ -312,7 +325,7 @@ getPreciBar_comb <- function(..., list = NULL, nrow = 1) {
   theme_set(theme_bw())
   
   mainLayer <- with(data_ggplot, {
-    mainLayer <- ggplot(data_ggplot)+
+    ggplot(data_ggplot)+
       geom_bar(aes(x = Index, y = Preci),fill = 'cyan', stat = 'identity', colour = 'black', width = .6)+
       facet_wrap( ~ Name, nrow = nrow) +
       theme(axis.text.x = element_text(angle = 90, hjust = 1))
