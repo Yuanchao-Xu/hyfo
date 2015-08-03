@@ -188,13 +188,15 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
 #' data can be used in ggplot and \code{getSpatialMap_comb()}; if \code{output = 'plot'}, the returned data is the plot containing all 
 #' layers' information, and can be plot directly or used in grid.arrange; if not set, the raster matrix data
 #' will be returned.
+#' @param name If \code{output = 'ggplot'}, name has to be assigned to your output, in order to differentiate
+#' different outputs in the later multiplot using \code{getSpatialMap_comb}.
 #' @param info A boolean showing whether the information of the map, e.g., max, mean ..., default is T.
 #' @param scale A string showing the plot scale, 'identity' or 'sqrt'.
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #'default is about precipitation.
 #' @return A matrix representing the raster map is returned, and the map is plotted.
 #' @examples
-#' data(tgridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
+#' data(tgridData)# the result of \code{loadNcdf}
 #' #the output type of has to be default or 'data'.
 #' a1 <- getSpatialMap(tgridData, method = 'mean')
 #' a2 <- getSpatialMap(tgridData, method = 'max')
@@ -213,7 +215,7 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
 #' @import ggplot2 plyr maps maptools rgeos
 #' @importFrom stats median
 getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points = NULL, output = 'data', 
-                              info = TRUE, scale = 'identity', ...) {
+                              name = NULL, info = TRUE, scale = 'identity', ...) {
   #check input
   checkWord <- c('lon', 'lat', 'z', 'value')
   if (is.null(attributes(matrix)$dimnames)) {
@@ -306,6 +308,8 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
   print(printLayer)
   
   if (output == 'ggplot') {
+    if (is.null(name)) stop('"name" argument not found, 
+                            If you choose "ggplot" as output, please assign a name.')
     data_ggplot$Name <- rep(title_d, dim(data_ggplot)[1])
     return (data_ggplot)
   } else if (output == 'plot') {
@@ -324,10 +328,10 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
 #' @examples
 #' data(tgridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
 #' #The output should be 'ggplot'
-#' a1 <- getSpatialMap(tgridData, method = 'summer', output = 'ggplot')
-#' a2 <- getSpatialMap(tgridData, method = 'winter', output = 'ggplot')
-#'# a3 <- getSpatialMap(tgridData, method = 'mean', output = 'ggplot')
-#'# a4 <- getSpatialMap(tgridData, method = 'max', output = 'ggplot')
+#' a1 <- getSpatialMap(tgridData, method = 'summer', output = 'ggplot', name = 'a1')
+#' a2 <- getSpatialMap(tgridData, method = 'winter', output = 'ggplot', name = 'a2')
+#'# a3 <- getSpatialMap(tgridData, method = 'mean', output = 'ggplot', name = 'a3')
+#'# a4 <- getSpatialMap(tgridData, method = 'max', output = 'ggplot', name = 'a4')
 #' getSpatialMap_comb(a1, a2)
 #' getSpatialMap_comb(a1, a2, nrow = 2)
 #' @details
@@ -348,6 +352,15 @@ getSpatialMap_comb <- function(..., list = NULL, nrow = 1) {
     checkBind(maps, 'rbind')
     data_ggplot <- do.call('rbind', maps)
   }
+  
+  if (!class(data_ggplot) == 'data.frame') {
+    warning('Your input is probably a list, but you forget to add "list = " before it.
+            Try again, or check help for more information.')
+  } else if (is.null(data_ggplot$Name)) {
+    stop('No "Name" column in the input data, check the arguments in getSpatialMap(), if 
+         output = "ggplot" is assigned, more info please check ?getSpatialMap().')
+  }
+  
   data_ggplot$Name <- factor(data_ggplot$Name, levels = data_ggplot$Name, ordered = TRUE)
   
   world_map <- map_data('world')

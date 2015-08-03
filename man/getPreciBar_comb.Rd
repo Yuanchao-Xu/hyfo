@@ -32,8 +32,8 @@ and short term mean monthly precipitation. They are both mean monthly precipitat
 \examples{
 data(tgridData)# the result of \\code{loadGridData{ecomsUDG.Raccess}}
 #output type of getPreciBar() has to be 'ggplot'.
-b1 <- getPreciBar(tgridData, method = 2, output = 'ggplot')
-b2 <- getPreciBar(tgridData, method = 3, output = 'ggplot')
+b1 <- getPreciBar(tgridData, method = 2, output = 'ggplot', name = 'b1')
+b2 <- getPreciBar(tgridData, method = 3, output = 'ggplot', name = 'b2')
 
 getPreciBar_comb(b1, b2)
 }

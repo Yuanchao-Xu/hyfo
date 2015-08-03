@@ -14,10 +14,9 @@
 #' data can be used in ggplot and \code{getPreciBar_comb()}; if \code{output = 'plot'}, the returned data is the plot containing all 
 #' layers' information, and can be plot directly or used in grid.arrange; if not set, the data
 #' will be returned.
+#' @param name If \code{output = 'ggplot'}, name has to be assigned to your output, in order to differentiate
+#' different outputs in the later multiplot using \code{getSpatialMap_comb}.
 #' @param plotRange A boolean showing whether the range will be plotted.
-#' @param name A name representing the name of the output, only usefull when you want to
-#' make multiplot with \code{getPreciBar_comb()}, name will be used to differentiate different
-#' outputs.
 #' @param member A number showing which member is selected to get, if the dataset has a "member" dimension. Default
 #' is NULL, if no member assigned, and there is a "member" in dimensions, the mean value of the members will be
 #' taken.
@@ -48,9 +47,8 @@
 #' 
 #' @return The calculated mean value of the input time series and the plot of the result.
 #' @export
-getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'data', plotRange = TRUE, 
-                        member = NULL, omitNA = TRUE, name = NULL, ...) {
-  
+getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'data', name = NULL, 
+                        plotRange = TRUE, member = NULL, omitNA = TRUE, ...) {
   
   if (is.null(TS)) {
     #check input dataset
@@ -279,7 +277,8 @@ getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'dat
   if (output == 'plot') {
     return(mainLayer)
   } else if (output == 'ggplot') {
-    if (is.null(name)) name <- title
+    if (is.null(name)) stop('"name" argument not found, 
+                            If you choose "ggplot" as output, please assign a name.')
     plotPreci$Name <- rep(name, dim(plotPreci)[1])
     return(plotPreci)
   } else {
@@ -307,8 +306,8 @@ getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'dat
 #' 
 #' data(tgridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
 #' #output type of getPreciBar() has to be 'ggplot'.
-#' b1 <- getPreciBar(tgridData, method = 2, output = 'ggplot')
-#' b2 <- getPreciBar(tgridData, method = 3, output = 'ggplot')
+#' b1 <- getPreciBar(tgridData, method = 2, output = 'ggplot', name = 'b1')
+#' b2 <- getPreciBar(tgridData, method = 3, output = 'ggplot', name = 'b2')
 #' 
 #' getPreciBar_comb(b1, b2)
 #' 

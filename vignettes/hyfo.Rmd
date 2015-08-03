@@ -617,10 +617,10 @@ If multi-plot is needed, `hyfo` can also combine different plots together. Use `
 
 ```{r, fig.show='hide', fig.height=4, fig.width=7}
 
-a1 <- getSpatialMap(tgridData, method = 'spring', output = 'ggplot')
-a2 <- getSpatialMap(tgridData, method = 'summer', output = 'ggplot')
-a3 <- getSpatialMap(tgridData, method = 'meanAnnual', output = 'ggplot')
-a4 <- getSpatialMap(tgridData, method = 'winter', output = 'ggplot')
+a1 <- getSpatialMap(tgridData, method = 'spring', output = 'ggplot', name = 'spring')
+a2 <- getSpatialMap(tgridData, method = 'summer', output = 'ggplot', name = 'summer')
+a3 <- getSpatialMap(tgridData, method = 'autumn', output = 'ggplot', name = 'autumn')
+a4 <- getSpatialMap(tgridData, method = 'winter', output = 'ggplot', name = 'winter')
 
 ```
 
@@ -633,7 +633,7 @@ getSpatialMap_comb(a1, a2, a3, a4, nrow = 4)
 
 `getSpatialMap_comb` accepts list (using `list =`) object too, which is easier for multi-plot. First list of 12 months are got. **NOTE: If input is a list, the argument should be `list = yourlist`, not directly put the list in the argument.**
 ```{r, fig.show='hide'}
-c <- lapply(1:12, function(x) getSpatialMap(tgridData, method = x, output = 'ggplot') )
+c <- lapply(1:12, function(x) getSpatialMap(tgridData, method = x, output = 'ggplot', name = x))
 ```
 
 Then they are combined.
@@ -654,10 +654,10 @@ getSpatialMap_comb(list = c, nrow = 4)
 Basically, bar plot follows the same rule as part 2.4.1 spatial map, only a few cases that needs to pay attention.
 
 ```{r, fig.show='hide', fig.height=4, fig.width=7, results='hide'}
-b1 <- getPreciBar(tgridData, method = 'spring', output = 'ggplot')
-b2 <- getPreciBar(tgridData, method = 'summer', output = 'ggplot')
-b3 <- getPreciBar(tgridData, method = 'autumn', output = 'ggplot')
-b4 <- getPreciBar(tgridData, method = 'winter', output = 'ggplot')
+b1 <- getPreciBar(tgridData, method = 'spring', output = 'ggplot', name = 'spring')
+b2 <- getPreciBar(tgridData, method = 'summer', output = 'ggplot', name = 'summer')
+b3 <- getPreciBar(tgridData, method = 'autumn', output = 'ggplot', name = 'autumn')
+b4 <- getPreciBar(tgridData, method = 'winter', output = 'ggplot', name = 'winter')
 ```
 
 ```{r, fig.show='hold', fig.height=6, fig.width=7}
@@ -665,7 +665,7 @@ getPreciBar_comb(b1, b2, b3, b4, nrow = 2)
 ```
 
 ```{r, fig.show='hide', fig.height=4, fig.width=7, results='hide'}
-c <- lapply(1:12, function(x) getPreciBar(tgridData, method = x, output = 'ggplot') )
+c <- lapply(1:12, function(x) getPreciBar(tgridData, method = x, output = 'ggplot', name = x))
 ```
 
 ```{r, fig.show='hold', fig.height=6, fig.width=7}

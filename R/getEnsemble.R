@@ -21,9 +21,9 @@
 #' plots afterwards. NOTE: If \code{output = 'ggplot'}, the missing value in the data will
 #' be replaced by \code{mv}, if assigned, default mv is 0.
 #' 
-#' @param name A string showing the name of the ggplot output, in order to differentiate from other
-#' ggplot output. Please see details. Only when \code{output = 'ggplot'}, name is valid, default is 
-#' the system time.
+#' @param name If \code{output = 'ggplot'}, name has to be assigned to your output, in order to differentiate
+#' different outputs in the later multiplot using \code{getEnsem_comb}.
+#' 
 #' @param mv A number showing representing the missing value. When calculating the cumulative value, 
 #' missing value will be replaced by mv, default is 0.
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
@@ -71,9 +71,7 @@
 #' \code{name}
 #' Assuming you have two ggplot outputs, you want to plot them together. In this situation, you
 #' need a name column to differentiate one ggplot output from the other. You can assigne this name
-#' by the argument directly, If name is not assigned and \code{output = 'ggplot'} is selected, then
-#' the system time will be selected as name column.
-#' 
+#' by the argument directly, name has to be assigned if \code{output = 'ggplot'} is selected,
 #' @return A ensemble time series using historical data as forecast.
 #' 
 #' @examples
@@ -250,9 +248,8 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
 #' data that can be directly plotted by ggplot2 will be returned, which is easier for you to make series
 #' plots afterwards. NOTE: If \code{output = 'ggplot'}, the missing value in the data will
 #' be replaced by \code{mv}, if assigned, default mv is 0.
-#' @param name A string showing the name of the ggplot output, in order to differentiate from other
-#' ggplot output. Please see details. Only when \code{output = 'ggplot'}, name is valid, default is 
-#' the system time.
+#' @param name If \code{output = 'ggplot'}, name has to be assigned to your output, in order to differentiate
+#' different outputs in the later multiplot using \code{getEnsem_comb}.
 #' @param mv A number showing representing the missing value. When calculating the cumulative value, 
 #' missing value will be replaced by mv, default is 0.
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
@@ -345,7 +342,8 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', 
   print(mainLayer)
   
   if (output == 'ggplot') {
-    if (is.null(name)) name <- Sys.time()
+    if (is.null(name)) stop('"name" argument not found, 
+                            If you choose "ggplot" as output, please assign a name.')
     
     data_ggplot$name <- rep(name, nrow(data_ggplot))     
     data_ggplot$nav <- rep(0, nrow(data_ggplot))
@@ -377,6 +375,15 @@ getEnsem_comb <- function(..., list = NULL, nrow = 1) {
     data_ggplot <- do.call('rbind', plots)
   }  
   #data_ggplot$name <- factor(data_ggplot$name, levels = data_ggplot$name, ordered = TRUE)
+  
+  if (!class(data_ggplot) == 'data.frame') {
+    warning('Your input is probably a list, but you forget to add "list = " before it.
+            Try again, or check help for more information.')
+  } else if (is.null(data_ggplot$Name)) {
+    stop('No "Name" column in the input data, check the arguments in getFreEnsem() or getHisEnsem(), if 
+         output = "ggplot" is assigned, more info please check ?getFreEnsem() or ?getHisEnsem().')
+  }
+  
   
   theme_set(theme_bw())
   mainLayer <- with(data_ggplot, {

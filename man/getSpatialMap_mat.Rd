@@ -5,7 +5,7 @@
 \title{Get spatial map of the input dataset, and a matrix representing the raster map will be returned.}
 \usage{
 getSpatialMap_mat(matrix, title_d = NULL, catchment = NULL, points = NULL,
-  output = "data", info = TRUE, scale = "identity", ...)
+  output = "data", name = NULL, info = TRUE, scale = "identity", ...)
 }
 \arguments{
 \item{matrix}{A matrix raster, should be the result of \code{getSpatialMap()}, output should be default
@@ -23,6 +23,9 @@ data can be used in ggplot and \code{getSpatialMap_comb()}; if \code{output = 'p
 layers' information, and can be plot directly or used in grid.arrange; if not set, the raster matrix data
 will be returned.}
 
+\item{name}{If \code{output = 'ggplot'}, name has to be assigned to your output, in order to differentiate
+different outputs in the later multiplot using \code{getSpatialMap_comb}.}
+
 \item{info}{A boolean showing whether the information of the map, e.g., max, mean ..., default is T.}
 
 \item{scale}{A string showing the plot scale, 'identity' or 'sqrt'.}
@@ -37,7 +40,7 @@ A matrix representing the raster map is returned, and the map is plotted.
 Get spatial map of the input dataset, and a matrix representing the raster map will be returned.
 }
 \examples{
-data(tgridData)# the result of \\code{loadGridData{ecomsUDG.Raccess}}
+data(tgridData)# the result of \\code{loadNcdf}
 #the output type of has to be default or 'data'.
 a1 <- getSpatialMap(tgridData, method = 'mean')
 a2 <- getSpatialMap(tgridData, method = 'max')

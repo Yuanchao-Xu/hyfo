@@ -5,7 +5,7 @@
 \title{get mean rainfall bar plot of the input dataset or time series.}
 \usage{
 getPreciBar(dataset, TS = NULL, method, cell = "mean", output = "data",
-  plotRange = TRUE, member = NULL, omitNA = TRUE, name = NULL, ...)
+  name = NULL, plotRange = TRUE, member = NULL, omitNA = TRUE, ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using
@@ -27,6 +27,9 @@ data can be used in ggplot and \code{getPreciBar_comb()}; if \code{output = 'plo
 layers' information, and can be plot directly or used in grid.arrange; if not set, the data
 will be returned.}
 
+\item{name}{If \code{output = 'ggplot'}, name has to be assigned to your output, in order to differentiate
+different outputs in the later multiplot using \code{getSpatialMap_comb}.}
+
 \item{plotRange}{A boolean showing whether the range will be plotted.}
 
 \item{member}{A number showing which member is selected to get, if the dataset has a "member" dimension. Default
@@ -34,10 +37,6 @@ is NULL, if no member assigned, and there is a "member" in dimensions, the mean 
 taken.}
 
 \item{omitNA}{A boolean showing whether the missing value is omitted.}
-
-\item{name}{A name representing the name of the output, only usefull when you want to
-make multiplot with \code{getPreciBar_comb()}, name will be used to differentiate different
-outputs.}
 
 \item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}}
 }

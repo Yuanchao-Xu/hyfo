@@ -22,9 +22,8 @@ data that can be directly plotted by ggplot2 will be returned, which is easier f
 plots afterwards. NOTE: If \code{output = 'ggplot'}, the missing value in the data will
 be replaced by \code{mv}, if assigned, default mv is 0.}
 
-\item{name}{A string showing the name of the ggplot output, in order to differentiate from other
-ggplot output. Please see details. Only when \code{output = 'ggplot'}, name is valid, default is
-the system time.}
+\item{name}{If \code{output = 'ggplot'}, name has to be assigned to your output, in order to differentiate
+different outputs in the later multiplot using \code{getEnsem_comb}.}
 
 \item{mv}{A number showing representing the missing value. When calculating the cumulative value,
 missing value will be replaced by mv, default is 0.}
