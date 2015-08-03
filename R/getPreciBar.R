@@ -89,12 +89,15 @@ getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'dat
   } else {
     Date <- as.POSIXlt(TS[, 1])
     yearIndex <- Date$year + 1900
-    monIndex <- Date$mon + 1
+    monthIndex <- Date$mon + 1
+    TS <- TS[, 2]
   }
     
   if (method == 'meanMonthly') {
-    meanMonthlyPreci <- getMeanPreci(TS, method = 'meanMonthly', yearIndex = yearIndex,
-                                     monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
+    
+    monthlypreci <- tapply(TS, INDEX = list(yearIndex, monthIndex), FUN = sum, na.rm = omitNA)
+    meanMonthlyPreci <- apply(monthlypreci, MARGIN = 2, FUN = mean, na.rm = TRUE)
+    
     
     title <- 'Mean Monthly Precipitation'
     xlab <- 'Month'
@@ -135,8 +138,8 @@ getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'dat
     ylim <- c(0, max(annualPreci, na.rm = TRUE) * 1.1)
     
   } else if (is.numeric(method)) {
-    
-    monthlyPreci <- getMeanPreci(TS, method = method, yearIndex = yearIndex,
+    month <- method
+    monthlyPreci <- getMeanPreci(TS, method = month, yearIndex = yearIndex,
                                  monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
     
     plotPreci <- data.frame(Index = names(monthlyPreci), Preci = monthlyPreci)

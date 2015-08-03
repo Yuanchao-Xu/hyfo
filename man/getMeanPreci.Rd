@@ -42,33 +42,4 @@ Month(number 1 to 12): month rainfall of each year is plotted, e.g. march rainfa
 Since "winter" is a crossing year, 12, 1, 2, 12 is in former year, and 1, 2 are in latter year.
 so winter belongs to the latter year.
 }
-\examples{
-data(testdl)
-TS  <- testdl[[1]]
-year = as.numeric(format(TS[, 1], '\%Y'))
-month = as.numeric(format(TS[, 1], '\%m'))
-
-# Get the mean spring precipitation.
-a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month)
-a
-
-# Get the series of spring precipitation, set fullResults = TRUE.
-a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month,
-                  fullResults = TRUE)
-a
-
-# If missing value is excluded, set omitNA = TRUE.
-a <- getMeanPreci(TS[, 2], method = 'winter', yearIndex = year, monthIndex = month,
-                  omitNA = TRUE, fullResults = TRUE)
-a
-
-# Get special month precipitation, e.g. march.
-a <- getMeanPreci(TS[, 2], method = 3, yearIndex = year, monthIndex = month,
-                  fullResults = TRUE)
-a
-
-# We can also get annual precipitation.
-a <- getMeanPreci(TS[, 2], method = 'annual', yearIndex = year, monthIndex = month,
-                  fullResults = TRUE)
-}
 

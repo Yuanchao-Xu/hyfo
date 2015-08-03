@@ -21,36 +21,35 @@
 #' so winter belongs to the latter year.
 #' 
 #' @return The mean value of the input time series or the full results before calculating mean.
-#' @examples
 #' 
-#' data(testdl)
-#' TS  <- testdl[[1]]
-#' year = as.numeric(format(TS[, 1], '%Y'))
-#' month = as.numeric(format(TS[, 1], '%m'))
-#' 
-#' # Get the mean spring precipitation.
-#' a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month)
-#' a
-#' 
-#' # Get the series of spring precipitation, set fullResults = TRUE.
-#' a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month,
-#'                   fullResults = TRUE)
-#' a
-#' 
-#' # If missing value is excluded, set omitNA = TRUE.
-#' a <- getMeanPreci(TS[, 2], method = 'winter', yearIndex = year, monthIndex = month,
-#'                   omitNA = TRUE, fullResults = TRUE)
-#' a
-#' 
-#' # Get special month precipitation, e.g. march.
-#' a <- getMeanPreci(TS[, 2], method = 3, yearIndex = year, monthIndex = month,
-#'                   fullResults = TRUE)
-#' a
-#' 
-#' # We can also get annual precipitation.
-#' a <- getMeanPreci(TS[, 2], method = 'annual', yearIndex = year, monthIndex = month,
-#'                   fullResults = TRUE)
-#'
+# data(testdl)
+# TS  <- testdl[[1]]
+# year = as.numeric(format(TS[, 1], '%Y'))
+# month = as.numeric(format(TS[, 1], '%m'))
+# 
+# # Get the mean spring precipitation.
+# a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month)
+# a
+# 
+# # Get the series of spring precipitation, set fullResults = TRUE.
+# a <- getMeanPreci(TS[, 2], method = 'spring', yearIndex = year, monthIndex = month,
+#                   fullResults = TRUE)
+# a
+# 
+# # If missing value is excluded, set omitNA = TRUE.
+# a <- getMeanPreci(TS[, 2], method = 'winter', yearIndex = year, monthIndex = month,
+#                   omitNA = TRUE, fullResults = TRUE)
+# a
+# 
+# # Get special month precipitation, e.g. march.
+# a <- getMeanPreci(TS[, 2], method = 3, yearIndex = year, monthIndex = month,
+#                   fullResults = TRUE)
+# a
+# 
+# # We can also get annual precipitation.
+# a <- getMeanPreci(TS[, 2], method = 'annual', yearIndex = year, monthIndex = month,
+#                   fullResults = TRUE)
+
 getMeanPreci <- function(inputTS, method = NULL, yearIndex = NULL, monthIndex = NULL,
                          fullResults = FALSE, omitNA = FALSE, plot = FALSE, ...) {
   # First check if all the records are NA.
