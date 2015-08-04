@@ -331,22 +331,23 @@ getPreciBar_comb <- function(..., list = NULL, nrow = 1) {
          output = "ggplot" is assigned, more info please check ?getPreciBar.')
   }
   
-  data_ggplot$Name <- factor(data_ggplot$Name, levels = data_ggplot$Name, ordered = TRUE)
+  data_ggplot$Name <- factor(data_ggplot$Name, levels = unique(data_ggplot$Name), ordered = TRUE)
   
   theme_set(theme_bw())
   
   mainLayer <- with(data_ggplot, {
-    ggplot(data_ggplot)+
-      geom_bar(aes(x = Index, y = Preci),fill = 'cyan', stat = 'identity', colour = 'black', width = .6)+
+    ggplot(data_ggplot) +
+      geom_bar(aes(x = Index, y = Preci),fill = 'cyan', stat = 'identity', 
+               colour = 'black', width = .6) +
       facet_wrap( ~ Name, nrow = nrow) +
       theme(axis.text.x = element_text(angle = 90, hjust = 1))
   })
   
-  if (grepl('maxValue', colnames(data_ggplot)) & grepl('minValue', colnames(data_ggplot))) {
+  if (!any(is.na(match(c('minValue', 'maxValue'), colnames(data_ggplot))))) {
     rangeLayer <- with(data_ggplot, {
       geom_errorbar(aes(x = Index, ymax = maxValue, ymin = minValue), width = 0.3)
     })       
-    print(mainLayer + rangeLayer)
+    mainLayer <- mainLayer + rangeLayer
   }
 
   

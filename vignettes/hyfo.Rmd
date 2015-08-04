@@ -3,6 +3,9 @@ title: "hyfo Easy Start"
 author: "Yuanchao Xu"
 date: "`r Sys.Date()`"
 output:
+  pdf_document:
+    toc: true
+    toc_depth: 3
   html_vignette:
     toc: true
     toc_depth: 3

@@ -1,13 +1,13 @@
 Package: hyfo
 Type: Package
 Title: Hydrology and Forecasting R Package for Data Analysis and Visualization
-Version: 1.0.0
+Version: 1.1.1
 Date: 2015-07-02
-Author: Yuanchao Xu <xuyuanchao37@gmail.com>
-Maintainer: Yuanchao Xu <xuyuanchao37@gmail.com>
-Description: hyfo is an R package which can be used as a tool for hydrological and forecasting. 
-  There are several tools in R including data processing, data visualization and data analysis. 
-  For hydrological and hydraulic modellers, hyfo can be a good preprocessing and postprocessing 
+Authors@R: person("Yuanchao", "Xu", email = "xuyuanchao37@gmail.com",
+  role = c("aut", "cre"))
+Description: This package can be used as a tool for hydrological and forecasting. 
+  There are several tools including data processing, data visualization and data analysis. 
+  For hydrological and hydraulic modellers, hyfo can be a good pre-processing and post-processing 
   tool for you.
   hyfo has been tested stable on windows platform.
 License: GPL-2
@@ -28,4 +28,5 @@ Suggests: gridExtra,
 VignetteBuilder: knitr
 LazyData: true
 URL: http://yuanchao-xu.github.io/hyfo/
-Repository: CRAN
+BugReports: https://github.com/Yuanchao-Xu/hyfo/issues
+repository: github
