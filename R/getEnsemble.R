@@ -219,15 +219,16 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
     }
     
     #generate different colors 
-    colors = c('red', 'blue', rainbow(length(unique(data_ggplot$variable)) - 2))
+    colors = c('brown1', 'dodgerblue3', rainbow(n = length(unique(data_ggplot$variable)) - 2,
+                                               start = 0.1))
     
     theme_set(theme_bw())
     mainLayer <- with(data_ggplot, {
       ggplot(data = data_ggplot) +
         aes(x = Date, y = value, color = variable, group = variable) +
-        geom_line(size = 0.3) +
-        geom_line(data = data_ggplot[data_ggplot$variable == 'Observation', ], size = 2) +
-        geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 2) +
+        geom_line(size = 0.6) +
+        geom_line(data = data_ggplot[data_ggplot$variable == 'Observation', ], size = 1.5) +
+        geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 1.5) +
         geom_point(data = data_ggplot[NAIndex, ], size = 3, shape = 4, color = 'black') +
         scale_color_manual(values = colors) +
         labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
@@ -394,14 +395,15 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', 
     
   }
   
-  colors = c('red', rainbow(length(unique(data_ggplot$variable)) - 1))
+  colors = c('brown1', rainbow(n = length(unique(data_ggplot$variable)) - 1,
+                                              start = 0.1))
   
   theme_set(theme_bw())
   mainLayer <- with(data_ggplot, {
     ggplot(data = data_ggplot) +
       aes(x = Date, y = value, color = variable) +
-      geom_line(size = 0.3) +
-      geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 2, color = 'red') +
+      geom_line(size = 0.6) +
+      geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 1.5, color = 'red') +
       geom_point(data = data_ggplot[NAIndex, ], size = 2, shape = 4, color = 'black') +
       scale_color_manual(values = colors) +
       theme(axis.text.x = element_text(size = rel(1.8)),
@@ -466,15 +468,16 @@ getEnsem_comb <- function(..., list = NULL, nrow = 1, legend = TRUE, x = '', y =
          output = "ggplot" is assigned, more info please check ?getFreEnsem() or ?getHisEnsem().')
   }
   
-  colors = c('red', 'blue', rainbow(length(unique(data_ggplot$variable)) - 2))
+  colors = c('brown1', 'dodgerblue3', rainbow(n = length(unique(data_ggplot$variable)) - 2,
+                                              start = 0.1))
   
   theme_set(theme_bw())
   mainLayer <- with(data_ggplot, {
     ggplot(data = data_ggplot) +
       aes(x = Date, y = value, color = variable) +
-      geom_line(size = 0.3) +
-      geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 2, color = 'red') +
-      geom_line(data = data_ggplot[data_ggplot$variable == 'Observation', ], size = 2, color = 'blue') +
+      geom_line(size = 0.6) +
+      geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 1.5) +
+      geom_line(data = data_ggplot[data_ggplot$variable == 'Observation', ], size = 1.5) +
       geom_point(data = data_ggplot[data_ggplot$nav == 1, ], size = 2, shape = 4, color = 'black') +
       scale_color_manual(values = colors) +
       theme(axis.text.x = element_text(size = rel(1.8)),

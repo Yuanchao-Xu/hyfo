@@ -16,9 +16,11 @@ vignette: >
   %\VignetteEncoding{ASCII}
 ---
 
-# Introduction 
+# Introduction
 
-hyfo is designed for hydrology and climate forecasting anaylasis, containing a number of tools including data extration, data processing and data visulization. Official Website is [here](http://yuanchao-xu.github.io/hyfo/)
+Official Website is [here](http://yuanchao-xu.github.io/hyfo/)
+
+hyfo is designed for hydrology and climate forecasting anaylasis, containing a number of tools including data extration, data processing and data visulization.
 
 **If you feel hyfo is of a little help, please cite it as following:**
 
@@ -483,8 +485,9 @@ nc <- loadNcdf(filePath, varname)
 # E.g. you want to make some changes to the data
 nc$Data <- nc$Data - 0.3
 
+```
+```{r, eval=FALSE}
 # Then write it back to file
-
 writeNcdf(gridData = nc, filePath = 'test.nc')
 
 
