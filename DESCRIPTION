@@ -1,11 +1,11 @@
 Package: hyfo
 Type: Package
-Title: Hydrology and Forecasting R Package for Data Analysis and Visualization
-Version: 1.1.1
+Title: Hydrology and Climate Forecasting R Package for Data Analysis and Visualization
+Version: 1.1.6
 Date: 2015-07-02
 Authors@R: person("Yuanchao", "Xu", email = "xuyuanchao37@gmail.com",
   role = c("aut", "cre"))
-Description: This package can be used as a tool for hydrological and forecasting. 
+Description: This package can be used as a tool for hydrology and climate forecasting. 
   There are several tools including data processing, data visualization and data analysis. 
   For hydrological and hydraulic modellers, hyfo can be a good pre-processing and post-processing 
   tool for you.
