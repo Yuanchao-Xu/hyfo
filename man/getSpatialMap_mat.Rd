@@ -5,7 +5,8 @@
 \title{Get spatial map of the input dataset, and a matrix representing the raster map will be returned.}
 \usage{
 getSpatialMap_mat(matrix, title_d = NULL, catchment = NULL, points = NULL,
-  output = "data", name = NULL, info = TRUE, scale = "identity", ...)
+  output = "data", name = NULL, info = FALSE, scale = "identity",
+  colors = NULL, ...)
 }
 \arguments{
 \item{matrix}{A matrix raster, should be the result of \code{getSpatialMap()}, output should be default
@@ -26,9 +27,14 @@ will be returned.}
 \item{name}{If \code{output = 'ggplot'}, name has to be assigned to your output, in order to differentiate
 different outputs in the later multiplot using \code{getSpatialMap_comb}.}
 
-\item{info}{A boolean showing whether the information of the map, e.g., max, mean ..., default is T.}
+\item{info}{A boolean showing whether the information of the map, e.g., max, mean ..., default is FALSE.}
 
 \item{scale}{A string showing the plot scale, 'identity' or 'sqrt'.}
+
+\item{colors}{Most of time you don't have to set this, but if you are not satisfied with the
+default color, you can set your own palette here. e.g., \code{colors = c('red', 'blue')}, then
+the value from lowest to highest, will have the color from red to blue. More info about colors,
+please check ?palette().}
 
 \item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 default is about precipitation.}
@@ -54,5 +60,25 @@ getSpatialMap_mat(a4)
 #Or to investigate the difference between winter value and summer value.
 a6 <- a3 - a4
 getSpatialMap_mat(a6)
+}
+\references{
+R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+
+Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
+
+Hadley Wickham (2011). The Split-Apply-Combine Strategy for Data Analysis. Journal of Statistical
+Software, 40(1), 1-29. URL http://www.jstatsoft.org/v40/i01/.
+
+Original S code by Richard A. Becker and Allan R. Wilks. R version by Ray Brownrigg. Enhancements
+by Thomas P Minka <tpminka at media.mit.edu> (2015). maps: Draw Geographical Maps. R package version
+2.3-11. http://CRAN.R-project.org/package=maps
+
+Roger Bivand and Nicholas Lewin-Koh (2015). maptools: Tools for Reading and Handling Spatial
+Objects. R package version 0.8-36. http://CRAN.R-project.org/package=maptools
+
+Roger Bivand and Colin Rundel (2015). rgeos: Interface to Geometry Engine - Open Source (GEOS). R
+package version 0.3-11. http://CRAN.R-project.org/package=rgeos
 }
 

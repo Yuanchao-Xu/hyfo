@@ -90,7 +90,10 @@ readTxt <- function(fileName, range){
 
 
 
-#'@importFrom utils read.csv
+#' @importFrom utils read.csv
+#' @references 
+#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
 readCsv <- function(fileName, range){
   
   data <- read.csv(fileName, skip = range[1] - 1, header = FALSE)

@@ -13,6 +13,8 @@
 #' a <- collectData_txt_anarbe(folder)
 #' 
 #' @references http://www4.gipuzkoa.net/oohh/web/esp/02.asp
+#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
 #' @source http://www4.gipuzkoa.net/oohh/web/esp/02.asp
 #' @return The collected data from different txt files.
 #' @export
@@ -89,7 +91,10 @@ anarbe_txt <- function(dataset, x1, x2){
   return(output)
   }
 
-#'@importFrom utils read.fwf
+#' @references 
+#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' @importFrom utils read.fwf
 readColumn_txt_anarbe <- function(fileName, keyword = NULL, rangeWord = NULL){
   
   a <- read.fwf(fileName, widths = rep(10,13))#read file with fixed width

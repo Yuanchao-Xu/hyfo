@@ -19,4 +19,11 @@ get moment analysis of the input distribution
 dis <- seq(1, 100)
 getMoment(dis)
 }
+\references{
+Lukasz Komsta and Frederick Novomestky (2015). moments: Moments, cumulants, skewness, kurtosis and
+related tests. R package version 0.14. http://CRAN.R-project.org/package=moments
+
+R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+}
 

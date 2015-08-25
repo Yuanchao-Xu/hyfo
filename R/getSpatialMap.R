@@ -31,7 +31,7 @@
 #' getSpatialMap(tgridData, method = 'winter', catchment = testCat, points = points)
 #' 
 #' @export
-getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
+getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 
   #check input dataset
   checkWord <- c('Data', 'xyCoords', 'Dates')
@@ -60,13 +60,16 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
   attributes(data)$dimensions <- att[c(dimIndex1, dimIndex2)]
   
   # Because in the following part, only 3 dimensions are allowed, so data has to be processed.
-  if (is.null(member) & any(attributes(data)$dimensions == 'member')) {
+  if (member == 'mean' & any(attributes(data)$dimensions == 'member')) {
     dimIndex3 <- which(attributes(data)$dimensions != 'member')
     data <- apply(data, MARGIN = dimIndex3, FUN = mean, na.rm = TRUE)
-  } else if (!is.null(member) & any(attributes(data)$dimensions == 'member')) {
+    message('Mean value of the members are returned.')
+    
+  } else if (member != 'mean' & any(attributes(data)$dimensions == 'member')) {
     dimIndex3 <- which(attributes(data)$dimensions == 'member')
     data <- chooseDim(data, dimIndex3, member, drop = TRUE)
-  } else if (!is.null(member) & !any(attributes(data)$dimensions == 'member')){
+    
+  } else if (member != 'mean' & !any(attributes(data)$dimensions == 'member')){
     stop('There is no member part in the dataset, but you choose one, check the input
          dataset or change your arguments.')
   }
@@ -139,17 +142,17 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
   } else if (method == 'mean') {
     
     #sum value of the dataset, this procedure is to get the mean value
-    data_new <- apply(data, MARGIN = c(2, 1), FUN = mean)
+    data_new <- apply(data, MARGIN = c(2, 1), FUN = mean, na.rm = TRUE)
     title_d <- 'Mean Daily Precipitation (mm / day)'
     
   } else if (method == 'max') {
     
-    data_new <- apply(data, MARGIN = c(2, 1), FUN = max)
+    data_new <- apply(data, MARGIN = c(2, 1), FUN = suppressWarnings(max), na.rm = TRUE)
     title_d <- 'Max Daily Precipitation (mm / day)'
     
   } else if (method == 'min') {
     
-    data_new <- apply(data, MARGIN = c(2, 1), FUN = min)
+    data_new <- apply(data, MARGIN = c(2, 1), FUN = suppressWarnings(min), na.rm = TRUE)
     title_d <- 'Min Daily Precipitation (mm / day)'
     
   } else if (is.numeric(method)) {
@@ -190,8 +193,12 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
 #' will be returned.
 #' @param name If \code{output = 'ggplot'}, name has to be assigned to your output, in order to differentiate
 #' different outputs in the later multiplot using \code{getSpatialMap_comb}.
-#' @param info A boolean showing whether the information of the map, e.g., max, mean ..., default is T.
+#' @param info A boolean showing whether the information of the map, e.g., max, mean ..., default is FALSE.
 #' @param scale A string showing the plot scale, 'identity' or 'sqrt'.
+#' @param colors Most of time you don't have to set this, but if you are not satisfied with the 
+#' default color, you can set your own palette here. e.g., \code{colors = c('red', 'blue')}, then
+#' the value from lowest to highest, will have the color from red to blue. More info about colors,
+#' please check ?palette().
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #'default is about precipitation.
 #' @return A matrix representing the raster map is returned, and the map is plotted.
@@ -214,8 +221,31 @@ getSpatialMap <- function(dataset, method = NULL, member = NULL, ...) {
 #' @export
 #' @import ggplot2 plyr maps maptools rgeos
 #' @importFrom stats median
+#' @importFrom reshape2 melt
+#' @references 
+#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' 
+#' Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+#' 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
+#' 
+#' Hadley Wickham (2011). The Split-Apply-Combine Strategy for Data Analysis. Journal of Statistical
+#' Software, 40(1), 1-29. URL http://www.jstatsoft.org/v40/i01/.
+#' 
+#' Original S code by Richard A. Becker and Allan R. Wilks. R version by Ray Brownrigg. Enhancements
+#' by Thomas P Minka <tpminka at media.mit.edu> (2015). maps: Draw Geographical Maps. R package version
+#' 2.3-11. http://CRAN.R-project.org/package=maps
+#' 
+#' Roger Bivand and Nicholas Lewin-Koh (2015). maptools: Tools for Reading and Handling Spatial
+#' Objects. R package version 0.8-36. http://CRAN.R-project.org/package=maptools
+#' 
+#' Roger Bivand and Colin Rundel (2015). rgeos: Interface to Geometry Engine - Open Source (GEOS). R
+#' package version 0.3-11. http://CRAN.R-project.org/package=rgeos
+#' 
+#' 
+#' 
 getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points = NULL, output = 'data', 
-                              name = NULL, info = TRUE, scale = 'identity', ...) {
+                              name = NULL, info = FALSE, scale = 'identity', colors = NULL, ...) {
   #check input
   checkWord <- c('lon', 'lat', 'z', 'value')
   if (is.null(attributes(matrix)$dimnames)) {
@@ -248,26 +278,44 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
   x_word <- paste('Longitude', word)
   world_map <- map_data('world')
   
-  data_ggplot <- melt(matrix, na.rm = TRUE)
+  # For some cases, matrix has to be reshaped, because it's too fat or too slim, to make
+  # it shown on the map, the ratio is x : y is 4 : 3.
+  matrix <- reshapeMatrix(matrix)
+  
+  
+  # cannot remove NA, or the matrix shape will be changed.
+  data_ggplot <- melt(matrix, na.rm = FALSE) 
+  
   colnames(data_ggplot) <- c('lat', 'lon', 'value')
   theme_set(theme_bw())
+  
+  if (is.null(colors)) colors <- c('yellow', 'orange', 'red')
+  
   
   mainLayer <- with(data_ggplot, {
     
     ggplot(data = data_ggplot) +
     geom_tile(aes(x = lon, y = lat, fill = value)) +
-    #scale_fill_gradient(high = 'red', low = 'yellow')+
-    scale_fill_gradientn(colours = c('yellow', 'orange', 'red'), na.value = 'transparent',
-                         guide = guide_colorbar(title='Rainfall (mm)', barheight = rel(9)), trans = scale) +#usually scale = 'sqrt'
-    geom_map(data = world_map, map = world_map, aes(map_id = region), fill='transparent', color='black') +
+    #scale_fill_discrete()+
+    scale_fill_gradientn(colours = colors, na.value = 'transparent') +#usually scale = 'sqrt'
+                        #guide = guide_colorbar, colorbar and legend are not the same.
+    guides(fill = guide_colourbar(title='Rainfall (mm)', barheight = rel(9), trans = scale)) +#usually scale = 'sqrt'
+    geom_map(data = world_map, map = world_map, aes(map_id = region), fill = 'transparent', 
+             color='black') +
     #    guides(fill = guide_colorbar(title='Rainfall (mm)', barheight = 15))+
     xlab(x_word) +
     ylab('Latitude') +
     ggtitle(title_d) +
     labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
-    theme(plot.title = element_text(size = rel(1.3), face = 'bold'),
-          axis.title.x = element_text(size = rel(1.2)),
-          axis.title.y = element_text(size = rel(1.2)))
+    theme(plot.title = element_text(size = rel(1.8), face = 'bold'),
+          axis.title.x = element_text(size = rel(1.7)),
+          axis.title.y = element_text(size = rel(1.7)),
+          axis.text.x = element_text(size = rel(1.9)),
+          axis.text.y = element_text(size = rel(1.9)),
+          legend.text = element_text(size = rel(1.3)),
+          legend.title = element_text(size = rel(1.3)))
+#    coord_fixed(ratio = 1, xlim = xlim, ylim = ylim)
+    
 #   geom_rect(xmin=min(lon)+0.72*(max(lon)-min(lon)),
 #             xmax=min(lon)+0.99*(max(lon)-min(lon)),
 #             ymin=min(lat)+0.02*(max(lat)-min(lat)),
@@ -310,7 +358,7 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
   if (output == 'ggplot') {
     if (is.null(name)) stop('"name" argument not found, 
                             If you choose "ggplot" as output, please assign a name.')
-    data_ggplot$Name <- rep(title_d, dim(data_ggplot)[1])
+    data_ggplot$Name <- rep(name, dim(data_ggplot)[1])
     return (data_ggplot)
   } else if (output == 'plot') {
     return(printLayer)
@@ -324,6 +372,10 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
 #' @param ... different maps generated by \code{getSpatialMap(, output = 'ggplot')}, see details.
 #' @param nrow A number showing the number of rows.
 #' @param list If input is a list containing different ggplot data, use \code{list = inputlist}.
+#' @param x A string of x axis name.
+#' @param y A string of y axis name.
+#' @param title A string of the title.
+#' @param output A boolean, if chosen TRUE, the output will be given.
 #' @return A combined map.
 #' @examples
 #' data(tgridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
@@ -334,6 +386,7 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
 #'# a4 <- getSpatialMap(tgridData, method = 'max', output = 'ggplot', name = 'a4')
 #' getSpatialMap_comb(a1, a2)
 #' getSpatialMap_comb(a1, a2, nrow = 2)
+#' 
 #' @details
 #' For \code{getSpatialMap_comb}, the maps to be compared should be with same size and resolution, 
 #' in other words, they should be fully overlapped by each other.
@@ -342,7 +395,10 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
 #' 
 #' @export
 #' @import ggplot2 maps
-getSpatialMap_comb <- function(..., list = NULL, nrow = 1) {
+#' @references 
+#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+getSpatialMap_comb <- function(..., list = NULL, nrow = 1, x = '', y = '', title = '', 
+                               output = FALSE) {
   
   
   if (!is.null(list)) {
@@ -363,6 +419,10 @@ getSpatialMap_comb <- function(..., list = NULL, nrow = 1) {
   
   data_ggplot$Name <- factor(data_ggplot$Name, levels = data_ggplot$Name, ordered = TRUE)
   
+#   lim <- getLim(data_ggplot$lon, data_ggplot$lat)
+#   xlim <- lim[[1]]                                  
+#   ylim <- lim[[2]]
+  
   world_map <- map_data('world')
   theme_set(theme_bw())
   mainLayer <- with(data_ggplot, {
@@ -371,10 +431,24 @@ getSpatialMap_comb <- function(..., list = NULL, nrow = 1) {
     #scale_fill_gradient(high = 'red', low = 'yellow')+
     scale_fill_gradientn(colours = c('yellow', 'orange', 'red'), na.value = 'transparent') +#usually scale = 'sqrt'
     geom_map(data = world_map, map = world_map, aes(map_id = region), fill = 'transparent', color = 'black') +
-    facet_wrap(~ Name, nrow = nrow)
+#    guides(fill = guide_colourbar(title='Rainfall (mm)', barheight = rel(9), trans = scale)) +#
+    facet_wrap(~ Name, nrow = nrow) +
+    theme(plot.title = element_text(size = rel(1.8), face = 'bold'),
+          axis.title.x = element_text(size = rel(1.7)),
+          axis.title.y = element_text(size = rel(1.7)),
+          axis.text.x = element_text(size = rel(1.9)),
+          axis.text.y = element_text(size = rel(1.9)),
+          legend.text = element_text(size = rel(1.3)),
+          legend.title = element_text(size = rel(1.3))) +
+    # no solultion for some very fat or very slim, in facet ggplot2, so, it's not buitiful.
+    #coord_equal() +
+    labs(x = x, y = y, title = title)
   })
   
+  
   suppressWarnings(print(mainLayer))
+  
+  if (output == TRUE) return(data_ggplot)
 }
 
 
@@ -383,10 +457,12 @@ getSpatialMap_comb <- function(..., list = NULL, nrow = 1) {
 chooseDim <- function(array, dim, value, drop = FALSE) { 
   # Create list representing arguments supplied to [
   # bquote() creates an object corresponding to a missing argument
+  dimnames <- attributes(array)$dimensions
+  
   indices <- rep(list(bquote()), length(dim(array)))
   indices[[dim]] <- value
   
-  if (dim(array)[dim] < value) {
+  if (dim(array)[dim] < max(value)) {
     stop('Chosen member exceeds the member range of the dataset.')
   }
   
@@ -397,8 +473,78 @@ chooseDim <- function(array, dim, value, drop = FALSE) {
     list(drop = drop)))
   # Print it, just to make it easier to see what's going on
   # Print(call)
-  
+
   # Finally, evaluate it
-  return(eval(call))
+  output <- eval(call)
+  
+  if (length(dim(output)) == length(dimnames)) {
+    attributes(output)$dimensions <- dimnames
+  } else if (length(dim(output)) < length(dimnames)){
+    
+    # In this case, one dimension is dropped, if value is a number 
+    # and drop == T, this situation can appear. So the dropped dimemsion
+    # should be the chosen dimension.
+    i <- 1:length(dimnames)
+    # get rid of the dropped dimensin
+    i <- i[-dim]
+    attributes(output)$dimensions <- dimnames[i]
+  }
+  
+  return(output)
 }
 
+
+reshapeMatrix <- function(matrix) {
+  # This is for the map plot to keep the ratio x : y == 4:3
+  # mainly used in map plot in ggplot2.
+  
+  
+  # So the input matrix should be reshaped, add in some NA values, 
+  # in order to be shown appropriately in ggplot.
+  
+  lon <- as.numeric(colnames(matrix))
+  lat <- as.numeric(rownames(matrix))
+  
+  dx <- mean(diff(lon))
+  dy <- mean(diff(lat))
+  
+  lx <- max(lon) - min(lon)
+  ly <- max(lat) - min(lat)
+  
+  
+  if (0.75 * lx < ly) {
+    # In this case, x needs to be made longer
+    
+    xhalf <- 0.67 * ly
+    xadd <- xhalf - lx / 2
+    # calculate how many columns needs to be added.
+    nxadd <- abs(round(xadd / dx))
+    
+    madd1 <- matrix(data = NA, nrow = length(lat), ncol = nxadd)
+    madd2 <- madd1
+    colnames(madd1) <- seq(to = min(lon) - dx, length = nxadd, by = dx)
+    colnames(madd2) <- seq(from = max(lon) + dx, length = nxadd, by = dx)
+    
+    matrix_new <- cbind(madd1, matrix, madd2)  
+    
+    
+  } else if (0.75 * lx > ly) {
+    
+    yhalf <- 0.38 * lx
+    yadd <- yhalf - ly / 2
+    nyadd <- abs(round(yadd / dy))
+    
+    madd1 <- matrix(data = NA, nrow = nyadd, ncol = length(lon))
+    madd2 <- madd1  
+      
+    rownames(madd1) <- seq(to = max(lat) + dy, length = nyadd, by = -dy)
+    rownames(madd2) <- seq(from = min(lat) - dx, length = nyadd, by = -dy)
+    
+    matrix_new <- rbind(madd1, matrix, madd2)
+    
+  } else {
+    matrix_new <- matrix
+  }
+  
+  return(matrix_new)
+}

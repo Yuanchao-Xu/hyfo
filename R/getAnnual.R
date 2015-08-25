@@ -31,7 +31,18 @@
 #' @import ggplot2 
 #' @importFrom reshape2 melt
 #' @importFrom stats aggregate
-getAnnual <- function(datalist, output = 'series', minRecords = 355, dataframe = NULL, ...) {
+#' @references 
+#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' 
+#' Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+#' 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
+#' 
+#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' 
+#' 
+getAnnual <- function(datalist, output = 'series', minRecords = 355, dataframe = NULL,
+                      ...) {
   
   # First check is dataframe input is empty.
   if (!is.null(dataframe)) {
@@ -88,12 +99,13 @@ getAnnual <- function(datalist, output = 'series', minRecords = 355, dataframe =
       ggplot(plotData) +
       geom_bar(aes(x = Year, y = value , fill = Name), 
                stat = 'identity') +
-      facet_grid(variable ~ Name, scales = 'free') +
+      facet_grid(variable ~ Name, scale = 'free') +
       xlab('Year') +
       ylab(NULL) +
       labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
       theme(plot.title = element_text(size = 20, face = 'bold', vjust = 1)) +
-      theme(axis.text.x = element_text(angle = 90, hjust = 1))
+      theme(axis.text.x = element_text(angle = 90, hjust = 1, size = rel(1.5)),
+            axis.text.y = element_text(size = rel(1.5)))
       #      grid.arrange(mainLayer, ncol = 4)
         
     })

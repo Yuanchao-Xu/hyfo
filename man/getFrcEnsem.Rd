@@ -2,14 +2,16 @@
 % Please edit documentation in R/getEnsemble.R
 \name{getFrcEnsem}
 \alias{getFrcEnsem}
-\title{getFrcEnsem extract different members' timeseries from forecasting data, if forecasting data has a member session.}
+\title{getFrcEnsem extract timeseries from forecasting data, if forecasting data has a member session
+an ensemble time sereis will be returned, if forecasting data doesn't have a member session, a singe time
+series will be returned.}
 \usage{
 getFrcEnsem(dataset, cell = "mean", plot = "norm", output = "data",
-  name = NULL, mv = 0, ...)
+  name = NULL, mv = 0, coord = NULL, ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using
-\code{library(ecomsUDG.Raccess)}, there should be a member part in the data part of the dataset.}
+\code{library(ecomsUDG.Raccess)}.}
 
 \item{cell}{A vector containing the locaton of the cell, e.g. c(2, 3), default is "mean", representing
 the spatially averaged value. Check details for more information.}
@@ -28,13 +30,18 @@ different outputs in the later multiplot using \code{getEnsem_comb}.}
 \item{mv}{A number showing representing the missing value. When calculating the cumulative value,
 missing value will be replaced by mv, default is 0.}
 
+\item{coord}{A coordinate of longitude and latitude. e.g. corrd = c(lon, lat). If coord is assigned,
+cell argument will no longer be used.}
+
 \item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}}
 }
 \value{
 A ensemble time series extracted from forecating data.
 }
 \description{
-getFrcEnsem extract different members' timeseries from forecasting data, if forecasting data has a member session.
+getFrcEnsem extract timeseries from forecasting data, if forecasting data has a member session
+an ensemble time sereis will be returned, if forecasting data doesn't have a member session, a singe time
+series will be returned.
 }
 \details{
 \code{cell} representing the location of the cell, NOTE: this location means the index of the cell,
@@ -46,5 +53,11 @@ Assuming you have two ggplot outputs, you want to plot them together. In this si
 need a name column to differentiate one ggplot output from the other. You can assigne this name
 by the argument directly, If name is not assigned and \code{output = 'ggplot'} is selected, then
 the system time will be selected as name column.
+}
+\references{
+H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+
+Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
 }
 

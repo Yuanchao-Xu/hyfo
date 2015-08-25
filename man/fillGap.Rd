@@ -62,5 +62,8 @@ a3 <- fillGap(a1, corPeriod = 'monthly')
 }
 \references{
 Gap fiiling method based on correlation and linear regression.
+
+Hirsch, Robert M., et al. "Statistical analysis of hydrologic data." Handbook of hydrology. (1992): 17-1.
+Salas, Jose D. "Analysis and modeling of hydrologic time series." Handbook of hydrology 19 (1993): 1-72.
 }
 

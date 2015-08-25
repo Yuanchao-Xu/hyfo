@@ -11,6 +11,8 @@
 #' a <- collectData_csv_anarbe(folder)
 #' 
 #' @references http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
+#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
 #' @source http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
 #' @export
 #' @importFrom utils tail

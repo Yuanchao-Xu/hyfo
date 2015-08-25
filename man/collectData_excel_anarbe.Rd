@@ -19,4 +19,8 @@ The collected data from different excel files.
 \description{
 Collect data from different excel files
 }
+\references{
+R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+}
 

@@ -25,6 +25,10 @@
 #' 
 #' @export
 #' @importFrom stats aggregate
+#' @references 
+#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' 
 monDay <- function(TS, method){
   if (length(TS) != 2) {
     stop('Time series not correct, should be two columns, Date and value.')
@@ -55,7 +59,11 @@ monDay <- function(TS, method){
   return (output)
 }
 
-#'@importFrom utils tail
+#' @importFrom utils tail
+#' @references 
+#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' 
 mon2day <- function(monData) {
   Date <- as.Date(monData[1])
   data <- monData[2]

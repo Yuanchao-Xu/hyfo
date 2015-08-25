@@ -4,7 +4,7 @@
 \alias{getSpatialMap}
 \title{Get spatial map of the input dataset.}
 \usage{
-getSpatialMap(dataset, method = NULL, member = NULL, ...)
+getSpatialMap(dataset, method = NULL, member = "mean", ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using

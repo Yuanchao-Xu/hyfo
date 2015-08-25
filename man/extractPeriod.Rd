@@ -2,11 +2,12 @@
 % Please edit documentation in R/extractPeriod.R
 \name{extractPeriod}
 \alias{extractPeriod}
-\title{Extract common period or certain period from a list of different dataframes of time series.
+\title{Extract common period or certain period from a list of different dataframes of time series, or from a
+dataframe.
 NOTE: all the dates in the datalist should follow the format in ?as.Date{base}.}
 \usage{
 extractPeriod(datalist, startDate = NULL, endDate = NULL,
-  commonPeriod = FALSE)
+  commonPeriod = FALSE, dataframe = NULL)
 }
 \arguments{
 \item{datalist}{A list of different dataframes of time series .}
@@ -17,12 +18,17 @@ extractPeriod(datalist, startDate = NULL, endDate = NULL,
 
 \item{commonPeriod}{A boolean showing whether the common period is extracted. If chosen, startDate and endDate
 should be NULL.}
+
+\item{dataframe}{A dataframe with first column Date, the rest columns value. If your input is a
+dataframe, not time series list, you can put \code{dataframe = yourdataframe}. And certain period will be
+extracted. Note: if your input is a time series, that means all the columns share the same period of date.}
 }
 \value{
-A list with all the time series inside containing the same period.
+A list or a dataframe with all the time series inside containing the same period.
 }
 \description{
-Extract common period or certain period from a list of different dataframes of time series.
+Extract common period or certain period from a list of different dataframes of time series, or from a
+dataframe.
 NOTE: all the dates in the datalist should follow the format in ?as.Date{base}.
 }
 \examples{
@@ -55,5 +61,9 @@ str(list_com)
 
 data(testdl)
 datalist_com1 <- extractPeriod(testdl, startDate = '1994-1-1', endDate = '1995-10-1')
+}
+\references{
+Achim Zeileis and Gabor Grothendieck (2005). zoo: S3 Infrastructure for Regular and Irregular Time
+Series. Journal of Statistical Software, 14(6), 1-27. URL http://www.jstatsoft.org/v14/i06/
 }
 

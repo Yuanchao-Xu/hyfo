@@ -4,17 +4,13 @@
 \alias{getPreciBar}
 \title{get mean rainfall bar plot of the input dataset or time series.}
 \usage{
-getPreciBar(dataset, TS = NULL, method, cell = "mean", output = "data",
-  name = NULL, plotRange = TRUE, member = NULL, omitNA = TRUE, ...)
+getPreciBar(dataset, method, cell = "mean", output = "data", name = NULL,
+  plotRange = TRUE, member = NULL, omitNA = TRUE, TS = NULL,
+  info = FALSE, ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using
 \code{loadNcdf}, or load functions from \code{ecomsUDG.Raccess}}
-
-\item{TS}{A time series, with first column the Date, second the value. If TS is not empty,
-hyfo will take data from TS, not consider dataset, so you should only have one input, dataset
-or the time series. If your input is a time series, \code{TS = yourTS} has to be put as an argument,
-or the program may take it as a dataet, and will give an error.}
 
 \item{method}{A string showing the calculating method of the input time series. More information
 please refer to the details.}
@@ -37,6 +33,14 @@ is NULL, if no member assigned, and there is a "member" in dimensions, the mean 
 taken.}
 
 \item{omitNA}{A boolean showing whether the missing value is omitted.}
+
+\item{TS}{A time series, with first column the Date, second the value. If TS is not empty,
+hyfo will take data from TS, not consider dataset, so you should only have one input, dataset
+or the time series. If your input is a time series, \code{TS = yourTS} has to be put as an argument,
+or the program may take it as a dataet, and will give an error. TS can be an ENSEMBLE containning
+different members. Than the mean value will be given and the range will be given.}
+
+\item{info}{A boolean showing whether the information of the map, e.g., max, mean ..., default is FALSE.}
 
 \item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}}
 }
@@ -66,5 +70,15 @@ and 3rd latitude, by the increasing order. Longitude comes first.
 data(tgridData)
 b1 <- getPreciBar(tgridData, method = 'annual')
 b2 <- getPreciBar(tgridData, method = 'meanMonthly')
+}
+\references{
+Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
+
+H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+
+
+R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
 }
 

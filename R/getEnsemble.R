@@ -1,9 +1,9 @@
 #' getHisEnsem use historical data as the forecasting input time series.
 #' 
 #' @param TS A time series dataframe, with first column Date, and second column value.
-#' @param example A vector containing two strings showing the start and end date, which can be used as an example.
-#' This should be the first example, only the data earlier than the example will not be considered.
-#' e.g. \code{example = c('1994-3-1', '1996-1-2')}, meaning the example period is from 1994-3-1 to 1996-1-2. And 
+#' @param example A vector containing two strings showing the start and end date, which represent the 
+#' forecasting period. Check details for more information.
+#'
 #' the program will extract every possible period in TS you provided to generate the ensemble. Check details for 
 #' more information.
 #' @param interval A number representing the interval of each ensemble member. NOTE: "interval" takes
@@ -29,6 +29,11 @@
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #' 
 #' @details 
+#' 
+#' \code{example} E.g., if you have a time series from 2000 to 2010. Assuming you are in 2003,
+#' you want to forecast the period from 2003-2-1 to 2003-4-1. Then for each year in your input
+#' time series, every year from 1st Feb to 1st Apr will be extracted to generate the ensemble
+#' forecasts. In this case your input example should be \code{example = c('2003-2-1', '2003-4-1')}
 #' 
 #' \code{interval} doesn't care about leap year and the months with 31 days, it will take 365 as a year, and 30 as a month.
 #' e.g., if the interval is from 1999-2-1 to 1999-3-1, you should just set interval to 30, although the real interval is 28
@@ -90,7 +95,13 @@
 #' # Take 30 days as buffer
 #' b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210, buffer = 30)
 #' @importFrom reshape2 melt 
+#' @importFrom grDevices rainbow
 #' @import ggplot2
+#' @references 
+#' Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+#' 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
+#' 
+#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
 #' @export
 
 getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm', output = 'data', 
@@ -155,7 +166,7 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
       endDate <- startDate + exL
     }
     
-    data <- mapply(FUN = function(x, y) extractPeriod_dataset(dataset = TS, startDate = x, endDate = y),
+    data <- mapply(FUN = function(x, y) extractPeriod_dataframe(dataframe = TS, startDate = x, endDate = y),
                    x = startDate, y = endDate)
     
     data <- lapply(1:n, function(x) data.frame(data[, x]))
@@ -163,7 +174,7 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
     if (buffer > 0) {
       bufferStart <- example[1] - buffer
       bufferEnd <- example[1] - 1
-      bufferTS <- extractPeriod_dataset(TS, bufferStart, bufferEnd)
+      bufferTS <- extractPeriod_dataframe(TS, bufferStart, bufferEnd)
       
       data <- lapply(data, function(x) rbind(bufferTS, x))
       
@@ -183,7 +194,7 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
     data_output <- cbind(data.frame(data_output[ind]), data_output[-ind])
     ex_date <- seq(from = example[1] - buffer, to = example[2], by = 1)
     data_output$Date <- ex_date
-    colnames(data_output)[2] <- 'Example'
+    colnames(data_output)[2] <- 'Observation'
     
     meanV <- apply(data_output[, 2:ncol(data_output)], MARGIN = 1, FUN = mean, na.rm = TRUE)
     
@@ -206,20 +217,30 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
     } else {
       stop('plot can only be "norm" or "cum", do not assign other words')
     }
+    
+    #generate different colors 
+    colors = c('red', 'blue', rainbow(length(unique(data_ggplot$variable)) - 2))
+    
     theme_set(theme_bw())
     mainLayer <- with(data_ggplot, {
       ggplot(data = data_ggplot) +
         aes(x = Date, y = value, color = variable, group = variable) +
         geom_line(size = 0.3) +
-        geom_line(data = data_ggplot[data_ggplot$variable == 'Example', ], size = 2) +
+        geom_line(data = data_ggplot[data_ggplot$variable == 'Observation', ], size = 2) +
         geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 2) +
-        geom_point(data = data_ggplot[NAIndex, ], size = 2, shape = 4, color = 'black') +
-        labs(empty = NULL, ...)#in order to pass "...", arguments shouldn't be empty.
+        geom_point(data = data_ggplot[NAIndex, ], size = 3, shape = 4, color = 'black') +
+        scale_color_manual(values = colors) +
+        labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
+        theme(axis.text.x = element_text(size = rel(1.8)),
+              axis.text.y = element_text(size = rel(1.8)),
+              axis.title.x = element_text(size = rel(1.8)),
+              axis.title.y = element_text(size = rel(1.8)))
     })
     print(mainLayer)
     
     if (output == 'ggplot') {
-      if (is.null(name)) name <- Sys.time()
+      if (is.null(name)) stop('"name" argument not found, 
+                            If you choose "ggplot" as output, please assign a name.')
       data_ggplot$name <- rep(name, nrow(data_ggplot))       
       data_ggplot$nav <- rep(0, nrow(data_ggplot))
       data_ggplot$nav[NAIndex] <- 1
@@ -236,10 +257,12 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
 
 
 
-#' getFrcEnsem extract different members' timeseries from forecasting data, if forecasting data has a member session.
+#' getFrcEnsem extract timeseries from forecasting data, if forecasting data has a member session
+#' an ensemble time sereis will be returned, if forecasting data doesn't have a member session, a singe time
+#' series will be returned.
 #' 
 #' @param dataset A list containing different information, should be the result of reading netcdf file using
-#' \code{library(ecomsUDG.Raccess)}, there should be a member part in the data part of the dataset.
+#' \code{library(ecomsUDG.Raccess)}.
 #' @param cell A vector containing the locaton of the cell, e.g. c(2, 3), default is "mean", representing
 #' the spatially averaged value. Check details for more information.
 #' @param plot A string showing whether the plot will be shown, e.g., 'norm' means normal plot (without any process), 
@@ -252,6 +275,8 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
 #' different outputs in the later multiplot using \code{getEnsem_comb}.
 #' @param mv A number showing representing the missing value. When calculating the cumulative value, 
 #' missing value will be replaced by mv, default is 0.
+#' @param coord A coordinate of longitude and latitude. e.g. corrd = c(lon, lat). If coord is assigned,
+#' cell argument will no longer be used.
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #' 
 #' @details 
@@ -270,9 +295,15 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
 #' 
 #' @import ggplot2
 #' @importFrom reshape2 melt
+#' @references 
+#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' 
+#' Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+#' 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
+#' 
 #' @export
 getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', name = NULL,
-                        mv = 0, ...) {
+                        mv = 0, coord = NULL, ...) {
   # cell should be a vector showing the location, or mean representing the loacation averaged.
   
   checkWord <- c('Data', 'xyCoords', 'Dates')
@@ -293,26 +324,60 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', 
   data <- aperm(data, c(dimIndex1, dimIndex2))
   attributes(data)$dimensions <- att[c(dimIndex1, dimIndex2)]
   
+  if (!is.null(coord)) {
+    if (length(coord) == 2) {
+      # corrdinates
+      lonC <- coord[1]
+      latC <- coord[2]
+      
+      lon <- dataset$xyCoords$x
+      lat <- dataset$xyCoords$y
+      
+      # Index
+      lonI <- which(abs(lon - lonC) == min(abs(lon - lonC), na.rm = TRUE)) 
+      latI <- which(abs(lat - latC) == min(abs(lat - latC), na.rm = TRUE))
+      
+      cell <- c(max(lonI), max(latI))
+      
+    } else stop('Wrong coord input, should be c(lon, lat). Lon and lat should be within the dataset range.')
+  } 
+  
+  
+  
+  
   if (!any(attributes(data)$dimensions == 'member')){
-    stop('There is no member part in the dataset, check the input
-         dataset or change your arguments.')
-  }
-  
-  
-  if (length(cell) == 2) {
-    data_ensem <- data[cell[1], cell[2], , ]
-    meanV <- apply(data_ensem, MARGIN = 1, FUN = mean, na.rm = TRUE)
-    data_ensem <- data.frame('Mean' = meanV, data_ensem) 
+    message('There is no member part in the dataset, there will be only one column of value
+            returned.')
     
-  } else if (cell == 'mean') {
-    data_ensem <- apply(data, MARGIN = c(3, 4), FUN = mean, na.rm = TRUE)
-#    colnames <- 1:ncol(data_ensem)
-    meanV <- apply(data_ensem, MARGIN = 1, FUN = mean, na.rm = TRUE)
-    data_ensem <- data.frame('Mean' = meanV, data_ensem)
+    if (length(cell) == 2) {
+      data_ensem <- data[cell[1], cell[2], ]
+      
+    } else if (cell == 'mean') {
+      data_ensem <- apply(data, MARGIN = 3, FUN = mean, na.rm = TRUE)
+      #    colnames <- 1:ncol(data_ensem)
+      
+    } else {
+      stop('Wrong cell input, check help for information.')
+    }
     
   } else {
-    stop('Wrong cell input, check help for information.')
+    
+    if (length(cell) == 2) {
+      data_ensem <- data[cell[1], cell[2], , ]
+      meanV <- apply(data_ensem, MARGIN = 1, FUN = mean, na.rm = TRUE)
+      data_ensem <- data.frame('Mean' = meanV, data_ensem) 
+      
+    } else if (cell == 'mean') {
+      data_ensem <- apply(data, MARGIN = c(3, 4), FUN = mean, na.rm = TRUE)
+  #    colnames <- 1:ncol(data_ensem)
+      meanV <- apply(data_ensem, MARGIN = 1, FUN = mean, na.rm = TRUE)
+      data_ensem <- data.frame('Mean' = meanV, data_ensem)
+      
+    } else {
+      stop('Wrong cell input, check help for information.')
+    }
   }
+
   
   data_output <- data.frame(Date, data_ensem)
   data_ggplot <- melt(data_output, id.var = 'Date')
@@ -329,13 +394,20 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', 
     
   }
   
+  colors = c('red', rainbow(length(unique(data_ggplot$variable)) - 1))
+  
   theme_set(theme_bw())
   mainLayer <- with(data_ggplot, {
     ggplot(data = data_ggplot) +
       aes(x = Date, y = value, color = variable) +
       geom_line(size = 0.3) +
-      geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 2) +
+      geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 2, color = 'red') +
       geom_point(data = data_ggplot[NAIndex, ], size = 2, shape = 4, color = 'black') +
+      scale_color_manual(values = colors) +
+      theme(axis.text.x = element_text(size = rel(1.8)),
+            axis.text.y = element_text(size = rel(1.8)),
+            axis.title.x = element_text(size = rel(1.8)),
+            axis.title.y = element_text(size = rel(1.8))) +
       labs(empty = NULL, ...)#in order to pass "...", arguments shouldn't be empty.
     
   })
@@ -361,11 +433,21 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', 
 #' or \code{getFrcEnsem(, output = 'ggplot')}, see details.
 #' @param nrow A number showing the number of rows.
 #' @param list If input is a list containing different ggplot data, use \code{list = inputlist}.
+#' @param legend A boolean representing whether you want the legend. Sometimes when you combine
+#' plots, there will be a lot of legends, if you don't like it, you can turn it off by setting
+#' \code{legend = FALSE}, default is TRUE.
+#' @param x A string of x axis name.
+#' @param y A string of y axis name.
+#' @param title A string of the title.
+#' @param output A boolean, if chosen TRUE, the output will be given.
 #' @return A combined ensemble plot.
 #' @export
 #' @import ggplot2
+#' @references 
+#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
 
-getEnsem_comb <- function(..., list = NULL, nrow = 1) {
+getEnsem_comb <- function(..., list = NULL, nrow = 1, legend = TRUE, x = '', y = '', title = '', 
+                          output = FALSE) {
   
   if (!is.null(list)) {
     data_ggplot <- do.call('rbind', list)
@@ -379,22 +461,41 @@ getEnsem_comb <- function(..., list = NULL, nrow = 1) {
   if (!class(data_ggplot) == 'data.frame') {
     warning('Your input is probably a list, but you forget to add "list = " before it.
             Try again, or check help for more information.')
-  } else if (is.null(data_ggplot$Name)) {
+  } else if (is.null(data_ggplot$name)) {
     stop('No "Name" column in the input data, check the arguments in getFreEnsem() or getHisEnsem(), if 
          output = "ggplot" is assigned, more info please check ?getFreEnsem() or ?getHisEnsem().')
   }
   
+  colors = c('red', 'blue', rainbow(length(unique(data_ggplot$variable)) - 2))
   
   theme_set(theme_bw())
   mainLayer <- with(data_ggplot, {
     ggplot(data = data_ggplot) +
       aes(x = Date, y = value, color = variable) +
       geom_line(size = 0.3) +
-      geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 2) +
+      geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 2, color = 'red') +
+      geom_line(data = data_ggplot[data_ggplot$variable == 'Observation', ], size = 2, color = 'blue') +
       geom_point(data = data_ggplot[data_ggplot$nav == 1, ], size = 2, shape = 4, color = 'black') +
-      facet_wrap( ~ name, nrow = nrow)
+      scale_color_manual(values = colors) +
+      theme(axis.text.x = element_text(size = rel(1.8)),
+            axis.text.y = element_text(size = rel(1.8)),
+            axis.title.x = element_text(size = rel(1.8)),
+            axis.title.y = element_text(size = rel(1.8))) +
+      facet_wrap( ~ name, nrow = nrow) +
+      labs(x = x, y = y, title = title)
     
   })
+  if (legend == FALSE) {
+    mainLayer <- mainLayer + 
+      theme(legend.position = 'none')
+# following ones are to add label, may be added in future.
+#      geom_text(data = data_ggplot[data_ggplot$Date == '2003-12-10', ], aes(label = variable), hjust = 0.7, vjust = 1)
+#      geom_text(data = data_ggplot[data_ggplot$variable == 'Mean', ], aes(label = variable), hjust = 0.7, vjust = 1)
+  }
+  
+  
   print(mainLayer)
+  
+  if (output == TRUE) return(data_ggplot)
   
 }

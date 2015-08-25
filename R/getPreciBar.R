@@ -7,7 +7,8 @@
 #' @param TS A time series, with first column the Date, second the value. If TS is not empty, 
 #' hyfo will take data from TS, not consider dataset, so you should only have one input, dataset
 #' or the time series. If your input is a time series, \code{TS = yourTS} has to be put as an argument,
-#' or the program may take it as a dataet, and will give an error.
+#' or the program may take it as a dataet, and will give an error. TS can be an ENSEMBLE containning 
+#' different members. Than the mean value will be given and the range will be given.
 #' @param cell A vector containing the locaton of the cell, e.g. c(2, 3), default is "mean", representing
 #' the spatially averaged value. Check details for more information.
 #' @param output A string showing the type of the output, if \code{output = 'ggplot'}, the returned 
@@ -21,6 +22,7 @@
 #' is NULL, if no member assigned, and there is a "member" in dimensions, the mean value of the members will be
 #' taken.
 #' @param omitNA A boolean showing whether the missing value is omitted.
+#' @param info A boolean showing whether the information of the map, e.g., max, mean ..., default is FALSE.
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #' @details
 #' There are following methods to be selected, 
@@ -44,18 +46,31 @@
 #' b2 <- getPreciBar(tgridData, method = 'meanMonthly')
 #' 
 #' @importFrom stats median
+#' @importFrom reshape2 melt
+#' @import ggplot2
+#' @references 
+#' Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+#' 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
+#' 
+#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' 
+#' 
+#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
 #' 
 #' @return The calculated mean value of the input time series and the plot of the result.
 #' @export
-getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'data', name = NULL, 
-                        plotRange = TRUE, member = NULL, omitNA = TRUE, ...) {
+getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', name = NULL, 
+                        plotRange = TRUE, member = NULL, omitNA = TRUE, TS = NULL, info = FALSE,
+                        ...) {
   
   if (is.null(TS)) {
     #check input dataset
     checkWord <- c('Data', 'xyCoords', 'Dates')
     if (any(is.na(match(checkWord, attributes(dataset)$names)))) {
       stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
-            check help for details.')
+            check help for details or use loadNCDF to read NetCDF file. 
+           If your input is a time series, put "TS = ".')
     }
     
     startTime <- as.POSIXlt(dataset$Dates$start, tz = 'GMT')
@@ -88,29 +103,46 @@ getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'dat
     TS <- apply(data, MARGIN = 3, FUN = mean, na.rm = TRUE) 
 
   } else {
+    
     Date <- as.POSIXlt(TS[, 1])
     yearIndex <- Date$year + 1900
     monthIndex <- Date$mon + 1
-    TS <- TS[, 2]
+    n <- ncol(TS) - 1
+    
+    if ( n == 1) {
+      TS <- TS[, 2]
+    } else {
+      
+      TS <- TS[, -1]
+      # month index should be repeat, but years cannot.
+      yearIndex <- sapply(1:n, function(x) yearIndex + x - 1)
+      dim(yearIndex) <- c(n * nrow(yearIndex), 1)
+      
+      monthIndex <- rep(monthIndex, n)
+      TS <- melt(TS)[, 2]
+      
+    }
+
   }
     
   if (method == 'meanMonthly') {
     
-    monthlypreci <- tapply(TS, INDEX = list(yearIndex, monthIndex), FUN = sum, na.rm = omitNA)
-    meanMonthlyPreci <- apply(monthlypreci, MARGIN = 2, FUN = mean, na.rm = TRUE)
+    monthlyPreci <- tapply(TS, INDEX = list(yearIndex, monthIndex), FUN = sum, na.rm = omitNA)
+    meanMonthlyPreci <- apply(monthlyPreci, MARGIN = 2, FUN = mean, na.rm = TRUE)
     
     
     title <- 'Mean Monthly Precipitation'
     xlab <- 'Month'
     
-    plotPreci <- data.frame(Index = month.abb[1:12], Preci = meanMonthlyPreci)
+    plotPreci <- data.frame(Index = month.abb[as.numeric(colnames(monthlyPreci))], 
+                            Preci = meanMonthlyPreci)
     
     # Here factor has to be reassigned, to keep the original order, or it will be reordered.
     plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
     
     if (plotRange) {
-      maxValue <- apply(monthlypreci, MARGIN = 2, FUN = max, na.rm = TRUE)
-      minValue <- apply(monthlypreci, MARGIN = 2, FUN = min, na.rm = TRUE)
+      maxValue <- apply(monthlyPreci, MARGIN = 2, FUN = max, na.rm = TRUE)
+      minValue <- apply(monthlyPreci, MARGIN = 2, FUN = min, na.rm = TRUE)
       
       plotPreci$maxValue <- maxValue
       plotPreci$minValue <- minValue
@@ -140,9 +172,13 @@ getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'dat
     
   } else if (is.numeric(method)) {
     month <- method
+    monExisting <- length(which(unique(monthIndex) == month))
+    if (monExisting == 0) stop("Your input month doesn't exist in the dataset.")
+    
     monthlyPreci <- getMeanPreci(TS, method = month, yearIndex = yearIndex,
                                  monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
-    
+    # If monthlyPreci length is 1, names need to be added.
+    if (length(monthlyPreci) == 1) names(monthlyPreci) <- unique(yearIndex)
     plotPreci <- data.frame(Index = names(monthlyPreci), Preci = monthlyPreci)
     plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
     
@@ -224,15 +260,19 @@ getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'dat
   
   
   xlim <- c(0, length(rownames(plotPreci))) 
-  meanValue <- round(mean(plotPreci$Preci, na.rm = TRUE), 2)
-  medianValue <- round(median(plotPreci$Preci,na.rm = TRUE), 2)
-  plotMean <- paste('Mean', ' = ', meanValue)
-  plotMedian <- paste('Median', ' = ', medianValue)
   
-  plotMax <- round(max(plotPreci$Preci, na.rm = TRUE), 2)
-  plotMin <- round(min(plotPreci$Preci, na.rm = TRUE), 2)
-  word <- paste('\n\n', paste(' Max', '=', plotMax), ',', paste('Min', '=', plotMin), ',',
-                plotMean, ',', plotMedian)
+  if (info == TRUE) {
+    meanValue <- round(mean(plotPreci$Preci, na.rm = TRUE), 2)
+    medianValue <- round(median(plotPreci$Preci,na.rm = TRUE), 2)
+    plotMean <- paste('Mean', ' = ', meanValue)
+    plotMedian <- paste('Median', ' = ', medianValue)
+    
+    plotMax <- round(max(plotPreci$Preci, na.rm = TRUE), 2)
+    plotMin <- round(min(plotPreci$Preci, na.rm = TRUE), 2)
+    word <- paste('\n\n', paste(' Max', '=', plotMax), ',', paste('Min', '=', plotMin), ',',
+                  plotMean, ',', plotMedian)
+  } else word <- NULL
+  
   
   xlab <- paste(xlab, word)
   
@@ -240,22 +280,23 @@ getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'dat
   
   mainLayer <- with(plotPreci, {
     ggplot(plotPreci) +
-    geom_bar(aes(x = Index, y = Preci), stat = 'identity', colour = 'black', fill = 'cyan', width = .6) +
+    geom_bar(aes(x = Index, y = Preci), stat = 'identity', colour = 'black', fill = 'cyan2', width = rel(.4)) +
     xlab(xlab) +
     ylab('Precipitation (mm)') +
     ggtitle(title) +
     labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
-    theme(plot.title = element_text(size = rel(1.3), face = 'bold'),
-          axis.title.x = element_text(size = rel(1.2)),
-          axis.title.y = element_text(size = rel(1.2)),
-          axis.text.x = element_text(angle = 90, hjust = 1)) +
+    theme(plot.title = element_text(size = rel(1.6), face = 'bold'),
+          axis.title.x = element_text(size = rel(1.6)),
+          axis.title.y = element_text(size = rel(1.6)),
+          axis.text.x = element_text(angle = 90, hjust = 1, size = rel(1.9)),
+          axis.text.y = element_text(size = rel(1.9)))
 #    geom_text(x = min(xlim) + 0.95 * (max(xlim) - min(xlim)), y = min(ylim) + 0.15 * (max(ylim) - min(ylim)),
 #              label = word)+
-    geom_hline(yintercept = meanValue) +
-    geom_text(x = min(xlim) + 0.3 * (max(xlim) - min(xlim)), y = meanValue + 3, vjust = 0, label = 'mean') +
-    geom_hline(yintercept = medianValue, colour = 'red') +
-    geom_text(x = min(xlim) + 0.6 * (max(xlim) - min(xlim)), y = medianValue + 3, vjust = 0,
-              label = 'median', colour = 'red')
+#     geom_hline(yintercept = meanValue) +
+#     geom_text(x = min(xlim) + 0.3 * (max(xlim) - min(xlim)), y = meanValue + 3, vjust = 0, label = 'mean') +
+#     geom_hline(yintercept = medianValue, colour = 'red') +
+#     geom_text(x = min(xlim) + 0.6 * (max(xlim) - min(xlim)), y = medianValue + 3, vjust = 0,
+#               label = 'median', colour = 'red')
   })
   
 
@@ -265,7 +306,7 @@ getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'dat
       print(mainLayer)
     } else {
       rangeLayer <- with(plotPreci, {
-        geom_errorbar(aes(x = Index, ymax = maxValue, ymin = minValue), width = 0.3)
+        geom_errorbar(aes(x = Index, ymax = maxValue, ymin = minValue), width = rel(0.3))
       })       
       print(mainLayer + rangeLayer)
     }
@@ -301,6 +342,10 @@ getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'dat
 #' @param nrow A number showing the number of rows.
 #' @param list If input is a list containing different ggplot data, use l\code{list = inputlist}.
 #' NOTE: yOU HAVE TO PUT A \code{list = }, before your list.
+#' @param x A string of x axis name.
+#' @param y A string of y axis name.
+#' @param title A string of the title.
+#' @param output A boolean, if chosen TRUE, the output will be given.
 #' @return A combined barplot.
 #' @examples
 #' 
@@ -313,7 +358,9 @@ getPreciBar <- function(dataset, TS = NULL, method, cell = 'mean', output = 'dat
 #' 
 #' @export
 #' @import ggplot2
-getPreciBar_comb <- function(..., list = NULL, nrow = 1) {
+#' @references 
+#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+getPreciBar_comb <- function(..., list = NULL, nrow = 1, x = '', y = '', title = '', output = FALSE) {
   if (!is.null(list)) {
     data_ggplot <- do.call('rbind', list)
   } else {
@@ -337,20 +384,27 @@ getPreciBar_comb <- function(..., list = NULL, nrow = 1) {
   
   mainLayer <- with(data_ggplot, {
     ggplot(data_ggplot) +
-      geom_bar(aes(x = Index, y = Preci),fill = 'cyan', stat = 'identity', 
-               colour = 'black', width = .6) +
+      geom_bar(aes(x = Index, y = Preci),fill = 'cyan2', stat = 'identity', 
+               colour = 'black', width = rel(.4)) +
       facet_wrap( ~ Name, nrow = nrow) +
-      theme(axis.text.x = element_text(angle = 90, hjust = 1))
+      theme(plot.title = element_text(size = rel(1.6), face = 'bold'),
+            axis.title.x = element_text(size = rel(1.6)),
+            axis.title.y = element_text(size = rel(1.6)),
+            axis.text.x = element_text(angle = 90, hjust = 1, size = rel(1.9)),
+            axis.text.y = element_text(size = rel(1.9))) +
+      labs(x = x, y = y, title = title)
   })
   
   if (!any(is.na(match(c('minValue', 'maxValue'), colnames(data_ggplot))))) {
     rangeLayer <- with(data_ggplot, {
-      geom_errorbar(aes(x = Index, ymax = maxValue, ymin = minValue), width = 0.3)
+      geom_errorbar(aes(x = Index, ymax = maxValue, ymin = minValue), width = rel(0.3))
     })       
     mainLayer <- mainLayer + rangeLayer
   }
 
   
   suppressWarnings(print(mainLayer))
+  
+  if (output == TRUE) return(data_ggplot)
 }
 

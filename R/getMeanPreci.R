@@ -51,7 +51,7 @@
 #                   fullResults = TRUE)
 
 getMeanPreci <- function(inputTS, method = NULL, yearIndex = NULL, monthIndex = NULL,
-                         fullResults = FALSE, omitNA = FALSE, plot = FALSE, ...) {
+                         fullResults = FALSE, omitNA = TRUE, plot = FALSE, ...) {
   # First check if all the records are NA.
   if (any(!is.na(inputTS))) {
     #converting daily preci to the wanted preci.
@@ -122,27 +122,36 @@ getMeanPreci <- function(inputTS, method = NULL, yearIndex = NULL, monthIndex = 
       
       
       matrix <- tapply(inputTS, INDEX = list(monthIndex, yearIndex), FUN = sum, na.rm = omitNA)
-      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[c(3, 4, 5)]))
+      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[c('3', '4', '5')]))
       
       if (fullResults == TRUE) output <- seasonalPreci else output <- mean(seasonalPreci, na.rm = TRUE)
       
     } else if (method == 'summer') {
       
       matrix <- tapply(inputTS, INDEX = list(monthIndex, yearIndex), FUN = sum, na.rm = omitNA)
-      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[c(6, 7, 8)]))
+      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[c('6', '7', '8')]))
       
       if (fullResults == TRUE) output <- seasonalPreci else output <- mean(seasonalPreci, na.rm = TRUE)
       
     } else if (method == 'autumn') {
       
       matrix <- tapply(inputTS, INDEX = list(monthIndex, yearIndex), FUN = sum, na.rm = omitNA)
-      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[c(9, 10, 11)]))
+      seasonalPreci <- apply(matrix, MARGIN = 2, function(x) sum(x[c('9', '10', '11')]))
 
       if (fullResults == TRUE) output <- seasonalPreci else output <- mean(seasonalPreci, na.rm = TRUE)
       
     } else if (is.numeric(method)) {
       
       month <- method
+      
+      #check if month exist 
+      e <- match(month, unique(monthIndex))
+      if (is.na(e)) {
+        e1 <- paste(unique(monthIndex), collapse = ',')
+        m <- paste('No input month exists in the dataset, choose among', e1)
+        stop(m)
+      }
+      
       monthlyPreci <- tapply(inputTS, INDEX = list(yearIndex, monthIndex), 
                              FUN = sum, na.rm = omitNA)[, toString(month)]
       

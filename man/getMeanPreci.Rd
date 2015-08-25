@@ -5,7 +5,7 @@
 \title{Get mean rainfall data, e.g. mean annual rainfall, mean monthly rainfall and mean winter rainfall.}
 \usage{
 getMeanPreci(inputTS, method = NULL, yearIndex = NULL, monthIndex = NULL,
-  fullResults = FALSE, omitNA = FALSE, plot = FALSE, ...)
+  fullResults = FALSE, omitNA = TRUE, plot = FALSE, ...)
 }
 \arguments{
 \item{inputTS}{A time series with only data column (1 column).}

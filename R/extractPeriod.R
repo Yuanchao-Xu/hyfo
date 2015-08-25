@@ -1,12 +1,16 @@
 
-#' Extract common period or certain period from a list of different dataframes of time series.
+#' Extract common period or certain period from a list of different dataframes of time series, or from a 
+#' dataframe.
 #' NOTE: all the dates in the datalist should follow the format in ?as.Date{base}.
 #' @param datalist A list of different dataframes of time series .
 #' @param startDate A Date showing the start of the extract period, default as NULL.
 #' @param endDate A Date showing the end of the extract period, default as NULL.
 #' @param commonPeriod A boolean showing whether the common period is extracted. If chosen, startDate and endDate
 #' should be NULL.
-#' @return A list with all the time series inside containing the same period.
+#' @param dataframe A dataframe with first column Date, the rest columns value. If your input is a 
+#' dataframe, not time series list, you can put \code{dataframe = yourdataframe}. And certain period will be 
+#' extracted. Note: if your input is a time series, that means all the columns share the same period of date.
+#' @return A list or a dataframe with all the time series inside containing the same period.
 #' @examples
 #' # Generate timeseries datalist. Each data frame consists of a Date and a value.
 #' 
@@ -40,11 +44,18 @@
 #' 
 #' 
 #' @importFrom zoo as.Date
+#' @references 
+#' Achim Zeileis and Gabor Grothendieck (2005). zoo: S3 Infrastructure for Regular and Irregular Time
+#' Series. Journal of Statistical Software, 14(6), 1-27. URL http://www.jstatsoft.org/v14/i06/
 #' @export
-extractPeriod <- function(datalist, startDate = NULL, endDate = NULL, commonPeriod = FALSE) {
-  
-  if (!is.null(startDate) & !is.null(endDate) & commonPeriod == FALSE) {
-    dataset <- lapply(datalist, extractPeriod_dataset, startDate = startDate, endDate = endDate)
+extractPeriod <- function(datalist, startDate = NULL, endDate = NULL, commonPeriod = FALSE, 
+                          dataframe = NULL) {
+  if (!is.null(dataframe)) {
+    dataset <- extractPeriod_dataframe(dataframe, startDate = startDate, endDate = endDate)
+  } else {
+    
+    if (!is.null(startDate) & !is.null(endDate) & commonPeriod == FALSE) {
+    dataset <- lapply(datalist, extractPeriod_dataframe, startDate = startDate, endDate = endDate)
   } else if (is.null(startDate) & is.null(endDate) & commonPeriod == TRUE) {
     
     Dates <- lapply(datalist, extractPeriod_getDate) 
@@ -53,10 +64,11 @@ extractPeriod <- function(datalist, startDate = NULL, endDate = NULL, commonPeri
     startDate <- as.Date(max(Dates[, 1]))
     endDate <- as.Date(min(Dates[, 2]))
     
-    dataset <- lapply(datalist, extractPeriod_dataset, startDate = startDate, endDate = endDate)
+    dataset <- lapply(datalist, extractPeriod_dataframe, startDate = startDate, endDate = endDate)
     
   } else {
     stop('Enter startDate and endDate, set commonPeriod as False, or simply set commonPeriod as TRUE')
+  }
   }
   
   return(dataset)
@@ -65,26 +77,33 @@ extractPeriod <- function(datalist, startDate = NULL, endDate = NULL, commonPeri
 
 #' Extract data from a dataframe with startDate and endDate
 #' 
-#' @param dataset A dataset with first column being a series of date or time.
+#' @param dataframe A time series with first column being a series of date or time.
 #' @param startDate A date representing the start date.
 #' @param endDate A date representing the end date.
 #' @return The extracted dataframe between \code{startDate} and \code{endDate}.
-#' @export
-extractPeriod_dataset <- function(dataset, startDate, endDate) {
+# @export
+extractPeriod_dataframe <- function(dataframe, startDate, endDate) {
+  if (!grepl('-|/', dataframe[1, 1])) {
+    stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
+         and use as.Date to convert.')
+  }
+  dataframe[, 1] <- as.Date(dataframe[, 1])
   
-  dataset[, 1] <- as.Date(dataset[, 1])
-  
-  startIndex <- which(dataset[, 1] == startDate)
-  endIndex <- which(dataset[, 1] == endDate)
+  startIndex <- which(dataframe[, 1] == startDate)
+  endIndex <- which(dataframe[, 1] == endDate)
   if (length(startIndex) == 0 | length(endIndex) == 0) {
     stop('startDate and endDate exceeds the date limits in dataframe. Check datalsit please.')
   }
-  output <- dataset[startIndex:endIndex, ]
+  output <- dataframe[startIndex:endIndex, ]
   
   return(output)  
 }
 
+
 #' @importFrom utils tail
+#' @references 
+#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
 extractPeriod_getDate <- function(dataset) {
   
   if (!grepl('-|/', dataset[1, 1])) {

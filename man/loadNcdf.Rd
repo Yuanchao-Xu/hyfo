@@ -4,7 +4,7 @@
 \alias{loadNcdf}
 \title{Load NetCDF file}
 \usage{
-loadNcdf(filePath, varname, tz = "GMT")
+loadNcdf(filePath, varname, tz = "GMT", ...)
 }
 \arguments{
 \item{filePath}{A path pointing to the NetCDF file, version3.}
@@ -14,6 +14,8 @@ get the basic information about the variables and select the target.}
 
 \item{tz}{A string representing the time zone, default is GMT, if you know what time zone is
 you can assign it in the argument. If \code{tz = ''}, current time zone will be taken.}
+
+\item{...}{Arguments will be passed to \code{downscaleNcdf}}
 }
 \value{
 A list object from \code{hyfo} containing the information to be used in the analysis,
@@ -21,5 +23,23 @@ or biascorrection.
 }
 \description{
 Load NetCDF file
+}
+\examples{
+# First open the test NETcDF file.
+filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
+
+# Then if you don't know the variable name, you can use \\code{getNcdfVar} to get variable name
+varname <- getNcdfVar(filePath)
+
+nc <- loadNcdf(filePath, varname)
+}
+\references{
+David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
+http://CRAN.R-project.org/package=ncdf
+
+file structure refers to
+
+Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
+version 2.2-6. http://meteo.unican.es/ecoms-udg
 }
 

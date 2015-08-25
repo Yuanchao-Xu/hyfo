@@ -19,7 +19,11 @@ readData_folder <- function(folderName, keyword) {
 }
 
 
-#'@importFrom utils choose.dir
+#' @importFrom utils choose.dir
+#' @references 
+#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+
 readData <- function(keyword, folderName) {
   message('Choose the main folder that, in it, there are different folders representing different gauging stations,
            all the gauging stations have precipitation data, some of them also have discharge data,

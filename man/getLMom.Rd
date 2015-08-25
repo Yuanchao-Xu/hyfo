@@ -19,4 +19,8 @@ get L moment analysis of the input distribution
 dis <- seq(1, 100)
 getLMom(dis)
 }
+\references{
+J. R. M. Hosking (2015). L-moments. R package, version 2.5. URL:
+http://CRAN.R-project.org/package=lmom.
+}
 

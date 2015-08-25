@@ -10,9 +10,9 @@ getHisEnsem(TS, example, interval = 365, buffer = 0, plot = "norm",
 \arguments{
 \item{TS}{A time series dataframe, with first column Date, and second column value.}
 
-\item{example}{A vector containing two strings showing the start and end date, which can be used as an example.
-This should be the first example, only the data earlier than the example will not be considered.
-e.g. \code{example = c('1994-3-1', '1996-1-2')}, meaning the example period is from 1994-3-1 to 1996-1-2. And
+\item{example}{A vector containing two strings showing the start and end date, which represent the
+forecasting period. Check details for more information.
+
 the program will extract every possible period in TS you provided to generate the ensemble. Check details for
 more information.}
 
@@ -48,6 +48,11 @@ A ensemble time series using historical data as forecast.
 getHisEnsem use historical data as the forecasting input time series.
 }
 \details{
+\code{example} E.g., if you have a time series from 2000 to 2010. Assuming you are in 2003,
+you want to forecast the period from 2003-2-1 to 2003-4-1. Then for each year in your input
+time series, every year from 1st Feb to 1st Apr will be extracted to generate the ensemble
+forecasts. In this case your input example should be \code{example = c('2003-2-1', '2003-4-1')}
+
 \code{interval} doesn't care about leap year and the months with 31 days, it will take 365 as a year, and 30 as a month.
 e.g., if the interval is from 1999-2-1 to 1999-3-1, you should just set interval to 30, although the real interval is 28
 days.
@@ -105,5 +110,11 @@ b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'))
 b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210, plot = 'cum')
 # Take 30 days as buffer
 b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210, buffer = 30)
+}
+\references{
+Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
+
+H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
 }
 

@@ -38,4 +38,8 @@ TS <- data.frame(Date = seq(as.Date('1999-9-15'), length = 30, by = '1 month'),
 runif(30, 3, 10))
 TS_new <- monDay(TS, method = 'mon2day')
 }
+\references{
+R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+}
 

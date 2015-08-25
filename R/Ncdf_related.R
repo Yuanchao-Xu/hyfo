@@ -3,7 +3,19 @@
 #' 
 #' @param filePath A path pointing to the netCDF file.
 #' @return The names of the varialbes in the file.
+#' @examples 
+#' # First open the test NETcDF file.
+#' filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
+#' 
+#' # Then if you don't know the variable name, you can use \code{getNcdfVar} to get variable name
+#' varname <- getNcdfVar(filePath)
+#' 
 #' @import ncdf
+#' @references 
+#' David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
+#' http://CRAN.R-project.org/package=ncdf
+#' 
+#' 
 #' @export
 getNcdfVar <- function(filePath) {
   nc <- open.ncdf(filePath)
@@ -19,12 +31,30 @@ getNcdfVar <- function(filePath) {
 #' get the basic information about the variables and select the target.
 #' @param tz A string representing the time zone, default is GMT, if you know what time zone is 
 #' you can assign it in the argument. If \code{tz = ''}, current time zone will be taken.
+#' @param ... Arguments will be passed to \code{downscaleNcdf}
 #' @return A list object from \code{hyfo} containing the information to be used in the analysis, 
 #' or biascorrection.
+#' @examples 
+#' # First open the test NETcDF file.
+#' filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
+#' 
+#' # Then if you don't know the variable name, you can use \code{getNcdfVar} to get variable name
+#' varname <- getNcdfVar(filePath)
+#' 
+#' nc <- loadNcdf(filePath, varname)
 #' 
 #' @export
-#'@import ncdf
-loadNcdf <- function(filePath, varname, tz = 'GMT') {
+#' @import ncdf
+#' @references 
+#' David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
+#' http://CRAN.R-project.org/package=ncdf
+#' 
+#' file structure refers to
+#' 
+#' Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
+#' version 2.2-6. http://meteo.unican.es/ecoms-udg
+#' 
+loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
   nc <- open.ncdf(filePath)
   
   var <- nc$var
@@ -92,10 +122,112 @@ loadNcdf <- function(filePath, varname, tz = 'GMT') {
   if (!is.na(dimIndex[4])) gridData$Members <- var$dim[[dimIndex[4]]]$vals
   
   gridData$Loaded <- 'by hyfo package, http://yuanchao-xu.github.io/hyfo/'
+  close.ncdf(nc)
+  
+  output <- downscaleNcdf(gridData, ...)
+  
+  return(output)
+  
+}
+
+
+
+
+#' Downscale NetCDF file
+#' @param gridData A hyfo list file or the list file from \code{loadECOMS{ecomsUDG.Raccess}}
+#'  or \code{loadGridData{ecomsUDG.Raccess}}
+#' @param year A vector of the target year. e.g. \code{year = 2000}, \code{year = 1980:2000}
+#' @param lon A vector of the range of the downscaled longitude, should contain a max value
+#' and a min value. e.g. \code{lon = c(-1.5, 2,5)}
+#' @param lat A vector of the range of the downscaled latitude, should contain a max value
+#' and a min value. e.g. \code{lat = c(32,2, 36)}
+#' @return A downscaled hyfo list file.
+#' @examples 
+#' # First open the test NETcDF file.
+#' filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
+#' 
+#' 
+#' # Then if you don't know the variable name, you can use \code{getNcdfVar} to get variable name
+#' varname <- getNcdfVar(filePath)
+#' 
+#' nc <- loadNcdf(filePath, varname)
+#' 
+#' # Then write to your work directory
+#' 
+#' nc1 <- downscaleNcdf(nc, year = 2006, lon = c(-2, -0.5), lat = c(43.2, 43.7))
+#' 
+#' 
+#' @export 
+#' @references 
+#' David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
+#' http://CRAN.R-project.org/package=ncdf
+#' 
+#' file structure refers to
+#' 
+#' Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
+#' version 2.2-6. http://meteo.unican.es/ecoms-udg
+#' 
+downscaleNcdf <- function(gridData, year = NULL, lon = NULL, lat = NULL) {
+  
+  if (!is.null(year)) {
+    Dates <- as.POSIXlt(gridData$Dates$start)
+    yearIndex <- Dates$year + 1900
+    
+    targetYearIndex <- unlist(lapply(year, function(x) which(yearIndex == x)))
+    if (length(targetYearIndex) == 0) stop('Check your input year, it may exceed the years 
+                                           in the input dataset.')
+    gridData$Dates$start <- gridData$Dates$start[targetYearIndex]
+    gridData$Dates$end <- gridData$Dates$end[targetYearIndex]
+    
+    timeDim <- match('time', attributes(gridData$Data)$dimensions)
+    
+    gridData$Data <- chooseDim(gridData$Data, timeDim, targetYearIndex)
+  }
+  
+  if (!is.null(lon)) {
+    
+    lonIndex <- gridData$xyCoords$x
+    
+    lonI1 <- which(abs(lonIndex - min(lon)) == min(abs(lonIndex - min(lon)), na.rm = TRUE)) 
+    lonI2 <- which(abs(lonIndex - max(lon)) == min(abs(lonIndex - max(lon)), na.rm = TRUE)) 
+    
+    targetLonIndex <- lonI1:lonI2
+    if (length(targetLonIndex) == 0) stop('Your input lon is too small, try to expand the 
+                                          longitude range.') 
+    gridData$xyCoords$x <- gridData$xyCoords$x[targetLonIndex]
+    lonDim <- match('lon', attributes(gridData$Data)$dimensions)
+    
+    gridData$Data <- chooseDim(gridData$Data, lonDim, targetLonIndex)
+  }
+  
+  
+  if (!is.null(lat)) {
+    latIndex <- gridData$xyCoords$y
+    
+    latI1 <- which(abs(latIndex - min(lat)) == min(abs(latIndex - min(lat)), na.rm = TRUE)) 
+    latI2 <- which(abs(latIndex - max(lat)) == min(abs(latIndex - max(lat)), na.rm = TRUE)) 
+    
+    targetLatIndex <- latI1:latI2
+    
+    if (length(targetLonIndex) == 0) stop('Your input lat is too small, try to expand the 
+                                          latitude range.') 
+    gridData$xyCoords$y <- gridData$xyCoords$y[targetLatIndex]
+    latDim <- match('lat', attributes(gridData$Data)$dimensions)
+    gridData$Data <- chooseDim(gridData$Data, latDim, targetLatIndex)
+  }
   
   return(gridData)
   
 }
+
+
+
+
+
+
+
+
+
 
 #' Write to NetCDF file using hyfo list file
 #' @param gridData A hyfo list file or the list file from \code{loadECOMS{ecomsUDG.Raccess}}
@@ -109,8 +241,33 @@ loadNcdf <- function(filePath, varname, tz = 'GMT') {
 #' seconds or days and so on. If not specified, the function will pick up the possible largest 
 #' time units from \code{c('weeks', 'days', 'hours', 'mins', 'secs')}
 #' @return An NetCDF version 3 file.
+#' @examples 
+#' # First open the test NETcDF file.
+#' filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
+#' 
+#' 
+#' # Then if you don't know the variable name, you can use \code{getNcdfVar} to get variable name
+#' varname <- getNcdfVar(filePath)
+#' 
+#' nc <- loadNcdf(filePath, varname)
+#' 
+#' # Then write to your work directory
+#' 
+#' writeNcdf(nc, 'test.nc')
+#' 
+#' 
 #' @export 
 #' @import ncdf
+#' @references 
+#' David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
+#' http://CRAN.R-project.org/package=ncdf
+#' 
+#' file structure refers to
+#' 
+#' Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
+#' version 2.2-6. http://meteo.unican.es/ecoms-udg
+#' 
+#' 
 writeNcdf <- function(gridData, filePath, missingValue = 1e20, tz = 'GMT', units = NULL) {
   
   name <- gridData$Variable$varName
@@ -191,7 +348,10 @@ getTimeUnit <- function(dates) {
 
 
 # Save for future use. 
-#'@import ncdf
+#' @import ncdf
+#' @references 
+#' David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
+#' http://CRAN.R-project.org/package=ncdf
 getExtralDim <- function(...) {
   dimList <- list(...)
   
