@@ -226,9 +226,9 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
     mainLayer <- with(data_ggplot, {
       ggplot(data = data_ggplot) +
         aes(x = Date, y = value, color = variable, group = variable) +
-        geom_line(size = 0.6) +
-        geom_line(data = data_ggplot[data_ggplot$variable == 'Observation', ], size = 1.5) +
-        geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 1.5) +
+        geom_line(size = 0.5) +
+        geom_line(data = data_ggplot[data_ggplot$variable == 'Observation', ], size = 1.6) +
+        geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 1.6) +
         geom_point(data = data_ggplot[NAIndex, ], size = 3, shape = 4, color = 'black') +
         scale_color_manual(values = colors) +
         labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
@@ -402,8 +402,8 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', 
   mainLayer <- with(data_ggplot, {
     ggplot(data = data_ggplot) +
       aes(x = Date, y = value, color = variable) +
-      geom_line(size = 0.6) +
-      geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 1.5, color = 'red') +
+      geom_line(size = 0.5) +
+      geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 1.6, color = 'red') +
       geom_point(data = data_ggplot[NAIndex, ], size = 2, shape = 4, color = 'black') +
       scale_color_manual(values = colors) +
       theme(axis.text.x = element_text(size = rel(1.8)),
@@ -475,9 +475,9 @@ getEnsem_comb <- function(..., list = NULL, nrow = 1, legend = TRUE, x = '', y =
   mainLayer <- with(data_ggplot, {
     ggplot(data = data_ggplot) +
       aes(x = Date, y = value, color = variable) +
-      geom_line(size = 0.6) +
-      geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 1.5) +
-      geom_line(data = data_ggplot[data_ggplot$variable == 'Observation', ], size = 1.5) +
+      geom_line(size = 0.5) +
+      geom_line(data = data_ggplot[data_ggplot$variable == 'Mean', ], size = 1.6) +
+      geom_line(data = data_ggplot[data_ggplot$variable == 'Observation', ], size = 1.6) +
       geom_point(data = data_ggplot[data_ggplot$nav == 1, ], size = 2, shape = 4, color = 'black') +
       scale_color_manual(values = colors) +
       theme(axis.text.x = element_text(size = rel(1.8)),
