@@ -2,7 +2,7 @@
 % Please edit documentation in R/checkBind.R
 \name{checkBind}
 \alias{checkBind}
-\title{check if the data is available for \code{rbind()} or \code{cbind()}}
+\title{Check data for bind function.}
 \usage{
 checkBind(data, bind)
 }

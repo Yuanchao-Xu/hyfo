@@ -2,9 +2,7 @@
 % Please edit documentation in R/getEnsemble.R
 \name{getFrcEnsem}
 \alias{getFrcEnsem}
-\title{getFrcEnsem extract timeseries from forecasting data, if forecasting data has a member session
-an ensemble time sereis will be returned, if forecasting data doesn't have a member session, a singe time
-series will be returned.}
+\title{Extract time series from forecasting data.}
 \usage{
 getFrcEnsem(dataset, cell = "mean", plot = "norm", output = "data",
   name = NULL, mv = 0, coord = NULL, ...)

@@ -2,10 +2,7 @@
 % Please edit documentation in R/list2dataframe.R
 \name{list2Dataframe}
 \alias{list2Dataframe}
-\title{Convert a list of different time series to a dataframe. Usually the list is the output of
-\code{extractPeriod}
-NOTE: Since it's dataframe, so the dataframes in the input datalist should have the same
-date, if not, please use  \code{extractPeriod} to process.}
+\title{Convert a list to a dataframe.}
 \usage{
 list2Dataframe(datalist)
 }

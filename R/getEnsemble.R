@@ -1,3 +1,5 @@
+#' Get ensemble forecast from historical data.
+#' 
 #' getHisEnsem use historical data as the forecasting input time series.
 #' 
 #' @param TS A time series dataframe, with first column Date, and second column value.
@@ -258,6 +260,8 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
 
 
 
+#' Extract time series from forecasting data.
+#' 
 #' getFrcEnsem extract timeseries from forecasting data, if forecasting data has a member session
 #' an ensemble time sereis will be returned, if forecasting data doesn't have a member session, a singe time
 #' series will be returned.

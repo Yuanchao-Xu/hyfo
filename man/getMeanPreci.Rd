@@ -2,7 +2,7 @@
 % Please edit documentation in R/getMeanPreci.R
 \name{getMeanPreci}
 \alias{getMeanPreci}
-\title{Get mean rainfall data, e.g. mean annual rainfall, mean monthly rainfall and mean winter rainfall.}
+\title{Get mean rainfall data.}
 \usage{
 getMeanPreci(inputTS, method = NULL, yearIndex = NULL, monthIndex = NULL,
   fullResults = FALSE, omitNA = TRUE, plot = FALSE, ...)

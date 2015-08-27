@@ -2,7 +2,7 @@
 % Please edit documentation in R/collectData_csv.R
 \name{collectData_csv_anarbe}
 \alias{collectData_csv_anarbe}
-\title{Collect data from the gauging stations in spain, catchement Anarbe}
+\title{Collect data from csv for Anarbe case.}
 \source{
 http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
 }

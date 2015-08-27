@@ -2,7 +2,7 @@
 % Please edit documentation in R/getSpatialMap.R
 \name{getSpatialMap_mat}
 \alias{getSpatialMap_mat}
-\title{Get spatial map of the input dataset, and a matrix representing the raster map will be returned.}
+\title{rePlot raster matrix}
 \usage{
 getSpatialMap_mat(matrix, title_d = NULL, catchment = NULL, points = NULL,
   output = "data", name = NULL, info = FALSE, scale = "identity",
@@ -43,7 +43,8 @@ default is about precipitation.}
 A matrix representing the raster map is returned, and the map is plotted.
 }
 \description{
-Get spatial map of the input dataset, and a matrix representing the raster map will be returned.
+replot the matrix output from \code{getSpatialMap}, when \code{output = 'data'} or output is default
+value.
 }
 \examples{
 data(tgridData)# the result of \\code{loadNcdf}

@@ -1,3 +1,5 @@
+#' Convert a list to a dataframe.
+#' 
 #' Convert a list of different time series to a dataframe. Usually the list is the output of
 #' \code{extractPeriod}
 #' NOTE: Since it's dataframe, so the dataframes in the input datalist should have the same 

@@ -1,4 +1,6 @@
 
+#' Extract period from list or dataframe.
+#' 
 #' Extract common period or certain period from a list of different dataframes of time series, or from a 
 #' dataframe.
 #' NOTE: all the dates in the datalist should follow the format in ?as.Date{base}.

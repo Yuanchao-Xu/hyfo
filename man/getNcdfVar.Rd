@@ -2,8 +2,7 @@
 % Please edit documentation in R/Ncdf_related.R
 \name{getNcdfVar}
 \alias{getNcdfVar}
-\title{Get variable name in the NetCDF file. After knowning the name, you can use \code{loadNcdf} to load
-the target variable.}
+\title{Get variable name of the NetCDF file.}
 \usage{
 getNcdfVar(filePath)
 }

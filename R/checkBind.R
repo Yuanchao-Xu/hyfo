@@ -1,3 +1,5 @@
+#' Check data for bind function.
+#' 
 #' check if the data is available for \code{rbind()} or \code{cbind()}
 #' 
 #' @param data A list containing different sublists ready to be processed by \code{do.call('rbind')} 

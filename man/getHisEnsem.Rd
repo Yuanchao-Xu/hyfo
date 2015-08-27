@@ -2,7 +2,7 @@
 % Please edit documentation in R/getEnsemble.R
 \name{getHisEnsem}
 \alias{getHisEnsem}
-\title{getHisEnsem use historical data as the forecasting input time series.}
+\title{Get ensemble forecast from historical data.}
 \usage{
 getHisEnsem(TS, example, interval = 365, buffer = 0, plot = "norm",
   output = "data", name = NULL, mv = 0, ...)

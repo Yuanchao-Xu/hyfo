@@ -1,3 +1,5 @@
+#' Get variable name of the NetCDF file.
+#' 
 #' Get variable name in the NetCDF file. After knowning the name, you can use \code{loadNcdf} to load
 #' the target variable.
 #' 

@@ -1,3 +1,5 @@
+#' Get mean rainfall data.
+#' 
 #' Get mean rainfall data, e.g. mean annual rainfall, mean monthly rainfall and mean winter rainfall.
 #' 
 #' @param inputTS A time series with only data column (1 column).

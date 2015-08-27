@@ -1,3 +1,5 @@
+#' Collect data from csv for Anarbe case.
+#' 
 #' Collect data from the gauging stations in spain, catchement Anarbe
 #' 
 #' @param folderName A string showing the path of the folder holding different csv files.

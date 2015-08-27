@@ -179,7 +179,10 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 
 
 
-#' Get spatial map of the input dataset, and a matrix representing the raster map will be returned.
+#' rePlot raster matrix
+#' 
+#' replot the matrix output from \code{getSpatialMap}, when \code{output = 'data'} or output is default
+#' value.
 #' 
 #' @param matrix A matrix raster, should be the result of \code{getSpatialMap()}, output should be default
 #' or 'data'
