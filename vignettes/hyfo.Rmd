@@ -12,7 +12,9 @@ output:
   html_document:
     toc: yes
 vignette: |
-  %\VignetteIndexEntry{hyfo easy start} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{ASCII}
+  %\VignetteIndexEntry{hyfo easy start} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{ASCII}
 ---
 
 # Introduction
