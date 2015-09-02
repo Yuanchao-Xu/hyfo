@@ -1,4 +1,3 @@
-
 #' Extract period from list or dataframe.
 #' 
 #' Extract common period or certain period from a list of different dataframes of time series, or from a 

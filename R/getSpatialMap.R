@@ -293,7 +293,7 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
   theme_set(theme_bw())
   
   if (is.null(colors)) colors <- c('yellow', 'orange', 'red')
-  
+  # if (is.null(colors)) colors <- rev(rainbow(n = 20, end = 0.7))
   
   mainLayer <- with(data_ggplot, {
     

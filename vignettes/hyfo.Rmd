@@ -187,7 +187,7 @@ a
 ```
 
 Mean annual precipitation is calculated, but as we can see in the figure before, it's not reliable, since there are a lot of missing values in AAA and CCC, especially in AAA, in 1993, there are more than 30 missing values in a year. So we have to decide which is the threshold for the valid record. the default is 355, which means in a year (355 or 365 days), if the valid records (not missing) exceeds 355, then this year is taken into consideration in the mean annual preicipitation calculation.
-```{r, fig.height=3, fig.width=3}
+```{r, fig.height=4, fig.width=7}
 getAnnual(testdl, output = 'mean', minRecords = 300)
 getAnnual(testdl, output = 'mean', minRecords = 365)
 ```
@@ -207,7 +207,8 @@ a <- getAnnual(dataframe = testdl[[1]])
 ```{r, fig.height=4, fig.width=7}
 a1 <- plotTS(TS = testdl[[1]])
 
-# You can also choose 'bar' as time series type, default is 'line'. But most of time, they are not # so different.
+# You can also choose 'bar' as time series type, default is 'line'. But most of time, 
+# they are not # so different.
 a2 <- plotTS(TS = testdl[[1]], type = 'bar')
 
 
