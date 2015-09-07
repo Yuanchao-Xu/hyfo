@@ -79,7 +79,7 @@ will be changed to 2001-1-1 to 2000-2-29, which keeps the start Date and change 
 If the end date is so important that cannot be changed, try to solve this problem by resetting
 the example period, to make the event included in the example.
 
-Good set of example and by can generate good ensemble.
+Good set of example and interval can generate good ensemble.
 
 \code{buffer}
 Sometimes the model needs to run for a few days to warm up, before the forecast. E.g., if a forecast starts at

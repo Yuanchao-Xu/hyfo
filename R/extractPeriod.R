@@ -84,10 +84,11 @@ extractPeriod <- function(datalist, startDate = NULL, endDate = NULL, commonPeri
 #' @return The extracted dataframe between \code{startDate} and \code{endDate}.
 # @export
 extractPeriod_dataframe <- function(dataframe, startDate, endDate) {
+  # to check whether first column is a date format
   if (!grepl('-|/', dataframe[1, 1])) {
     stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
          and use as.Date to convert.')
-  }
+  }    
   dataframe[, 1] <- as.Date(dataframe[, 1])
   
   startIndex <- which(dataframe[, 1] == startDate)
