@@ -5,14 +5,14 @@
 \title{Extract period from list or dataframe.}
 \usage{
 extractPeriod(datalist, startDate = NULL, endDate = NULL,
-  commonPeriod = FALSE, dataframe = NULL)
+  commonPeriod = FALSE, dataframe = NULL, year = NULL, month = NULL)
 }
 \arguments{
 \item{datalist}{A list of different dataframes of time series .}
 
-\item{startDate}{A Date showing the start of the extract period, default as NULL.}
+\item{startDate}{A Date showing the start of the extract period, default as NULL, check details.}
 
-\item{endDate}{A Date showing the end of the extract period, default as NULL.}
+\item{endDate}{A Date showing the end of the extract period, default as NULL, check details.}
 
 \item{commonPeriod}{A boolean showing whether the common period is extracted. If chosen, startDate and endDate
 should be NULL.}
@@ -20,6 +20,11 @@ should be NULL.}
 \item{dataframe}{A dataframe with first column Date, the rest columns value. If your input is a
 dataframe, not time series list, you can put \code{dataframe = yourdataframe}. And certain period will be
 extracted. Note: if your input is a time series, that means all the columns share the same period of date.}
+
+\item{year}{extract certain year in the entire time series. if you want to extract year 2000, set \code{year = 2000}}
+
+\item{month}{extract certain months in a year. e.g. if you want to extract Jan, Feb of each year,
+set \code{month = c(1, 2)}.}
 }
 \value{
 A list or a dataframe with all the time series inside containing the same period.
@@ -28,6 +33,29 @@ A list or a dataframe with all the time series inside containing the same period
 Extract common period or certain period from a list of different dataframes of time series, or from a
 dataframe.
 NOTE: all the dates in the datalist should follow the format in ?as.Date{base}.
+}
+\details{
+\strong{startDate and endDate}
+
+If startDate and endDate are assigned, then certain period between startDate and endDate will be returned,
+for both datalist input and dataframe input.
+
+If startDate and endDate are NOT assigned, then,
+
+   if input is a datalist, the startDate and endDate of the common period of different datalists will be assigned
+   to the startDate and endDate.
+
+   if input is a dataframe, the startDate and endDate of the input dataframe will be assigned to the startDate
+   and endDate . Since different value columns share a common Date column in a dataframe input.
+
+\strong{year and month}
+
+For year crossing month input, hyfo will take from the year before. E.g. if \code{month = c(10, 11, 12, 1)},
+and \code{year = 1999}, hyfo will take month 10, 11 and 12 from year 1998, and month 1 from 1999.You DO NOT
+have to set \code{year = 1998 : 1999}.
+
+Well, if you set \code{year = 1998 : 1999}, hyfo will take month 10, 11 and 12 from year 1997, and month 1 from 1998,
+then, take month 10, 11 and 12 from year 1998, month 1 from 1999. So you only have to care about the latter year.
 }
 \examples{
 # Generate timeseries datalist. Each data frame consists of a Date and a value.
@@ -59,6 +87,11 @@ str(list_com)
 
 data(testdl)
 datalist_com1 <- extractPeriod(testdl, startDate = '1994-1-1', endDate = '1995-10-1')
+
+
+dataframe <- list2Dataframe(datalist_com1)
+# now we have a dataframe to extract certain months.
+dataframe_new <- extractPeriod(dataframe = dataframe, month = c(1,2,3) )
 }
 \references{
 Achim Zeileis and Gabor Grothendieck (2005). zoo: S3 Infrastructure for Regular and Irregular Time

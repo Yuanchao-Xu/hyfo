@@ -53,6 +53,8 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
   att <- attributes(data)$dimensions
   dimIndex <- seq(1, length(att))
   dimIndex1 <- match(c('lon', 'lat', 'time'), att)# match can apply to simple cases
+  
+  # for array this works, or setdiff can be used here to find the nomatch element.
   dimIndex2 <- dimIndex[-dimIndex1]# choose nomatch
   
   

@@ -4,13 +4,41 @@
 #' dataframe.
 #' NOTE: all the dates in the datalist should follow the format in ?as.Date{base}.
 #' @param datalist A list of different dataframes of time series .
-#' @param startDate A Date showing the start of the extract period, default as NULL.
-#' @param endDate A Date showing the end of the extract period, default as NULL.
+#' @param startDate A Date showing the start of the extract period, default as NULL, check details.
+#' @param endDate A Date showing the end of the extract period, default as NULL, check details.
 #' @param commonPeriod A boolean showing whether the common period is extracted. If chosen, startDate and endDate
 #' should be NULL.
 #' @param dataframe A dataframe with first column Date, the rest columns value. If your input is a 
 #' dataframe, not time series list, you can put \code{dataframe = yourdataframe}. And certain period will be 
 #' extracted. Note: if your input is a time series, that means all the columns share the same period of date.
+#' @param year extract certain year in the entire time series. if you want to extract year 2000, set \code{year = 2000}
+#' @param month extract certain months in a year. e.g. if you want to extract Jan, Feb of each year, 
+#' set \code{month = c(1, 2)}.
+#' @details 
+#' \strong{startDate and endDate}
+#' 
+#' If startDate and endDate are assigned, then certain period between startDate and endDate will be returned, 
+#' for both datalist input and dataframe input.
+#' 
+#' If startDate and endDate are NOT assigned, then,
+#' 
+#'    if input is a datalist, the startDate and endDate of the common period of different datalists will be assigned
+#'    to the startDate and endDate.
+#' 
+#'    if input is a dataframe, the startDate and endDate of the input dataframe will be assigned to the startDate
+#'    and endDate . Since different value columns share a common Date column in a dataframe input. 
+#' 
+#' \strong{year and month}
+#' 
+#' For year crossing month input, hyfo will take from the year before. E.g. if \code{month = c(10, 11, 12, 1)},
+#' and \code{year = 1999}, hyfo will take month 10, 11 and 12 from year 1998, and month 1 from 1999.You DO NOT 
+#' have to set \code{year = 1998 : 1999}.
+#' 
+#' Well, if you set \code{year = 1998 : 1999}, hyfo will take month 10, 11 and 12 from year 1997, and month 1 from 1998,
+#' then, take month 10, 11 and 12 from year 1998, month 1 from 1999. So you only have to care about the latter year.
+#' 
+#' 
+#' 
 #' @return A list or a dataframe with all the time series inside containing the same period.
 #' @examples
 #' # Generate timeseries datalist. Each data frame consists of a Date and a value.
@@ -44,52 +72,58 @@
 #' datalist_com1 <- extractPeriod(testdl, startDate = '1994-1-1', endDate = '1995-10-1')
 #' 
 #' 
+#' dataframe <- list2Dataframe(datalist_com1)
+#' # now we have a dataframe to extract certain months.
+#' dataframe_new <- extractPeriod(dataframe = dataframe, month = c(1,2,3) )
+#' 
+#' 
 #' @importFrom zoo as.Date
 #' @references 
 #' Achim Zeileis and Gabor Grothendieck (2005). zoo: S3 Infrastructure for Regular and Irregular Time
 #' Series. Journal of Statistical Software, 14(6), 1-27. URL http://www.jstatsoft.org/v14/i06/
 #' @export
 extractPeriod <- function(datalist, startDate = NULL, endDate = NULL, commonPeriod = FALSE, 
-                          dataframe = NULL) {
+                          dataframe = NULL, year = NULL, month = NULL) {
   if (!is.null(dataframe)) {
-    dataset <- extractPeriod_dataframe(dataframe, startDate = startDate, endDate = endDate)
-  } else {
+    dataset <- extractPeriod_dataframe(dataframe, startDate = startDate, endDate = endDate, year = year,
+                                       month = month)
     
+    
+  } else {
     if (!is.null(startDate) & !is.null(endDate) & commonPeriod == FALSE) {
-    dataset <- lapply(datalist, extractPeriod_dataframe, startDate = startDate, endDate = endDate)
-  } else if (is.null(startDate) & is.null(endDate) & commonPeriod == TRUE) {
+      dataset <- lapply(datalist, extractPeriod_dataframe, startDate = startDate, endDate = endDate, year = year,
+                        month = month)
+    } else if (is.null(startDate) & is.null(endDate) & commonPeriod == TRUE) {
     
-    Dates <- lapply(datalist, extractPeriod_getDate) 
-    Dates <- do.call('rbind', Dates)
+      Dates <- lapply(datalist, extractPeriod_getDate) 
+      Dates <- do.call('rbind', Dates)
     
-    startDate <- as.Date(max(Dates[, 1]))
-    endDate <- as.Date(min(Dates[, 2]))
+      startDate <- as.Date(max(Dates[, 1]))
+      endDate <- as.Date(min(Dates[, 2]))
     
-    dataset <- lapply(datalist, extractPeriod_dataframe, startDate = startDate, endDate = endDate)
+      dataset <- lapply(datalist, extractPeriod_dataframe, startDate = startDate, endDate = endDate, year = year,
+                        month = month)
     
-  } else {
-    stop('Enter startDate and endDate, set commonPeriod as False, or simply set commonPeriod as TRUE')
-  }
+    } else {
+      stop('Enter startDate and endDate, set commonPeriod as False, or simply set commonPeriod as TRUE')
+    }
   }
   
   return(dataset)
 }
 
 
-#' Extract data from a dataframe with startDate and endDate
-#' 
-#' @param dataframe A time series with first column being a series of date or time.
-#' @param startDate A date representing the start date.
-#' @param endDate A date representing the end date.
-#' @return The extracted dataframe between \code{startDate} and \code{endDate}.
-# @export
-extractPeriod_dataframe <- function(dataframe, startDate, endDate) {
+
+extractPeriod_dataframe <- function(dataframe, startDate, endDate, year = NULL, month = NULL) {
   # to check whether first column is a date format
   if (!grepl('-|/', dataframe[1, 1])) {
     stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
          and use as.Date to convert.')
   }    
   dataframe[, 1] <- as.Date(dataframe[, 1])
+  
+  if (is.null(startDate)) startDate <- dataframe[1, 1]
+  if (is.null(endDate)) endDate <- tail(dataframe[, 1], 1)
   
   startIndex <- which(dataframe[, 1] == startDate)
   endIndex <- which(dataframe[, 1] == endDate)
@@ -98,6 +132,40 @@ extractPeriod_dataframe <- function(dataframe, startDate, endDate) {
   }
   output <- dataframe[startIndex:endIndex, ]
   
+  # month needs to be firstly extracted, then year, otherwise, redundant months will be extracted.
+  if (!is.null(month)) {
+    Date <- as.POSIXlt(output[, 1])
+    mon <- Date$mon + 1
+    
+    # %in% can deal with multiple equalities
+    DateIndex <- which(mon %in% month)
+    
+    output <- output[DateIndex, ]
+  }
+
+  
+  if (!is.null(year)) {
+    Date <- as.POSIXlt(output[, 1])
+    yea <- Date$year + 1900
+    mon <- Date$mon + 1
+      
+    if (!any(sort(month) != month) | is.null(month)) {
+      DateIndex <- which(yea %in% year)
+      output <- output[DateIndex, ]
+      
+      # if year crossing  than sort(month) != month
+    } else {
+      
+      startIndex <- which(yea == year - 1 & mon == month[1])[1]
+      endIndex <- tail(which(yea == year & mon == tail(month, 1)), 1)
+      
+      output <- output[startIndex:endIndex, ]
+    }
+      
+  }
+  
+  
+
   return(output)  
 }
 

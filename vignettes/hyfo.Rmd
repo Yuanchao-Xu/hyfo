@@ -232,7 +232,7 @@ plotTS_comb(a1, a2, nrow = 2)
 
 ## 1.3 Further Process for Model Input
 
-### 1.3.1 Extract Common Period from Different Time Series
+### 1.3.1 Extract Certain Period or Months from Different Time Series
 
 Now we have the general information of the precipitation, if we want to use them in a model, we have to extract the common period of them, and use the common period precipitation to analyze.
 ```{r, fig.height=4, fig.width=7, results='hide'}
@@ -253,7 +253,7 @@ Above is for us to extract period from different datalist, if we have a single t
 ```{r, fig.height=4, fig.width=7, results='hide'}
 # First change the list from above process to dataframe
 dataframe <- list2Dataframe(testdl_new)
-# not we have a dataframe to extract certain period.
+# now we have a dataframe to extract certain period.
 dataframe <- extractPeriod(dataframe = dataframe, startDate = '1994-12-01', endDate = '1995-03-01' )
 str(testdl_new)
 ```

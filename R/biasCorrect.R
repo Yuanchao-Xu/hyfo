@@ -39,6 +39,8 @@
 #' Hindcast is also called re-forecast, is the forecast of the past. E.g. you have a forecast from year 2000-2010, assuming now you are in 2005. So from 2000-2005, this period
 #' is the hindcast period, and 2005-2010, this period is the forecast period.
 #'
+#' Hindcast can be the same as forecast, i.e., you can use forecast itself as hindcast to train the bias correction.
+#'
 #'
 #' \strong{How it works}
 #' 
