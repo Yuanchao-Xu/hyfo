@@ -38,12 +38,16 @@
 
 <p>You can directly download ".tar.gz" file from the link above, and install in an R IDE e.g. Rstudio. <strong>Or</strong> use the <strong>Simpler</strong> way to install the latest version. Remember，your R should be at least R 3.1.0.</p>
 
-<div class="highlight highlight-r,"><pre>  install.packages(<span class="pl-s"><span class="pl-pds">'</span>devtools<span class="pl-pds">'</span></span>)
+<div class="highlight highlight-r"><pre>  install.packages(<span class="pl-s"><span class="pl-pds">'</span>devtools<span class="pl-pds">'</span></span>)
   <span class="pl-c"># Ignore the warning that Rtool is not installed, unless you want other function from devtools.</span>
   <span class="pl-c"># If "devtools" is already installed in your computer, you can directly run the following code.</span>
   <span class="pl-e">devtools</span><span class="pl-k">::</span>install_github(<span class="pl-s"><span class="pl-pds">'</span>Yuanchao-Xu/hyfo<span class="pl-pds">'</span></span>)</pre></div>
 
-<p>If meet with some error during the installation (e.g., <code>{r}cannot remove prior installation of package 'XXX'</code>), most probably is because of the conflicts between packages (e.g., "Rcpp" and "sp"), you can just follow the error message and re-install the required packages, they are all on CRAN, which is very convenient.</p>
+<p>If meet with some error during the installation, e.g., </p>
+
+<div class="highlight highlight-r"><pre>  <span class="pl-smi">cannot</span> <span class="pl-smi">remove</span> <span class="pl-smi">prior</span> <span class="pl-smi">installation</span> <span class="pl-smi">of</span> <span class="pl-smi">package</span> <span class="pl-s"><span class="pl-pds">'</span>XXX<span class="pl-pds">'</span></span></pre></div>
+
+<p>Most probably it is because of the conflicts between packages (e.g., "Rcpp" and "sp"), you can just follow the error message and re-install the required packages, they are all on CRAN, which is very convenient.</p>
 
 <h2>
 <a id="updates" class="anchor" href="#updates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Updates</h2>
