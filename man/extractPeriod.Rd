@@ -90,8 +90,9 @@ datalist_com1 <- extractPeriod(testdl, startDate = '1994-1-1', endDate = '1995-1
 
 
 dataframe <- list2Dataframe(datalist_com1)
-# now we have a dataframe to extract certain months.
-dataframe_new <- extractPeriod(dataframe = dataframe, month = c(1,2,3) )
+# now we have a dataframe to extract certain months and years.
+dataframe_new <- extractPeriod(dataframe = dataframe, month = c(1,2,3))
+dataframe_new <- extractPeriod(dataframe = dataframe, month = c(12,1,2), year = 1995)
 }
 \references{
 Achim Zeileis and Gabor Grothendieck (2005). zoo: S3 Infrastructure for Regular and Irregular Time

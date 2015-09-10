@@ -2,11 +2,11 @@
 % Please edit documentation in R/getSpatialMap.R
 \name{getSpatialMap_mat}
 \alias{getSpatialMap_mat}
-\title{rePlot raster matrix}
+\title{Replot raster matrix}
 \usage{
-getSpatialMap_mat(matrix, title_d = NULL, catchment = NULL, points = NULL,
+getSpatialMap_mat(matrix, title_d = NULL, catchment = NULL, point = NULL,
   output = "data", name = NULL, info = FALSE, scale = "identity",
-  colors = NULL, ...)
+  color = NULL, ...)
 }
 \arguments{
 \item{matrix}{A matrix raster, should be the result of \code{getSpatialMap()}, output should be default
@@ -16,7 +16,7 @@ or 'data'}
 
 \item{catchment}{A catchment file geting from \code{shp2cat()} in the package, if a catchment is available for background.}
 
-\item{points}{A dataframe, showing other information, e.g., location of the gauging stations. The
+\item{point}{A dataframe, showing other information, e.g., location of the gauging stations. The
 the data.frame should be with columes "name, lon, lat, z, value".}
 
 \item{output}{A string showing the type of the output, if \code{output = 'ggplot'}, the returned
@@ -31,9 +31,9 @@ different outputs in the later multiplot using \code{getSpatialMap_comb}.}
 
 \item{scale}{A string showing the plot scale, 'identity' or 'sqrt'.}
 
-\item{colors}{Most of time you don't have to set this, but if you are not satisfied with the
-default color, you can set your own palette here. e.g., \code{colors = c('red', 'blue')}, then
-the value from lowest to highest, will have the color from red to blue. More info about colors,
+\item{color}{Most of time you don't have to set this, but if you are not satisfied with the
+default color, you can set your own palette here. e.g., \code{color = c('red', 'blue')}, then
+the value from lowest to highest, will have the color from red to blue. More info about color,
 please check ?palette().}
 
 \item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}

@@ -75,7 +75,7 @@
 #' 
 #' @examples 
 #' 
-#' # Use testdl as an example, we take frc, hindcast and obs fro testdl.
+#' # Use testdl as an example, we take frc, hindcast and obs from testdl.
 #' data(testdl)
 #' 
 #' # common period has to be extracted in order to better train the forecast.
@@ -91,6 +91,14 @@
 #' 
 #' # If the variable is precipitation, it cannot be negative value, so use multi scale method
 #' frc_new <- biasCorrect(frc, hindcast, obs, method = 'scaling', scaleType = 'multi')
+#' 
+#' # If the forecasts you extracted only has incontinuous data for certain months and years, e.g.,
+#' # for seasonal forecasting, forecasts only provide 3-6 months data, so the case can be 
+#' # for example Dec, Jan and Feb of every year from year 1999-2005.
+#' # In such case, you need to extract certain months and years from observed time series.
+#' # extractPeriod() can be then used.
+#'   
+#' 
 #' 
 #' @references 
 #' Bias correction methods come from \code{biasCorrection} from \code{dowscaleR}

@@ -8,7 +8,7 @@
 #' is NULL, if no member assigned, and there is a "member" in dimensions, the mean value of the members will be
 #' taken.
 #' @param ... Check \code{?getSpatialMap_mat} for details, e.g., x, y, title, catchment, 
-#' points, output,
+#' point, output,
 #' @return A matrix representing the raster map is returned, and the map is plotted.
 #' @details
 #' There are following methods to be selected, 
@@ -26,9 +26,9 @@
 #' 
 #' getSpatialMap(tgridData, method = 'winter', catchment = testCat)
 #' 
-#' file <- system.file("extdata", "points.txt", package = "hyfo")
-#' points <- read.table(file, header = TRUE, sep = ',' )
-#' getSpatialMap(tgridData, method = 'winter', catchment = testCat, points = points)
+#' file <- system.file("extdata", "point.txt", package = "hyfo")
+#' point <- read.table(file, header = TRUE, sep = ',' )
+#' getSpatialMap(tgridData, method = 'winter', catchment = testCat, point = point)
 #' 
 #' @export
 getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
@@ -181,7 +181,7 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 
 
 
-#' rePlot raster matrix
+#' Replot raster matrix
 #' 
 #' replot the matrix output from \code{getSpatialMap}, when \code{output = 'data'} or output is default
 #' value.
@@ -190,7 +190,7 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 #' or 'data'
 #' @param title_d A string showing the title of the plot, defaut is NULL.
 #' @param catchment A catchment file geting from \code{shp2cat()} in the package, if a catchment is available for background.
-#' @param points A dataframe, showing other information, e.g., location of the gauging stations. The 
+#' @param point A dataframe, showing other information, e.g., location of the gauging stations. The 
 #' the data.frame should be with columes "name, lon, lat, z, value".
 #' @param output A string showing the type of the output, if \code{output = 'ggplot'}, the returned 
 #' data can be used in ggplot and \code{getSpatialMap_comb()}; if \code{output = 'plot'}, the returned data is the plot containing all 
@@ -200,9 +200,9 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 #' different outputs in the later multiplot using \code{getSpatialMap_comb}.
 #' @param info A boolean showing whether the information of the map, e.g., max, mean ..., default is FALSE.
 #' @param scale A string showing the plot scale, 'identity' or 'sqrt'.
-#' @param colors Most of time you don't have to set this, but if you are not satisfied with the 
-#' default color, you can set your own palette here. e.g., \code{colors = c('red', 'blue')}, then
-#' the value from lowest to highest, will have the color from red to blue. More info about colors,
+#' @param color Most of time you don't have to set this, but if you are not satisfied with the 
+#' default color, you can set your own palette here. e.g., \code{color = c('red', 'blue')}, then
+#' the value from lowest to highest, will have the color from red to blue. More info about color,
 #' please check ?palette().
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #'default is about precipitation.
@@ -249,16 +249,16 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 #' 
 #' 
 #' 
-getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points = NULL, output = 'data', 
-                              name = NULL, info = FALSE, scale = 'identity', colors = NULL, ...) {
+getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, point = NULL, output = 'data', 
+                              name = NULL, info = FALSE, scale = 'identity', color = NULL, ...) {
   #check input
   checkWord <- c('lon', 'lat', 'z', 'value')
   if (is.null(attributes(matrix)$dimnames)) {
     stop('Input matrix is incorrect, check help to know how to get the matrix.')
   } else if (!is.null(catchment) & class(catchment) != "SpatialPolygonsDataFrame") {
     stop('Catchment format is incorrect, check help to get more details. ')
-  } else if (!is.null(points) & any(is.na(match(checkWord, attributes(points)$names)))) {
-    stop('Points should be a dataframe with colnames "lon, lat, z, value".')
+  } else if (!is.null(point) & any(is.na(match(checkWord, attributes(point)$names)))) {
+    stop('point should be a dataframe with colnames "lon, lat, z, value".')
   }
   
   #ggplot
@@ -294,15 +294,15 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
   colnames(data_ggplot) <- c('lat', 'lon', 'value')
   theme_set(theme_bw())
   
-  if (is.null(colors)) colors <- c('yellow', 'orange', 'red')
-  # if (is.null(colors)) colors <- rev(rainbow(n = 20, end = 0.7))
+  if (is.null(color)) color <- c('yellow', 'orange', 'red')
+  # if (is.null(color)) color <- rev(rainbow(n = 20, end = 0.7))
   
   mainLayer <- with(data_ggplot, {
     
     ggplot(data = data_ggplot) +
     geom_tile(aes(x = lon, y = lat, fill = value)) +
     #scale_fill_discrete()+
-    scale_fill_gradientn(colours = colors, na.value = 'transparent') +#usually scale = 'sqrt'
+    scale_fill_gradientn(colours = color, na.value = 'transparent') +#usually scale = 'sqrt'
                         #guide = guide_colorbar, colorbar and legend are not the same.
     guides(fill = guide_colourbar(title='Rainfall (mm)', barheight = rel(9), trans = scale)) +#usually scale = 'sqrt'
     geom_map(data = world_map, map = world_map, aes(map_id = region), fill = 'transparent', 
@@ -346,10 +346,10 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, points =
     
     printLayer <- printLayer + catchmentLayer
   }
-  #plot points
-  if (is.null(points) == FALSE) {
-    pointLayer <- with(points, {
-      geom_point(data = points, aes(x = lon, y = lat, size = value, colour = z),
+  #plot point
+  if (is.null(point) == FALSE) {
+    pointLayer <- with(point, {
+      geom_point(data = point, aes(x = lon, y = lat, size = value, colour = z),
                  guide = guide_legend(barheight = rel(3)))
         
         

@@ -18,7 +18,7 @@ is NULL, if no member assigned, and there is a "member" in dimensions, the mean 
 taken.}
 
 \item{...}{Check \code{?getSpatialMap_mat} for details, e.g., x, y, title, catchment,
-points, output,}
+point, output,}
 }
 \value{
 A matrix representing the raster map is returned, and the map is plotted.
@@ -42,8 +42,8 @@ getSpatialMap(tgridData, method = 'winter')
 
 getSpatialMap(tgridData, method = 'winter', catchment = testCat)
 
-file <- system.file("extdata", "points.txt", package = "hyfo")
-points <- read.table(file, header = TRUE, sep = ',' )
-getSpatialMap(tgridData, method = 'winter', catchment = testCat, points = points)
+file <- system.file("extdata", "point.txt", package = "hyfo")
+point <- read.table(file, header = TRUE, sep = ',' )
+getSpatialMap(tgridData, method = 'winter', catchment = testCat, point = point)
 }
 

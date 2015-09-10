@@ -73,8 +73,9 @@
 #' 
 #' 
 #' dataframe <- list2Dataframe(datalist_com1)
-#' # now we have a dataframe to extract certain months.
-#' dataframe_new <- extractPeriod(dataframe = dataframe, month = c(1,2,3) )
+#' # now we have a dataframe to extract certain months and years.
+#' dataframe_new <- extractPeriod(dataframe = dataframe, month = c(1,2,3))
+#' dataframe_new <- extractPeriod(dataframe = dataframe, month = c(12,1,2), year = 1995)
 #' 
 #' 
 #' @importFrom zoo as.Date
