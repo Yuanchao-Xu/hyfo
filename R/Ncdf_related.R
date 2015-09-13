@@ -12,6 +12,8 @@
 #' # Then if you don't know the variable name, you can use \code{getNcdfVar} to get variable name
 #' varname <- getNcdfVar(filePath)
 #' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' 
 #' @import ncdf
 #' @references 
 #' David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
@@ -33,7 +35,9 @@ getNcdfVar <- function(filePath) {
 #' get the basic information about the variables and select the target.
 #' @param tz A string representing the time zone, default is GMT, if you know what time zone is 
 #' you can assign it in the argument. If \code{tz = ''}, current time zone will be taken.
-#' @param ... Arguments will be passed to \code{downscaleNcdf}
+#' @param ... Several arguments including Year, month, lon, lat 
+#' type in \code{?downscaleNcdf} for details.You can load while downscale, 
+#' and also first load than use \code{downscaleNcdf} to downscale.
 #' @return A list object from \code{hyfo} containing the information to be used in the analysis, 
 #' or biascorrection.
 #' @examples 
@@ -44,6 +48,13 @@ getNcdfVar <- function(filePath) {
 #' varname <- getNcdfVar(filePath)
 #' 
 #' nc <- loadNcdf(filePath, varname)
+#' 
+#' # you can directly add your downscale information to the argument.
+#' nc1 <- loadNcdf(filePath, varname, year = 2006, lon = c(-2, -0.5), lat = c(43.2, 43.7))
+#' nc2 <- loadNcdf(filePath, varname, year = 2005, month = 3:8, lon = c(-2, -0.5), 
+#' lat = c(43.2, 43.7))
+#' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export
 #' @import ncdf
@@ -109,6 +120,8 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
     warning("Only one time step is taken, time dimension is dropped in the original data.
             But after loading, the time dimension (with length : 1) will be added.")
   }
+  
+  # Right now there is no need to add end Date, in furture, may be added as needed.
   gridData$Dates$start <- as.character(Date)
   
   # Assing data to grid data
@@ -116,7 +129,7 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
   
   if (length(dim(nc_data)) < 3) {
     dim(nc_data) <- c(dim(nc_data), 1) 
-    message('Time dimension is added, make sure in your original data, only time dimension is dropped.')
+    message('Time dimension is added, make sure in your original data, only time dimension was dropped.')
   }
   gridData$Data <- nc_data
   attributes(gridData$Data)$dimensions <- dimNames
@@ -139,6 +152,7 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
 #' @param gridData A hyfo list file or the list file from \code{loadECOMS{ecomsUDG.Raccess}}
 #'  or \code{loadGridData{ecomsUDG.Raccess}}
 #' @param year A vector of the target year. e.g. \code{year = 2000}, \code{year = 1980:2000}
+#' @param month A vector of the target month. e.g. \code{month = 2}, \code{month = 3:12}
 #' @param lon A vector of the range of the downscaled longitude, should contain a max value
 #' and a min value. e.g. \code{lon = c(-1.5, 2,5)}
 #' @param lat A vector of the range of the downscaled latitude, should contain a max value
@@ -157,7 +171,9 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
 #' # Then write to your work directory
 #' 
 #' nc1 <- downscaleNcdf(nc, year = 2006, lon = c(-2, -0.5), lat = c(43.2, 43.7))
+#' nc2 <- downscaleNcdf(nc, year = 2005, month = 3:8, lon = c(-2, -0.5), lat = c(43.2, 43.7))
 #' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export 
 #' @references 
@@ -169,22 +185,56 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
 #' Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
 #' version 2.2-6. http://meteo.unican.es/ecoms-udg
 #' 
-downscaleNcdf <- function(gridData, year = NULL, lon = NULL, lat = NULL) {
+downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat = NULL) {
+  
+  if (!is.null(month)) {
+    Dates <- as.POSIXlt(gridData$Dates$start)
+    monIndex <- Dates$mon + 1
+    
+    targetMonIndex <- which(monIndex %in% month)
+    if (length(targetMonIndex) == 0) stop('Check your input year, it may exceed the years 
+                                           in the input dataset.')
+    gridData$Dates$start <- gridData$Dates$start[targetMonIndex]
+    gridData$Dates$end <- gridData$Dates$end[targetMonIndex]
+    
+    timeDim <- match('time', attributes(gridData$Data)$dimensions)
+    
+    gridData$Data <- chooseDim(gridData$Data, timeDim, targetMonIndex)
+    
+  }
   
   if (!is.null(year)) {
     Dates <- as.POSIXlt(gridData$Dates$start)
     yearIndex <- Dates$year + 1900
+    monIndex <- Dates$mon + 1
+    timeDim <- match('time', attributes(gridData$Data)$dimensions)
     
-    targetYearIndex <- unlist(lapply(year, function(x) which(yearIndex == x)))
-    if (length(targetYearIndex) == 0) stop('Check your input year, it may exceed the years 
-                                           in the input dataset.')
+    
+    if (is.null(month) || !any(sort(month) != month)) {
+      targetYearIndex <- which(yearIndex %in% year)
+      if (length(targetYearIndex) == 0) stop('No input years in the input ts, check your input.')
+      
+      
+      # if year crossing  than sort(month) != month
+    } else {
+      
+      startIndex <- which(yearIndex == year - 1 & monIndex == month[1])[1]
+      endIndex <- tail(which(yearIndex == year & monIndex == tail(month, 1)), 1)
+      
+      if (is.na(startIndex) || length(endIndex) == 0 || startIndex > endIndex) {
+        stop('Cannot find input months and input years in the input time series.')
+      } else {
+        
+        targetYearIndex <- startIndex:endIndex
+      }
+    }
+    
     gridData$Dates$start <- gridData$Dates$start[targetYearIndex]
     gridData$Dates$end <- gridData$Dates$end[targetYearIndex]
     
-    timeDim <- match('time', attributes(gridData$Data)$dimensions)
-    
     gridData$Data <- chooseDim(gridData$Data, timeDim, targetYearIndex)
-  }
+  }  
+    
   
   if (!is.null(lon)) {
     
@@ -257,6 +307,7 @@ downscaleNcdf <- function(gridData, year = NULL, lon = NULL, lat = NULL) {
 #' 
 #' writeNcdf(nc, 'test.nc')
 #' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export 
 #' @import ncdf

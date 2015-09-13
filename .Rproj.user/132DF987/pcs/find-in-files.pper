@@ -4,7 +4,7 @@
         "filePatterns" : [
         ],
         "path" : "~/hyfo/R",
-        "query" : "import reshape2",
+        "query" : "...",
         "regex" : false
     }
 }

@@ -18,6 +18,8 @@ get L moment analysis of the input distribution
 \examples{
 dis <- seq(1, 100)
 getLMom(dis)
+
+# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
 J. R. M. Hosking (2015). L-moments. R package, version 2.5. URL:

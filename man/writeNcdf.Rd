@@ -43,6 +43,8 @@ nc <- loadNcdf(filePath, varname)
 # Then write to your work directory
 
 writeNcdf(nc, 'test.nc')
+
+# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
 David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.

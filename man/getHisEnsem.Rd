@@ -110,6 +110,9 @@ b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'))
 b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210, plot = 'cum')
 # Take 30 days as buffer
 b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210, buffer = 30)
+
+
+# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
 Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,

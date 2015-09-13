@@ -510,7 +510,7 @@ writeNcdf(gridData = nc, filePath = 'test.nc')
 ```
 
 
-`hyfo` can also do downscale job. When you load the file, you can directly assign the year, longitude and latitude. And if you already have a hyfo list file, you can use `downscaleNcdf` to downscale your list file. 
+`hyfo` can also do downscale job. When you load the file, you can directly assign the year, month, longitude and latitude. And if you already have a hyfo list file, you can use `downscaleNcdf` to downscale your list file. 
 
 ```{r, fig.height=6, fig.width=9}
 # First open the test NETcDF file.
@@ -519,13 +519,15 @@ filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
 # Then if you don't know the variable name, you can use \code{getNcdfVar} to get variable name
 varname <- getNcdfVar(filePath)
 
-nc <- loadNcdf(filePath, varname, year = 2005:2006, lon = c(-2.4, -1.6), 
-               lat = c(41, 43.5))
+nc <- loadNcdf(filePath, varname, year = 2005:2006, month = c(2:9), 
+               lon = c(-2.4, -1.6), lat = c(41, 43.5))
+
 
 nc_plot <- getSpatialMap(nc, 'mean') 
 
 # if you want to further downscale nc, you can use the following function.
-nc1 <- downscaleNcdf(nc, year = 2005, lon = c(-2.2, -1.75), lat = c(43, 44))
+nc1 <- downscaleNcdf(nc, year = 2005, month = c(5:8), lon = c(-2.2, -1.75), 
+                     lat = c(43, 44))
 nc1_plot <- getSpatialMap(nc1, 'mean')
 ```
 

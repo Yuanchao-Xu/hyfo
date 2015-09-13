@@ -27,6 +27,9 @@
 #' a3 <- fillGap(a2)
 #' getAnnual(dataframe = a3)
 #' 
+#' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' 
 #' @export
 #' @import ggplot2 
 #' @importFrom reshape2 melt

@@ -16,6 +16,8 @@
 #' 
 #' a <- collectData(folder, fileType = 'csv', range = c(10, 20, 1,2))
 #' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' 
 #' @export
 collectData <- function(folderName, fileType = NULL, range = NULL, sheetIndex = 1){
   

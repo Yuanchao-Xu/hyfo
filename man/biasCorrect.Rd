@@ -108,6 +108,8 @@ frc_new <- biasCorrect(frc, hindcast, obs, method = 'scaling', scaleType = 'mult
 # for example Dec, Jan and Feb of every year from year 1999-2005.
 # In such case, you need to extract certain months and years from observed time series.
 # extractPeriod() can be then used.
+
+# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
 Bias correction methods come from \code{biasCorrection} from \code{dowscaleR}

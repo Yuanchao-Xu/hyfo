@@ -45,6 +45,8 @@
 #' b1 <- getPreciBar(tgridData, method = 'annual')
 #' b2 <- getPreciBar(tgridData, method = 'meanMonthly')
 #' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' 
 #' @importFrom stats median
 #' @importFrom reshape2 melt
 #' @import ggplot2
@@ -355,6 +357,8 @@ getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', name = 
 #' b2 <- getPreciBar(tgridData, method = 3, output = 'ggplot', name = 'b2')
 #' 
 #' getPreciBar_comb(b1, b2)
+#' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export
 #' @import ggplot2

@@ -18,7 +18,8 @@ plots afterwards.}
 \item{name}{If \code{output = 'ggplot'}, name has to be assigned to your output, in order to differentiate
 different outputs in the later multiplot using \code{plotTS_comb}.}
 
-\item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}}
+\item{...}{\code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'},
+\code{x = 'aaa'}, \code{y = 'aaa'}}
 }
 \value{
 A plot of the input time series.
@@ -28,6 +29,10 @@ plot time series, with marks on missing value.
 }
 \examples{
 plotTS(testdl[[1]])
+plotTS(testdl[[1]], x = 'xxx', y = 'yyy', title = 'aaa')
+
+
+# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
 H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.

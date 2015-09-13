@@ -23,6 +23,8 @@
 #' runif(30, 3, 10))
 #' TS_new <- monDay(TS, method = 'mon2day')
 #' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' 
 #' @export
 #' @importFrom stats aggregate
 #' @references 

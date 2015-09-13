@@ -96,6 +96,11 @@
 #' b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210, plot = 'cum') 
 #' # Take 30 days as buffer
 #' b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210, buffer = 30)
+#' 
+#' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' 
+#' 
 #' @importFrom reshape2 melt 
 #' @importFrom grDevices rainbow
 #' @import ggplot2
@@ -322,6 +327,8 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
 #' b <- getFrcEnsem(nc, coord = c(-1.4, 43.2))
 #' 
 #' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' 
 #' @return A ensemble time series extracted from forecating data.
 #' 
 #' @import ggplot2
@@ -473,6 +480,27 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', 
 #' @param title A string of the title.
 #' @param output A boolean, if chosen TRUE, the output will be given.
 #' @return A combined ensemble plot.
+#' @examples 
+#' 
+#' data(testdl)
+#' 
+#' a <- testdl[[1]]
+#' 
+#' # Choose example from "1994-2-4" to "1996-1-4"
+#' 
+#' 
+#' b1<- getHisEnsem(a, example = c('1995-2-4', '1996-1-4'), plot = 'cum', output = 'ggplot',
+#'                  name = 1)
+#'                   
+#' b2 <- getHisEnsem(a, example = c('1995-4-4', '1996-3-4'), plot = 'cum', output = 'ggplot',
+#'                  name = 2)
+#' 
+#' getEnsem_comb(b1, b2)
+#' getEnsem_comb(list = list(b1, b2), nrow = 2)
+#' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' 
+#' 
 #' @export
 #' @import ggplot2
 #' @references 

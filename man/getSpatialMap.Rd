@@ -17,8 +17,8 @@ details.}
 is NULL, if no member assigned, and there is a "member" in dimensions, the mean value of the members will be
 taken.}
 
-\item{...}{Check \code{?getSpatialMap_mat} for details, e.g., x, y, title, catchment,
-point, output,}
+\item{...}{several arguments including x, y, title, catchment, point, output, name, info, scale, color,
+type in \code{?getSpatialMap_mat} for details.}
 }
 \value{
 A matrix representing the raster map is returned, and the map is plotted.
@@ -45,5 +45,7 @@ getSpatialMap(tgridData, method = 'winter', catchment = testCat)
 file <- system.file("extdata", "point.txt", package = "hyfo")
 point <- read.table(file, header = TRUE, sep = ',' )
 getSpatialMap(tgridData, method = 'winter', catchment = testCat, point = point)
+
+# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 

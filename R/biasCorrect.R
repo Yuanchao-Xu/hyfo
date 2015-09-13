@@ -98,6 +98,7 @@
 #' # In such case, you need to extract certain months and years from observed time series.
 #' # extractPeriod() can be then used.
 #'   
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
 #' 
 #' @references 

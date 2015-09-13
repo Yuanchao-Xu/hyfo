@@ -42,7 +42,11 @@ a2 <- getSpatialMap(tgridData, method = 'winter', output = 'ggplot', name = 'a2'
 # a3 <- getSpatialMap(tgridData, method = 'mean', output = 'ggplot', name = 'a3')
 # a4 <- getSpatialMap(tgridData, method = 'max', output = 'ggplot', name = 'a4')
 getSpatialMap_comb(a1, a2)
-getSpatialMap_comb(a1, a2, nrow = 2)
+
+# or you can put them into a list.
+getSpatialMap_comb(list = list(a1, a2), nrow = 2)
+
+# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
 H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.

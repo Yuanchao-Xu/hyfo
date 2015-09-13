@@ -61,6 +61,8 @@ getSpatialMap_mat(a4)
 #Or to investigate the difference between winter value and summer value.
 a6 <- a3 - a4
 getSpatialMap_mat(a6)
+
+# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
 R Core Team (2015). R: A language and environment for statistical computing. R Foundation for

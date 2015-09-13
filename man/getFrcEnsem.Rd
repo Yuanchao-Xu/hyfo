@@ -74,6 +74,9 @@ a <- getFrcEnsem(nc, cell = c(6,2))
 # From the map, cell = c(6, 2) means lon = -1.4, lat = 43.2, so you can use corrd to locate
 # your research area and extract time series.
 b <- getFrcEnsem(nc, coord = c(-1.4, 43.2))
+
+
+# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
 H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.

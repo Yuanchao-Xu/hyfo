@@ -4,13 +4,16 @@
 \alias{downscaleNcdf}
 \title{Downscale NetCDF file}
 \usage{
-downscaleNcdf(gridData, year = NULL, lon = NULL, lat = NULL)
+downscaleNcdf(gridData, year = NULL, month = NULL, lon = NULL,
+  lat = NULL)
 }
 \arguments{
 \item{gridData}{A hyfo list file or the list file from \code{loadECOMS{ecomsUDG.Raccess}}
 or \code{loadGridData{ecomsUDG.Raccess}}}
 
 \item{year}{A vector of the target year. e.g. \code{year = 2000}, \code{year = 1980:2000}}
+
+\item{month}{A vector of the target month. e.g. \code{month = 2}, \code{month = 3:12}}
 
 \item{lon}{A vector of the range of the downscaled longitude, should contain a max value
 and a min value. e.g. \code{lon = c(-1.5, 2,5)}}
@@ -37,6 +40,9 @@ nc <- loadNcdf(filePath, varname)
 # Then write to your work directory
 
 nc1 <- downscaleNcdf(nc, year = 2006, lon = c(-2, -0.5), lat = c(43.2, 43.7))
+nc2 <- downscaleNcdf(nc, year = 2005, month = 3:8, lon = c(-2, -0.5), lat = c(43.2, 43.7))
+
+# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
 David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.

@@ -7,8 +7,8 @@
 #' @param member A number showing which member is selected to get, if the dataset has a "member" dimension. Default
 #' is NULL, if no member assigned, and there is a "member" in dimensions, the mean value of the members will be
 #' taken.
-#' @param ... Check \code{?getSpatialMap_mat} for details, e.g., x, y, title, catchment, 
-#' point, output,
+#' @param ...  several arguments including x, y, title, catchment, point, output, name, info, scale, color, 
+#' type in \code{?getSpatialMap_mat} for details.
 #' @return A matrix representing the raster map is returned, and the map is plotted.
 #' @details
 #' There are following methods to be selected, 
@@ -29,6 +29,8 @@
 #' file <- system.file("extdata", "point.txt", package = "hyfo")
 #' point <- read.table(file, header = TRUE, sep = ',' )
 #' getSpatialMap(tgridData, method = 'winter', catchment = testCat, point = point)
+#' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export
 getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
@@ -223,6 +225,8 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 #' a6 <- a3 - a4
 #' getSpatialMap_mat(a6)
 #' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' 
 #' @export
 #' @import ggplot2 plyr maps maptools rgeos
 #' @importFrom stats median
@@ -390,7 +394,11 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, point = 
 #'# a3 <- getSpatialMap(tgridData, method = 'mean', output = 'ggplot', name = 'a3')
 #'# a4 <- getSpatialMap(tgridData, method = 'max', output = 'ggplot', name = 'a4')
 #' getSpatialMap_comb(a1, a2)
-#' getSpatialMap_comb(a1, a2, nrow = 2)
+#' 
+#' # or you can put them into a list.
+#' getSpatialMap_comb(list = list(a1, a2), nrow = 2)
+#' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
 #' @details
 #' For \code{getSpatialMap_comb}, the maps to be compared should be with same size and resolution, 

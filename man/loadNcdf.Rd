@@ -15,7 +15,9 @@ get the basic information about the variables and select the target.}
 \item{tz}{A string representing the time zone, default is GMT, if you know what time zone is
 you can assign it in the argument. If \code{tz = ''}, current time zone will be taken.}
 
-\item{...}{Arguments will be passed to \code{downscaleNcdf}}
+\item{...}{Several arguments including Year, month, lon, lat
+type in \code{?downscaleNcdf} for details.You can load while downscale,
+and also first load than use \code{downscaleNcdf} to downscale.}
 }
 \value{
 A list object from \code{hyfo} containing the information to be used in the analysis,
@@ -32,6 +34,13 @@ filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
 varname <- getNcdfVar(filePath)
 
 nc <- loadNcdf(filePath, varname)
+
+# you can directly add your downscale information to the argument.
+nc1 <- loadNcdf(filePath, varname, year = 2006, lon = c(-2, -0.5), lat = c(43.2, 43.7))
+nc2 <- loadNcdf(filePath, varname, year = 2005, month = 3:8, lon = c(-2, -0.5),
+lat = c(43.2, 43.7))
+
+# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
 David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.

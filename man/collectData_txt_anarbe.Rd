@@ -30,6 +30,8 @@ collect data from different txt.
 file <- system.file("extdata", "1999.csv", package = "hyfo")
 folder <- strsplit(file, '1999')[[1]][1]
 a <- collectData_txt_anarbe(folder)
+
+# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
 http://www4.gipuzkoa.net/oohh/web/esp/02.asp

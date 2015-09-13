@@ -93,6 +93,9 @@ dataframe <- list2Dataframe(datalist_com1)
 # now we have a dataframe to extract certain months and years.
 dataframe_new <- extractPeriod(dataframe = dataframe, month = c(1,2,3))
 dataframe_new <- extractPeriod(dataframe = dataframe, month = c(12,1,2), year = 1995)
+
+
+# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
 Achim Zeileis and Gabor Grothendieck (2005). zoo: S3 Infrastructure for Regular and Irregular Time

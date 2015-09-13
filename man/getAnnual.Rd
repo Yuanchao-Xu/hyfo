@@ -44,6 +44,9 @@ getAnnual(dataframe = a2)
 
 a3 <- fillGap(a2)
 getAnnual(dataframe = a3)
+
+
+# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
 H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.

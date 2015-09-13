@@ -70,6 +70,8 @@ and 3rd latitude, by the increasing order. Longitude comes first.
 data(tgridData)
 b1 <- getPreciBar(tgridData, method = 'annual')
 b2 <- getPreciBar(tgridData, method = 'meanMonthly')
+
+# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
 Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,

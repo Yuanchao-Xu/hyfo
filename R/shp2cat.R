@@ -8,6 +8,9 @@
 #' #open internal file
 #' file <- system.file("extdata", "testCat.shp", package = "hyfo")
 #' catchment <- shp2cat(file)
+#' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' 
 #' @import rgdal
 #' @importFrom utils tail
 #' @references 

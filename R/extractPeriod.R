@@ -78,6 +78,8 @@
 #' dataframe_new <- extractPeriod(dataframe = dataframe, month = c(12,1,2), year = 1995)
 #' 
 #' 
+#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' 
 #' @importFrom zoo as.Date
 #' @references 
 #' Achim Zeileis and Gabor Grothendieck (2005). zoo: S3 Infrastructure for Regular and Irregular Time
@@ -140,6 +142,7 @@ extractPeriod_dataframe <- function(dataframe, startDate, endDate, year = NULL, 
     
     # %in% can deal with multiple equalities
     DateIndex <- which(mon %in% month)
+    if (length(DateIndex) == 0) stop('No input months in the input ts, check your input.')
     
     output <- output[DateIndex, ]
   }
@@ -150,8 +153,10 @@ extractPeriod_dataframe <- function(dataframe, startDate, endDate, year = NULL, 
     yea <- Date$year + 1900
     mon <- Date$mon + 1
       
-    if (!any(sort(month) != month) | is.null(month)) {
+    if (is.null(month) || !any(sort(month) != month)) {
       DateIndex <- which(yea %in% year)
+      if (length(DateIndex) == 0) stop('No input years in the input ts, check your input.')
+      
       output <- output[DateIndex, ]
       
       # if year crossing  than sort(month) != month
@@ -160,7 +165,12 @@ extractPeriod_dataframe <- function(dataframe, startDate, endDate, year = NULL, 
       startIndex <- which(yea == year - 1 & mon == month[1])[1]
       endIndex <- tail(which(yea == year & mon == tail(month, 1)), 1)
       
-      output <- output[startIndex:endIndex, ]
+      if (is.na(startIndex) || length(endIndex) == 0 || startIndex > endIndex) {
+        stop('Cannot find input months and input years in the input time series.')
+      } else {
+        output <- output[startIndex:endIndex, ]
+      }
+      
     }
       
   }
