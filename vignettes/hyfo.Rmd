@@ -3,18 +3,16 @@ title: '[hyfo Easy Start](http://yuanchao-xu.github.io/hyfo/)'
 author: "Yuanchao Xu"
 date: '`r Sys.Date()`'
 output:
-  pdf_document:
+  html_document:
     toc: yes
-    toc_depth: 3
   html_vignette:
     toc: yes
     toc_depth: 3
-  html_document:
+  pdf_document:
     toc: yes
-vignette: |
-  %\VignetteIndexEntry{hyfo easy start} 
-  %\VignetteEngine{knitr::rmarkdown} 
-  %\VignetteEncoding{ASCII}
+    toc_depth: 3
+vignette: "%\\VignetteIndexEntry{hyfo easy start} \n%\\VignetteEngine{knitr::rmarkdown}
+  \n%\\VignetteEncoding{ASCII}\n"
 ---
 
 # Introduction
@@ -48,7 +46,8 @@ Xu, Yuanchao(2015). hyfo: Hydrology and Climate Forecasting R Package for Data A
 * Also you can use the following code to install the latest version.
 ```{r, eval=FALSE}
   install.packages('devtools')
-  # Ignore the warning that Rtool is not installed, unless you want other function from devtools.
+  # Ignore the warning that Rtool is not installed, unless you want other function 
+  from devtools.
   # If you have "devtools" installed already, you just need to run the following code.
   devtools::install_github('Yuanchao-Xu/hyfo')
 ```
@@ -91,8 +90,8 @@ library(hyfo)#load the package.
 file <- system.file("extdata", "1999.csv", package = "hyfo")
 folder <- strsplit(file, '1999')[[1]][1]
 
-# Extract and combine content from different files and in each file, the extracted zone is 
-# from row 10 to row 20, Column 1 to column2.
+# Extract and combine content from different files and in each file, 
+# the extracted zone is from row 10 to row 20, Column 1 to column2.
 a <- collectData(folder, fileType = 'csv', range = c(10, 20, 1, 2))
 str(a)
 ```
@@ -491,12 +490,14 @@ There are three main functions dealing with `getNcdfVar()`, `loadNcdf()` and `wr
 # First open the test NETcDF file.
 filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
  
-# Then if you don't know the variable name, you can use \code{getNcdfVar} to get variable name
+# Then if you don't know the variable name, you can use \code{getNcdfVar} to 
+# get variable name
 varname <- getNcdfVar(filePath)
 
 nc <- loadNcdf(filePath, varname)
 
-# nc is a list based hyfo output file, with this file, you can make further analysis.
+# nc is a list based hyfo output file, with this file, you can make further 
+# analysis.
 
 # E.g. you want to make some changes to the data
 nc$Data <- nc$Data - 0.3
@@ -516,7 +517,8 @@ writeNcdf(gridData = nc, filePath = 'test.nc')
 # First open the test NETcDF file.
 filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
  
-# Then if you don't know the variable name, you can use \code{getNcdfVar} to get variable name
+# Then if you don't know the variable name, you can use \code{getNcdfVar} to 
+# get variable name
 varname <- getNcdfVar(filePath)
 
 nc <- loadNcdf(filePath, varname, year = 2005:2006, month = c(2:9), 
@@ -549,7 +551,8 @@ a <- getSpatialMap(tgridData, method = 'meanAnnual')
 # If a dataset is an ensemble forecast, you can use argument member to choose
 filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
  
-# Then if you don't know the variable name, you can use \code{getNcdfVar} to get variable name
+# Then if you don't know the variable name, you can use \code{getNcdfVar} to 
+# get variable name
 varname <- getNcdfVar(filePath)
 
 nc <- loadNcdf(filePath, varname)
@@ -808,7 +811,8 @@ getSpatialMap_comb(a1, a2, a3, a4, nrow = 4)
 
 `getSpatialMap_comb` accepts list (using `list =`) object too, which is easier for multi-plot. First list of 12 months are got. **NOTE: If input is a list, the argument should be `list = yourlist`, not directly put the list in the argument.**
 ```{r, fig.show='hide'}
-c <- lapply(1:12, function(x) getSpatialMap(tgridData, method = x, output = 'ggplot', name = x))
+c <- lapply(1:12, function(x) getSpatialMap(tgridData, method = x, output = 'ggplot', 
+                                            name = x))
 ```
 
 Then they are combined.
@@ -840,7 +844,8 @@ getPreciBar_comb(b1, b2, b3, b4, nrow = 2)
 ```
 
 ```{r, fig.show='hide', fig.height=6, fig.width=9, results='hide'}
-c <- lapply(1:12, function(x) getPreciBar(tgridData, method = x, output = 'ggplot', name = x))
+c <- lapply(1:12, function(x) getPreciBar(tgridData, method = x, output = 'ggplot', 
+                                          name = x))
 ```
 
 ```{r, fig.show='hold', fig.height=8, fig.width=9}
@@ -864,7 +869,8 @@ If there are different members existing in the dataset, `hyfo` can extract them 
 ```{r, fig.show='hold', fig.height=6, fig.width=9}
 filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
  
-# Then if you don't know the variable name, you can use \code{getNcdfVar} to get variable name
+# Then if you don't know the variable name, you can use \code{getNcdfVar} to 
+# get variable name
 varname <- getNcdfVar(filePath)
 
 nc <- loadNcdf(filePath, varname)
@@ -872,7 +878,8 @@ nc <- loadNcdf(filePath, varname)
 a <- getFrcEnsem(nc)
 
 
-# If there is no member session in the dataset, a single time sereis will be extracted.
+# If there is no member session in the dataset, a single time sereis will be 
+# extracted.
 
 a1 <- getFrcEnsem(tgridData)
 ```
@@ -883,8 +890,8 @@ The default output is spatially averaged, if there are more than one cells in th
 getSpatialMap(nc, 'mean')
 
 a <- getFrcEnsem(nc, cell = c(6,2))
-# From the map, cell = c(6, 2) means lon = -1.4, lat = 43.2, so you can use corrd to locate
-# your research area and extract time series.
+# From the map, cell = c(6, 2) means lon = -1.4, lat = 43.2, so you can use 
+# corrd to locate your research area and extract time series.
 b <- getFrcEnsem(nc, coord = c(-1.4, 43.2))
 
 ```

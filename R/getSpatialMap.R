@@ -52,6 +52,7 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
   data <- dataset$Data
   
   # Dimension needs to be arranged. Make sure first and second dimension is lat and lon.
+  # Further may be arranged into a seperate function
   att <- attributes(data)$dimensions
   dimIndex <- seq(1, length(att))
   dimIndex1 <- match(c('lon', 'lat', 'time'), att)# match can apply to simple cases
