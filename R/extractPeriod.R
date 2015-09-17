@@ -134,18 +134,6 @@ extractPeriod_dataframe <- function(dataframe, startDate, endDate, year = NULL, 
     stop('startDate and endDate exceeds the date limits in dataframe. Check datalsit please.')
   }
   output <- dataframe[startIndex:endIndex, ]
-  
-  # month needs to be firstly extracted, then year, otherwise, redundant months will be extracted.
-  if (!is.null(month)) {
-    Date <- as.POSIXlt(output[, 1])
-    mon <- Date$mon + 1
-    
-    # %in% can deal with multiple equalities
-    DateIndex <- which(mon %in% month)
-    if (length(DateIndex) == 0) stop('No input months in the input ts, check your input.')
-    
-    output <- output[DateIndex, ]
-  }
 
   
   if (!is.null(year)) {
@@ -159,22 +147,55 @@ extractPeriod_dataframe <- function(dataframe, startDate, endDate, year = NULL, 
       
       output <- output[DateIndex, ]
       
-      # if year crossing  than sort(month) != month
+      # if year crossing  than sort(month) != month, in this case we need to
+      # take months from last year.
     } else {
       
-      startIndex <- which(yea == year - 1 & mon == month[1])[1]
-      endIndex <- tail(which(yea == year & mon == tail(month, 1)), 1)
+      
+      startIndex <- intersect(which(yea == year[1] - 1), which(mon == month[1]))[1]
+      endIndex <- tail(intersect(which(yea == tail(year, 1)), which(mon == tail(month, 1))), 1)
+      
       
       if (is.na(startIndex) || length(endIndex) == 0 || startIndex > endIndex) {
         stop('Cannot find input months and input years in the input time series.')
-      } else {
-        output <- output[startIndex:endIndex, ]
+      }
+      output <- output[startIndex:endIndex, ]
+        
+      if (any(diff(year) != 1)) {
+        # if year is not continuous, like 1999, 2003, 2005, than we have to sift again.  
+        Date <- as.POSIXlt(output[, 1])
+        yea <- Date$year + 1900
+        mon <- Date$mon + 1
+        
+        DateIndex <- unlist(sapply(year, function(x) {
+          startIndex <- intersect(which(yea == x - 1), which(mon == month[1]))[1]
+          endIndex <- tail(intersect(which(yea == x), which(mon == tail(month, 1))), 1)
+          index <- startIndex:endIndex
+          return(index)
+        }))
+        
+        
+        output <- output[DateIndex, ]
+        
+        # cannot directly return output here, because sometimes, month can be incontinuous,
+        # we still need the next process to sift month.
+        }
       }
       
     }
-      
-  }
   
+    
+    if (!is.null(month)) {
+      Date <- as.POSIXlt(output[, 1])
+      mon <- Date$mon + 1
+    
+      # %in% can deal with multiple equalities
+      DateIndex <- which(mon %in% month)
+      
+      if (length(DateIndex) == 0) stop('No input months in the input ts, check your input.')
+      
+      output <- output[DateIndex, ]
+  }
   
 
   return(output)  
@@ -197,3 +218,6 @@ extractPeriod_getDate <- function(dataset) {
   
   return(c(start, end))
 }
+
+
+

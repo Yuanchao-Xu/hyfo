@@ -187,21 +187,6 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
 #' 
 downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat = NULL) {
   
-  if (!is.null(month)) {
-    Dates <- as.POSIXlt(gridData$Dates$start)
-    monIndex <- Dates$mon + 1
-    
-    targetMonIndex <- which(monIndex %in% month)
-    if (length(targetMonIndex) == 0) stop('Check your input year, it may exceed the years 
-                                           in the input dataset.')
-    gridData$Dates$start <- gridData$Dates$start[targetMonIndex]
-    gridData$Dates$end <- gridData$Dates$end[targetMonIndex]
-    
-    timeDim <- match('time', attributes(gridData$Data)$dimensions)
-    
-    gridData$Data <- chooseDim(gridData$Data, timeDim, targetMonIndex)
-    
-  }
   
   if (!is.null(year)) {
     Dates <- as.POSIXlt(gridData$Dates$start)
@@ -218,14 +203,34 @@ downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat =
       # if year crossing  than sort(month) != month
     } else {
       
-      startIndex <- which(yearIndex == year - 1 & monIndex == month[1])[1]
-      endIndex <- tail(which(yearIndex == year & monIndex == tail(month, 1)), 1)
+      startIndex <- intersect(which(yearIndex == year[1] - 1), which(monIndex == month[1]))[1]
+      endIndex <- tail(intersect(which(yearIndex == tail(year, 1)), which(monIndex == tail(month, 1))), 1)
       
       if (is.na(startIndex) || length(endIndex) == 0 || startIndex > endIndex) {
         stop('Cannot find input months and input years in the input time series.')
       } else {
         
         targetYearIndex <- startIndex:endIndex
+        
+        if (any(diff(year) != 1)) {
+          # if year is not continuous, like 1999, 2003, 2005, than we have to sift again.
+          # Only for special cases.
+          Dates <- Dates[targetYearIndex]
+          yea <- Dates$year + 1900
+          mon <- Dates$mon + 1
+          
+          DateIndex <- unlist(sapply(year, function(x) {
+            startIndex <- intersect(which(yea == x - 1), which(mon == month[1]))[1]
+            endIndex <- tail(intersect(which(yea == x), which(mon == tail(month, 1))), 1)
+            index <- startIndex:endIndex
+            return(index)
+          }))
+          
+          
+          targetYearIndex <- targetYearIndex[DateIndex]
+          # cannot directly return output here, because sometimes, month can be incontinuous,
+          # we still need the next process to sift month.
+        }
       }
     }
     
@@ -235,6 +240,21 @@ downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat =
     gridData$Data <- chooseDim(gridData$Data, timeDim, targetYearIndex)
   }  
     
+  if (!is.null(month)) {
+    Dates <- as.POSIXlt(gridData$Dates$start)
+    monIndex <- Dates$mon + 1
+    
+    targetMonIndex <- which(monIndex %in% month)
+    if (length(targetMonIndex) == 0) stop('Check your input year, it may exceed the years 
+                                          in the input dataset.')
+    gridData$Dates$start <- gridData$Dates$start[targetMonIndex]
+    gridData$Dates$end <- gridData$Dates$end[targetMonIndex]
+    
+    timeDim <- match('time', attributes(gridData$Data)$dimensions)
+    
+    gridData$Data <- chooseDim(gridData$Data, timeDim, targetMonIndex)
+    
+  }
   
   if (!is.null(lon)) {
     
@@ -243,7 +263,8 @@ downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat =
     lonI1 <- which(abs(lonIndex - min(lon)) == min(abs(lonIndex - min(lon)), na.rm = TRUE)) 
     lonI2 <- which(abs(lonIndex - max(lon)) == min(abs(lonIndex - max(lon)), na.rm = TRUE)) 
     
-    targetLonIndex <- lonI1:lonI2
+    # take the as large as possible range
+    targetLonIndex <- lonI1[length(lonI1)]:lonI2[length(lonI2)]
     if (length(targetLonIndex) == 0) stop('Your input lon is too small, try to expand the 
                                           longitude range.') 
     gridData$xyCoords$x <- gridData$xyCoords$x[targetLonIndex]
@@ -259,7 +280,7 @@ downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat =
     latI1 <- which(abs(latIndex - min(lat)) == min(abs(latIndex - min(lat)), na.rm = TRUE)) 
     latI2 <- which(abs(latIndex - max(lat)) == min(abs(latIndex - max(lat)), na.rm = TRUE)) 
     
-    targetLatIndex <- latI1:latI2
+    targetLatIndex <- latI1[length(latI1)]:latI2[length(latI2)]
     
     if (length(targetLonIndex) == 0) stop('Your input lat is too small, try to expand the 
                                           latitude range.') 
