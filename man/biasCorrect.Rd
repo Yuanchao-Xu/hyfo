@@ -5,7 +5,8 @@
 \title{Biascorrect the input timeseries or hyfo dataset}
 \usage{
 biasCorrect(frc, hindcast, obs, method = "delta", scaleType = "multi",
-  input = "TS", preci = FALSE)
+  input = "hyfo", preci = FALSE, prThreshold = 0,
+  extrapolate = "constant")
 }
 \arguments{
 \item{frc}{a hyfo grid data output or a dataframe (time series) consists of Date column and one or more value columns,
@@ -25,12 +26,16 @@ of scaling method, 'add' and 'mult', which means additive and multiplicative sca
 details.}
 
 \item{input}{If input is a time series, \code{input = 'TS'} needs to be assigned, or hyfo will take it as
-an hyfo output grid file. Default is time series input, where in most of the cases we prefer. If your input
-is a hyfo output file, \code{input = 'hyfo'}.}
+an hyfo output grid file. Default is hyfo output grid file, where in most of the cases we prefer.}
 
 \item{preci}{If the precipitation is biascorrected, then you have to assign \code{preci = TRUE}. Since for
 precipitation, some biascorrect methods may not apply to, or some methods are specially for precipitation.
-Default is FALSE.}
+Default is FALSE, refer to details.}
+
+\item{prThreshold}{The minimum value that is considered as a non-zero precipitation. Default to 1 (assuming mm).}
+
+\item{extrapolate}{When use 'eqm' method, and 'no' is set, modified frc is bounded by the range of obs.
+If 'constant' is set, modified frc is not bounded by the range of obs.}
 }
 \description{
 Biascorrect the input time series or dataset, the input time series or dataset should consist of observation, hindcast, and forecast.
@@ -84,6 +89,14 @@ between the observed and simulated means in the train period. The \code{additive
 correction is defined by parameter \code{scaling.type} (default is \code{additive}).
 The additive version is preferably applicable to unbounded variables (e.g. temperature)
 and the multiplicative to variables with a lower bound (e.g. precipitation, because it also preserves the frequency).
+
+ \strong{eqm}
+Can keep the extreme value, if you choose constant extrapolation method. But then you will face the risk
+that the extreme value is an error.
+
+ \strong{gqm}
+Can somehow filter some extreme values caused by errors, while keep the extreme value. Seems more reasonable.
+Better have a long period of training, and the if the forecast system is relatively stable.
 }
 \examples{
 # Use testdl as an example, we take frc, hindcast and obs from testdl.
@@ -98,10 +111,17 @@ hindcast <- datalist[[2]]
 obs <- datalist[[3]]
 
 # default method is delta
-frc_new <- biasCorrect(frc, hindcast, obs)
+frc_new <- biasCorrect(frc, hindcast, obs, input = 'TS')
+# for precipitation data, extra process needs to be executed, so you have to tell
+# the program to it is a precipitation data.
 
-# If the variable is precipitation, it cannot be negative value, so use multi scale method
-frc_new <- biasCorrect(frc, hindcast, obs, method = 'scaling', scaleType = 'multi')
+frc_new <- biasCorrect(frc, hindcast, obs, input = 'TS', preci = TRUE)
+
+# You can use other methods to biascorrect.
+frc_new <- biasCorrect(frc, hindcast, obs, method = 'scaling', scaleType = 'multi', input = 'TS')
+
+frc_new <- biasCorrect(frc, hindcast, obs, method = 'eqm', input = 'TS', preci = TRUE)
+frc_new <- biasCorrect(frc, hindcast, obs, method = 'gqm', input = 'TS', preci = TRUE)
 
 # If the forecasts you extracted only has incontinuous data for certain months and years, e.g.,
 # for seasonal forecasting, forecasts only provide 3-6 months data, so the case can be

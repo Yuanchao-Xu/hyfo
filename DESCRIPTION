@@ -1,7 +1,7 @@
 Package: hyfo
 Type: Package
 Title: Hydrology and Climate Forecasting R Package for Data Analysis and Visualization
-Version: 1.2.2
+Version: 1.2.3
 Date: 2015-07-02
 Authors@R: person("Yuanchao", "Xu", email = "xuyuanchao37@gmail.com",
   role = c("aut", "cre"))
@@ -22,7 +22,8 @@ Imports: ggplot2 (>= 1.0.1),
     maps(>= 2.3-9),
     maptools (>= 0.8-36),
     rgeos (>= 0.3-8),
-    ncdf (>= 1.6.8)
+    ncdf (>= 1.6.8),
+    MASS (>= 7.3-39)
 Suggests: gridExtra,
     knitr
 VignetteBuilder: knitr

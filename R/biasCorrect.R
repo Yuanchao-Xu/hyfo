@@ -20,11 +20,13 @@
 #' of scaling method, 'add' and 'mult', which means additive and multiplicative scaling method. More info check 
 #' details.
 #' @param input If input is a time series, \code{input = 'TS'} needs to be assigned, or hyfo will take it as 
-#' an hyfo output grid file. Default is time series input, where in most of the cases we prefer. If your input
-#' is a hyfo output file, \code{input = 'hyfo'}.
+#' an hyfo output grid file. Default is hyfo output grid file, where in most of the cases we prefer.
 #' @param preci If the precipitation is biascorrected, then you have to assign \code{preci = TRUE}. Since for
 #' precipitation, some biascorrect methods may not apply to, or some methods are specially for precipitation. 
-#' Default is FALSE.
+#' Default is FALSE, refer to details.
+#' @param prThreshold The minimum value that is considered as a non-zero precipitation. Default to 1 (assuming mm).
+#' @param extrapolate When use 'eqm' method, and 'no' is set, modified frc is bounded by the range of obs.
+#' If 'constant' is set, modified frc is not bounded by the range of obs.
 #' @details 
 #' 
 #' Since climate forecast is based on global condition, when downscaling to different regions, it may include
@@ -72,6 +74,13 @@
 #' The additive version is preferably applicable to unbounded variables (e.g. temperature) 
 #' and the multiplicative to variables with a lower bound (e.g. precipitation, because it also preserves the frequency). 
 #'  
+#'  \strong{eqm}
+#' Can keep the extreme value, if you choose constant extrapolation method. But then you will face the risk
+#' that the extreme value is an error.
+#'  
+#'  \strong{gqm}
+#' Can somehow filter some extreme values caused by errors, while keep the extreme value. Seems more reasonable.
+#' Better have a long period of training, and the if the forecast system is relatively stable.
 #' 
 #' @examples 
 #' 
@@ -87,10 +96,17 @@
 #' obs <- datalist[[3]]
 #' 
 #' # default method is delta
-#' frc_new <- biasCorrect(frc, hindcast, obs)
+#' frc_new <- biasCorrect(frc, hindcast, obs, input = 'TS')
+#' # for precipitation data, extra process needs to be executed, so you have to tell
+#' # the program to it is a precipitation data.
 #' 
-#' # If the variable is precipitation, it cannot be negative value, so use multi scale method
-#' frc_new <- biasCorrect(frc, hindcast, obs, method = 'scaling', scaleType = 'multi')
+#' frc_new <- biasCorrect(frc, hindcast, obs, input = 'TS', preci = TRUE)
+#' 
+#' # You can use other methods to biascorrect.
+#' frc_new <- biasCorrect(frc, hindcast, obs, method = 'scaling', scaleType = 'multi', input = 'TS')
+#' 
+#' frc_new <- biasCorrect(frc, hindcast, obs, method = 'eqm', input = 'TS', preci = TRUE)
+#' frc_new <- biasCorrect(frc, hindcast, obs, method = 'gqm', input = 'TS', preci = TRUE)
 #' 
 #' # If the forecasts you extracted only has incontinuous data for certain months and years, e.g.,
 #' # for seasonal forecasting, forecasts only provide 3-6 months data, so the case can be 
@@ -108,7 +124,8 @@
 #' package version 0.6-0. https://github.com/SantanderMetGroup/downscaleR/wiki
 #' @export
 
-biasCorrect <- function(frc, hindcast, obs, method = 'delta', scaleType = 'multi', input = 'TS', preci = FALSE){
+biasCorrect <- function(frc, hindcast, obs, method = 'delta', scaleType = 'multi', input = 'hyfo', 
+                        preci = FALSE, prThreshold = 0, extrapolate = 'constant'){
   
   if (input == 'TS') {
     # First check if the first column is Date
@@ -116,9 +133,7 @@ biasCorrect <- function(frc, hindcast, obs, method = 'delta', scaleType = 'multi
       stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
            and use as.Date to convert.If your input is a hyfo dataset, put input = "hyfo" as an
            argument, check help for more info.')
-    } 
-    
-    
+    }
     # change to date type is easier, but in case in future the flood part is added, Date type doesn't have
     # hour, min and sec, so, it's better to convert it into POSIxlt.
     
@@ -131,7 +146,7 @@ biasCorrect <- function(frc, hindcast, obs, method = 'delta', scaleType = 'multi
     
     if (ncol(frc) == 2) {
       frc_data <- biasCorrect_core(frc[, 2], hindcast[, 2], obs[, 2], method = method, 
-                                   scaleType = scaleType, preci = preci)
+                                   scaleType = scaleType, preci = preci, prThreshold = prThreshold)
     } else if (ncol(frc) > 2) {
       # In this case more than one value columns exist in the dataset, both frc and hindcast.
       
@@ -139,7 +154,8 @@ biasCorrect <- function(frc, hindcast, obs, method = 'delta', scaleType = 'multi
       
       # For every column, it's biascorrected respectively.
       frc_data <- lapply(2:n, function(x) biasCorrect_core(frc[, x], hindcast[, x], obs[, 2], method = method,
-                                                           scaleType = scaleType, preci = preci))
+                                                           scaleType = scaleType, preci = preci, 
+                                                           prThreshold = prThreshold))
       frc_data <- do.call('cbind', frc_data)
       
     } else stop('Wrong TS input, check your TS dimension.')
@@ -157,9 +173,100 @@ biasCorrect <- function(frc, hindcast, obs, method = 'delta', scaleType = 'multi
 }
 
 
+#' @importFrom MASS fitdistr
+#' @importFrom stats ecdf quantile pgamma qgamma rgamma
+#' 
+#' @references 
+#' Bias correction methods come from \code{biasCorrection} from \code{dowscaleR}
+#' 
+#' Santander Meteorology Group (2015). downscaleR: Climate data manipulation and statistical downscaling. R
+#' package version 0.6-0. https://github.com/SantanderMetGroup/downscaleR/wiki
 # this is only used to calculate the value column, 
-biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = 'multi', preci = FALSE){
-  
+biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = 'multi', 
+                             preci = FALSE, prThreshold = 0, extrapolate = 'constant'){
+  # If the variable is precipitation, some further process needs to be added.
+  # The process is taken from downscaleR, to provide a more reasonable hindcast, used in the calibration.
+  if (preci == TRUE) {
+    
+    # lowerIndex is based on obs
+    lowerIndex <- length(which(obs < prThreshold))
+    
+    # In the original function, this minHindcastPreci is Pth[,i,j] in downscaleR, and it is originally
+    # set to NA, which is not so appropriate for all the precipitations.
+    # In the original function, there are only two conditions, 1. all the obs less than threshold
+    # 2. there are some obs less than threshold. 
+    # While, if we set threshold to 0, there could be a 3rd condition, all the obs no less than threshold.
+    # Here I set this situation, firstly set minHindcastPreci to the min of the hindcast. Because in future
+    # use, 'eqm' method is going to use this value.
+    
+    #set this minHindcastPreci <- min(hindcast, na.rm = TRUE) or change the following condition
+    # to lowerIndex >= 0.
+    
+    if (lowerIndex >= 0 & lowerIndex < length(obs)) {
+      index <- sort(hindcast, decreasing = FALSE, na.last = NA, index.return = TRUE)$ix
+      hindcast_sorted <- sort(hindcast, decreasing = FALSE, na.last = NA)
+      # minHindcastPreci is the min preci over threshold FOR ***HINDCAST***
+      # But use obs to get the lowerIndex, so obs[lowerIndex + 1] > prThreshold, but
+      # hindcast_sorted[lowerIndex + 1] may greater than or smaller than ptThreshold
+      
+      
+      # It would be better to understand if you draw two lines: hindcast_sorted and obs_sorted
+      # with y = prThreshold, you will find the difference of the two.
+      
+      # In principle, the value under the threshold needs to be replaced by some other reasonable value.
+      # simplest way 
+      minHindcastPreci <- hindcast_sorted[lowerIndex + 1]
+      
+      
+      # Also here if minHindcastPreci is 0 and prThreshold is 0, will cause problem, bettter set 
+      # I set it prThreshold != 0 
+      if (minHindcastPreci <= prThreshold & prThreshold != 0) {
+        obs_sorted <- sort(obs, decreasing = FALSE, na.last = NA)
+        
+        # higherIndex is based on hindcast
+        higherIndex <- which(hindcast_sorted > prThreshold & !is.na(hindcast_sorted))
+        
+        if (length(higherIndex) == 0) {
+          higherIndex <- max(which(!is.na(hindcast_sorted)))
+          higherIndex <- min(length(obs_sorted), higherIndex)
+        } else {
+          higherIndex <- min(higherIndex)
+        }
+        
+        
+        # here I don't know why choose 6.
+        # Written # [Shape parameter Scale parameter] in original package
+        if (length(unique(obs_sorted[(lowerIndex + 1):higherIndex])) < 6) {
+          hindcast_sorted[(lowerIndex + 1):higherIndex] <- mean(obs_sorted[(lowerIndex + 1):higherIndex], 
+                                                                na.rm = TRUE)
+        } else {
+          obsGamma <- fitdistr(obs_sorted[(lowerIndex + 1):higherIndex], "gamma")
+          
+          # this is to replace the original hindcast value between lowerIndex and higherIndex with 
+          # some value taken from gamma distribution just generated.
+          hindcast_sorted[(lowerIndex + 1):higherIndex] <- rgamma(higherIndex - lowerIndex, obsGamma$estimate[1], 
+                                                           rate = obsGamma$estimate[2])
+        }
+        hindcast_sorted <- sort(hindcast_sorted, decreasing = FALSE, na.last = NA)
+        
+      } 
+      minIndex <- min(lowerIndex, length(hindcast))
+      hindcast_sorted[1:minIndex] <- 0
+      hindcast[index] <- hindcast_sorted
+      
+    } else if (lowerIndex == length(obs)) {
+      
+      index <- sort(hindcast, decreasing = FALSE, na.last = NA, index.return = TRUE)$ix
+      hindcast_sorted <- sort(hindcast, decreasing = FALSE, na.last = NA)
+      minHindcastPreci <- hindcast_sorted[lowerIndex]
+      
+      # here is to compare with hindcast, not obs
+      minIndex <- min(lowerIndex, length(hindcast))
+      hindcas_sortedt[1:minIndex] <- 0
+      hindcast[index] <- hindcast_sorted
+      
+    }
+  }
 
   # default is the simplest method in biascorrection, just do simple addition and subtraction.
   if (method == 'delta') {
@@ -181,9 +288,139 @@ biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = '
     
     
   } else if (method == 'eqm') {
-    
-  # To be added, right now too complicated and not so much use.
-    
+    # In this method, the value is bounded by the observation
+    if (preci == FALSE) {
+      if (any(!is.na(hindcast)) & any(!is.na(obs))) {
+        ecdfHindcast <- ecdf(hindcast)
+        
+        if (extrapolate == 'constant') {
+          higherIndex <- which(frc > max(hindcast, na.rm = TRUE))
+          lowerIndex <- which(frc < min(hindcast, na.rm = TRUE))
+          
+          extrapolateIndex <- c(higherIndex, lowerIndex)
+          
+          if (length(higherIndex) > 0) {
+            maxHindcast <- max(hindcast, na.rm = TRUE)
+            dif <- maxHindcast - max(obs, na.rm = TRUE)
+            frc[higherIndex] <- frc[higherIndex] - dif
+          }
+          
+          if (length(lowerIndex) > 0) {
+            minHindcast <- min(hindcast, na.rm = TRUE)
+            dif <- minHindcast - min(obs, nna.rm = TRUE)
+            frc[lowerIndex] <- frc[lowerIndex] - dif
+          }
+          
+          frc[-extrapolateIndex] <- quantile(obs, probs = ecdfHindcast(frc[-extrapolateIndex]), 
+                                             na.rm = TRUE, type = 4)
+        } else {
+          frc <- quantile(obs, probs = ecdfHindcast(frc), na.rm = TRUE, type = 4)
+        }
+      }
+    } else {
+      
+      if (any(!is.na(hindcast)) & any(!is.na(obs))) {
+        
+        # Most of time this condition seems useless because minHindcastPreci comes from hindcast, so there will be
+        # always hindcast > minHindcastPreci exists.
+        # Unless one condition that minHindcastPreci is the max in the hindcast, than on hindcast > minHindcastPreci
+        if (length(which(hindcast > minHindcastPreci)) > 0) {
+          
+          ecdfHindcast <- ecdf(hindcast[hindcast > minHindcastPreci])
+          
+          noRain <- which(frc <= minHindcastPreci & !is.na(frc))
+          rain <- which(frc > minHindcastPreci & !is.na(frc))
+          
+          # drizzle is to see whether there are some precipitation between the min frc (over threshold) and 
+          # min hindcast (over threshold).
+          drizzle <- which(frc > minHindcastPreci & frc <= min(hindcast[hindcast > minHindcastPreci], na.rm = TRUE) 
+                           & !is.na(frc))
+          
+          if (length(rain) > 0) {
+            ecdfFrc <- ecdf(frc[rain])
+            
+            if (extrapolate == 'constant') {
+              
+              # This higher and lower index mean the extrapolation part
+              higherIndex <- which(frc[rain] > max(hindcast, na.rm = TRUE))
+              lowerIndex <- which(frc[rain] < min(hindcast, na.rm = TRUE))
+              
+              extrapolateIndex <- c(higherIndex, lowerIndex)
+              
+              if (length(higherIndex) > 0) {
+                maxHindcast <- max(hindcast, na.rm = TRUE)
+                dif <- maxHindcast - max(obs, na.rm = TRUE)
+                frc[rain[higherIndex]] <- frc[higherIndex] - dif
+              }
+              
+              if (length(lowerIndex) > 0) {
+                minHindcast <- min(hindcast, na.rm = TRUE)
+                dif <- minHindcast - min(obs, nna.rm = TRUE)
+                frc[rain[lowerIndex]] <- frc[lowerIndex] - dif
+              }
+              
+              
+              # Here the original function doesn't accout for the situation that extraploateIndex is 0
+              # if it is 0, rain[-extraploateIndex] would be nothing
+              if (length(extrapolateIndex) != 0) {
+                frc[rain[-extrapolateIndex]] <- quantile(obs[which(obs > prThreshold & !is.na(obs))], 
+                                                       probs = ecdfHindcast(frc[rain[-extrapolateIndex]]), 
+                                                       na.rm = TRUE, type = 4)
+              } else {
+                frc[rain] <- quantile(obs[which(obs > prThreshold & !is.na(obs))], 
+                                      probs = ecdfHindcast(frc[rain]), na.rm = TRUE, type = 4)
+              }
+              
+            } else {
+              
+              frc[rain] <- quantile(obs[which(obs > prThreshold & !is.na(obs))], 
+                                    probs = ecdfHindcast(frc[rain]), na.rm = TRUE, type = 4)
+            }
+            
+          }
+          
+          if (length(drizzle) > 0){
+            
+            # drizzle part is a seperate part. it use the ecdf of frc (larger than minHindcastPreci) to 
+            # biascorrect the original drizzle part
+            frc[drizzle] <- quantile(frc[which(frc > min(hindcast[which(hindcast > minHindcastPreci)], na.rm = TRUE) & 
+                                                 !is.na(frc))], probs = ecdfFrc(frc[drizzle]), na.rm = TRUE, 
+                                     type = 4)
+          }
+          
+          frc[noRain] <- 0
+          
+          
+        } else {
+          # in this condition minHindcastPreci is the max of hindcast, so all hindcast <= minHindcastPreci
+          # And frc distribution is used then.
+          noRain <- which(frc <= minHindcastPreci & !is.na(frc))
+          rain <- which(frc > minHindcastPreci & !is.na(frc))
+          
+          if (length(rain) > 0) {
+            ecdfFrc <- ecdf(frc[rain])
+            frc[rain] <- quantile(obs[which(obs > prThreshold & !is.na(obs))], probs = ecdfFrc(frc[rain]), 
+                                  na.rm = TRUE, type = 4)
+          }
+          frc[noRain]<-0
+        }
+      }
+    }
+  } else if (method == 'gqm') {
+    # this condition I don't know why there should be some value hindcast <= threshold
+    if (any(hindcast <= prThreshold)) {
+      
+      ind <- which(obs > prThreshold & !is.na(obs))
+      obsGamma <- fitdistr(obs[ind],"gamma")
+      ind <- which(hindcast > 0 & !is.na(hindcast))
+      hindcastGamma <- fitdistr(hindcast[ind],"gamma")
+      rain <- which(frc > minHindcastPreci & !is.na(frc))
+      noRain <- which(frc <= minHindcastPreci & !is.na(frc))
+      
+      probF <- pgamma(frc[rain], hindcastGamma$estimate[1], rate = hindcastGamma$estimate[2])
+      frc[rain] <- qgamma(probF,obsGamma$estimate[1], rate = obsGamma$estimate[2])
+      frc[noRain] <- 0
+    }
   }
   
   
