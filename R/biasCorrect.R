@@ -408,7 +408,7 @@ biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = '
     }
   } else if (method == 'gqm') {
     # this condition I don't know why there should be some value hindcast <= threshold
-    if (preci = FALSE) stop ('gqm method only applys to precipitation, please set preci = T')
+    if (preci == FALSE) stop ('gqm method only applys to precipitation, please set preci = T')
     if (any(hindcast <= prThreshold)) {
       
       ind <- which(obs > prThreshold & !is.na(obs))
