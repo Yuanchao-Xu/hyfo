@@ -331,7 +331,7 @@ The basic forecasts are made from the historical data, to see, how the historica
 E.g., we have a period of data from 2000 to 2007, we assume 2004 to be the forecast year. Then, use 2004 as an example, the data in 2000, 2001, 2002, 2003, 2005, 2006, 2007 will be taken to generate an ensemble forecast of 6 members(except 2004).
 
 
-Set example year, e.g., year 1994.
+Set example year, e.g., year 1994. mean value of each ensemble will be returned in the second column, while if you don't want the mean value, you can filter mean value by output[, -2], and you will get purely the output.
 ```{r, fig.show='hold', fig.height=4, fig.width=9}
 data(testdl)
 
