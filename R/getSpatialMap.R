@@ -233,24 +233,30 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 #' @importFrom stats median
 #' @importFrom reshape2 melt
 #' @references 
-#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' 
+#' \itemize{
+#' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 #' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
 #' 
-#' Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+#' \item Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
 #' 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
 #' 
-#' Hadley Wickham (2011). The Split-Apply-Combine Strategy for Data Analysis. Journal of Statistical
+#' \item Hadley Wickham (2011). The Split-Apply-Combine Strategy for Data Analysis. Journal of Statistical
 #' Software, 40(1), 1-29. URL http://www.jstatsoft.org/v40/i01/.
 #' 
-#' Original S code by Richard A. Becker and Allan R. Wilks. R version by Ray Brownrigg. Enhancements
+#' \item Original S code by Richard A. Becker and Allan R. Wilks. R version by Ray Brownrigg. Enhancements
 #' by Thomas P Minka <tpminka at media.mit.edu> (2015). maps: Draw Geographical Maps. R package version
 #' 2.3-11. http://CRAN.R-project.org/package=maps
 #' 
-#' Roger Bivand and Nicholas Lewin-Koh (2015). maptools: Tools for Reading and Handling Spatial
+#' \item Roger Bivand and Nicholas Lewin-Koh (2015). maptools: Tools for Reading and Handling Spatial
 #' Objects. R package version 0.8-36. http://CRAN.R-project.org/package=maptools
 #' 
-#' Roger Bivand and Colin Rundel (2015). rgeos: Interface to Geometry Engine - Open Source (GEOS). R
+#' \item Roger Bivand and Colin Rundel (2015). rgeos: Interface to Geometry Engine - Open Source (GEOS). R
 #' package version 0.3-11. http://CRAN.R-project.org/package=rgeos
+#' 
+#' }
+#' 
+#' 
 #' 
 #' 
 #' 
@@ -410,7 +416,10 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, point = 
 #' @export
 #' @import ggplot2 maps
 #' @references 
-#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' 
+#' \itemize{
+#' \item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' }
 getSpatialMap_comb <- function(..., list = NULL, nrow = 1, x = '', y = '', title = '', 
                                output = FALSE) {
   

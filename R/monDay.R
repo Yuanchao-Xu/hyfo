@@ -28,8 +28,12 @@
 #' @export
 #' @importFrom stats aggregate
 #' @references 
-#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' 
+#' \itemize{
+#' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 #' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' }
+#' 
 #' 
 monDay <- function(TS, method){
   if (length(TS) != 2) {
@@ -63,8 +67,11 @@ monDay <- function(TS, method){
 
 #' @importFrom utils tail
 #' @references 
-#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' 
+#' \itemize{
+#' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 #' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' }
 #' 
 mon2day <- function(monData) {
   Date <- as.Date(monData[1])

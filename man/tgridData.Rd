@@ -22,10 +22,12 @@ tgridData
 A list containing different information getting from grid data file, e.g., netcdf file.
 }
 \references{
-Herrera, S., Ancell, R., Gutierrez, J. M., Pons, M. R., Frias, M. D., & Fernandez, J.
+\itemize{
+\item Herrera, S., Ancell, R., Gutierrez, J. M., Pons, M. R., Frias, M. D., & Fernandez, J.
 (2012). Development and analysis of a 50-year high-resolution daily gridded precipitation dataset
 over Spain (Spain02). International Journal of Climatology
 (http://www.meteo.unican.es/datasets/spain02), 10.1002/joc.2256.
+}
 }
 \keyword{datasets}
 

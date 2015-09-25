@@ -26,7 +26,9 @@ varname <- getNcdfVar(filePath)
 # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
-David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
+\itemize{
+\item David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
 http://CRAN.R-project.org/package=ncdf
+}
 }
 

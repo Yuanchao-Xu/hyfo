@@ -53,6 +53,11 @@ getEnsem_comb(list = list(b1, b2), nrow = 2)
 # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
-H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+\itemize{
+\item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+\item Santander Meteorology Group (2015). downscaleR: Climate data manipulation and
+statistical downscaling. R package version 0.6-0.
+https://github.com/SantanderMetGroup/downscaleR/wiki
+}
 }
 

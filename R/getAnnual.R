@@ -35,13 +35,15 @@
 #' @importFrom reshape2 melt
 #' @importFrom stats aggregate
 #' @references 
-#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
 #' 
-#' Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+#' \itemize{
+#' \item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' \item Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
 #' 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
-#' 
-#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 #' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' }
+#' 
 #' 
 #' 
 getAnnual <- function(datalist, output = 'series', minRecords = 355, dataframe = NULL,

@@ -91,11 +91,19 @@ The additive version is preferably applicable to unbounded variables (e.g. tempe
 and the multiplicative to variables with a lower bound (e.g. precipitation, because it also preserves the frequency).
 
  \strong{eqm}
-Can keep the extreme value, if you choose constant extrapolation method. But then you will face the risk
+Empirical Quantile Mapping. This is a very extended bias correction method which consists on calibrating the simulated Cumulative Distribution Function (CDF)
+by adding to the observed quantiles both the mean delta change and the individual delta changes in the corresponding quantiles.
+This method is applicable to any kind of variable.
+
+It can keep the extreme value, if you choose constant extrapolation method. But then you will face the risk
 that the extreme value is an error.
 
  \strong{gqm}
-Can somehow filter some extreme values caused by errors, while keep the extreme value. Seems more reasonable.
+Gamma Quantile Mapping. This method is described in Piani et al. 2010 and is applicable only to precipitation. It is based on the initial assumption that both observed
+and simulated intensity distributions are well approximated by the gamma distribution, therefore is a parametric q-q map
+that uses the theorical instead of the empirical distribution.
+
+It can somehow filter some extreme values caused by errors, while keep the extreme value. Seems more reasonable.
 Better have a long period of training, and the if the forecast system is relatively stable.
 }
 \examples{
@@ -134,7 +142,18 @@ frc_new <- biasCorrect(frc, hindcast, obs, method = 'gqm', input = 'TS', preci =
 \references{
 Bias correction methods come from \code{biasCorrection} from \code{dowscaleR}
 
-Santander Meteorology Group (2015). downscaleR: Climate data manipulation and statistical downscaling. R
+\itemize{
+
+\item Santander Meteorology Group (2015). downscaleR: Climate data manipulation and statistical downscaling. R
 package version 0.6-0. https://github.com/SantanderMetGroup/downscaleR/wiki
+
+\item R.A.I. Wilcke, T. Mendlik and A. Gobiet (2013) Multi-variable error correction of regional climate models. Climatic Change, 120, 871-887
+
+\item A. Amengual, V. Homar, R. Romero, S. Alonso, and C. Ramis (2012) A Statistical Adjustment of Regional Climate Model Outputs to Local Scales: Application to Platja de Palma, Spain. J. Clim., 25, 939-957
+
+\item C. Piani, J. O. Haerter and E. Coppola (2009) Statistical bias correction for daily precipitation in regional climate models over Europe, Theoretical and Applied Climatology, 99, 187-192
+
+\item O. Gutjahr and G. Heinemann (2013) Comparing precipitation bias correction methods for high-resolution regional climate simulations using COSMO-CLM, Theoretical and Applied Climatology, 114, 511-529
+}
 }
 

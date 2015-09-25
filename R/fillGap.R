@@ -52,8 +52,12 @@
 #' @references
 #' Gap fiiling method based on correlation and linear regression.
 #' 
-#' Hirsch, Robert M., et al. "Statistical analysis of hydrologic data." Handbook of hydrology. (1992): 17-1.
+#' \itemize{
+#' \item Hirsch, Robert M., et al. "Statistical analysis of hydrologic data." Handbook of hydrology. (1992): 17-1.
 #' Salas, Jose D. "Analysis and modeling of hydrologic time series." Handbook of hydrology 19 (1993): 1-72.
+#' 
+#' }
+#' 
 #' 
 #' @export
 fillGap <- function(dataset, corPeriod = 'daily') {
@@ -128,8 +132,13 @@ fillGap_column <- function(i, data, corOrder, lmCoef) {
 
 #' @importFrom stats cor na.omit
 #' @references 
-#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' 
+#' \itemize{
+#' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 #' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' }
+#' 
+#' 
 
 fillGap_cor <- function(data, corPeriod = 'daily', Date) {
   

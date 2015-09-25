@@ -74,13 +74,12 @@ b2 <- getPreciBar(tgridData, method = 'meanMonthly')
 # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
-Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+\itemize{
+\item Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
-
-H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
-
-
-R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+\item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+\item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+}
 }
 

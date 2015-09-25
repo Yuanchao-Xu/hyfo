@@ -16,8 +16,12 @@
 #' 
 #' @import ncdf
 #' @references 
-#' David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
+#' 
+#' \itemize{
+#' \item David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
 #' http://CRAN.R-project.org/package=ncdf
+#' }
+#' 
 #' 
 #' 
 #' @export
@@ -59,13 +63,15 @@ getNcdfVar <- function(filePath) {
 #' @export
 #' @import ncdf
 #' @references 
-#' David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
+#' 
+#' \itemize{
+#' \item David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
 #' http://CRAN.R-project.org/package=ncdf
 #' 
-#' file structure refers to
-#' 
-#' Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
+#' \item Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
 #' version 2.2-6. http://meteo.unican.es/ecoms-udg
+#' }
+#' 
 #' 
 loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
   nc <- open.ncdf(filePath)
@@ -177,13 +183,15 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
 #' 
 #' @export 
 #' @references 
-#' David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
+#' 
+#' \itemize{
+#' \item David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
 #' http://CRAN.R-project.org/package=ncdf
 #' 
-#' file structure refers to
-#' 
-#' Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
+#' \item Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
 #' version 2.2-6. http://meteo.unican.es/ecoms-udg
+#' }
+#' 
 #' 
 downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat = NULL) {
   
@@ -333,13 +341,15 @@ downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat =
 #' @export 
 #' @import ncdf
 #' @references 
-#' David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
+#' 
+#' \itemize{
+#' \item #' David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
 #' http://CRAN.R-project.org/package=ncdf
 #' 
-#' file structure refers to
-#' 
-#' Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
+#' \item Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
 #' version 2.2-6. http://meteo.unican.es/ecoms-udg
+#' 
+#' }
 #' 
 #' 
 writeNcdf <- function(gridData, filePath, missingValue = 1e20, tz = 'GMT', units = NULL) {

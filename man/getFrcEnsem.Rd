@@ -79,9 +79,13 @@ b <- getFrcEnsem(nc, coord = c(-1.4, 43.2))
 # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
-H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
-
-Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+\itemize{
+\item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+\item Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
+\item Santander Meteorology Group (2015). downscaleR: Climate data manipulation and
+statistical downscaling. R package version 0.6-0.
+https://github.com/SantanderMetGroup/downscaleR/wiki
+}
 }
 

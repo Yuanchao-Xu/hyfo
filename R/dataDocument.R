@@ -11,8 +11,12 @@
 #'   ...
 #' }
 #' @references
-#' http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
-#' http://www4.gipuzkoa.net/oohh/web/esp/02.asp
+#' \itemize{
+#' \item http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
+#' \item #' http://www4.gipuzkoa.net/oohh/web/esp/02.asp
+#' }
+#' 
+#' 
 #' @source
 #' http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
 #' http://www4.gipuzkoa.net/oohh/web/esp/02.asp
@@ -32,10 +36,16 @@
 #'   \item{Dates}{Date information.}
 #'   ...
 #' }
-#' @references Herrera, S., Ancell, R., Gutierrez, J. M., Pons, M. R., Frias, M. D., & Fernandez, J. 
+#' @references 
+#' 
+#' \itemize{
+#' \item Herrera, S., Ancell, R., Gutierrez, J. M., Pons, M. R., Frias, M. D., & Fernandez, J. 
 #' (2012). Development and analysis of a 50-year high-resolution daily gridded precipitation dataset 
 #' over Spain (Spain02). International Journal of Climatology 
 #' (http://www.meteo.unican.es/datasets/spain02), 10.1002/joc.2256.
+#' }
+#' 
+#' 
 #' 
 #' @source http://www.meteo.unican.es/datasets/spain02
 "tgridData"

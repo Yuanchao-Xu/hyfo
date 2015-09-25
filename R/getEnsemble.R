@@ -105,10 +105,14 @@
 #' @importFrom grDevices rainbow
 #' @import ggplot2
 #' @references 
-#' Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
-#' 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
 #' 
-#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' \itemize{
+#' \item Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+#' 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
+#' \item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' }
+#' 
+#' 
 #' @export
 
 getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm', output = 'data', 
@@ -334,10 +338,16 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
 #' @import ggplot2
 #' @importFrom reshape2 melt
 #' @references 
-#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
 #' 
-#' Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+#' \itemize{
+#' \item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' \item Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
 #' 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
+#' \item Santander Meteorology Group (2015). downscaleR: Climate data manipulation and
+#' statistical downscaling. R package version 0.6-0.
+#' https://github.com/SantanderMetGroup/downscaleR/wiki
+#' }
+#' 
 #' 
 #' @export
 getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', name = NULL,
@@ -504,7 +514,16 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', 
 #' @export
 #' @import ggplot2
 #' @references 
-#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' 
+#' \itemize{
+#' \item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' \item Santander Meteorology Group (2015). downscaleR: Climate data manipulation and
+#' statistical downscaling. R package version 0.6-0.
+#' https://github.com/SantanderMetGroup/downscaleR/wiki
+#' }
+#' 
+#' 
+#' 
 
 getEnsem_comb <- function(..., list = NULL, nrow = 1, legend = TRUE, x = '', y = '', title = '', 
                           output = FALSE) {

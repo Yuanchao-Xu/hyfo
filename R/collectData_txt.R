@@ -14,9 +14,15 @@
 #' 
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
-#' @references http://www4.gipuzkoa.net/oohh/web/esp/02.asp
-#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' @references 
+#' 
+#' \itemize{
+#' \item http://www4.gipuzkoa.net/oohh/web/esp/02.asp
+#' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 #' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' }
+#' 
+#' 
 #' @source http://www4.gipuzkoa.net/oohh/web/esp/02.asp
 #' @return The collected data from different txt files.
 #' @export
@@ -94,8 +100,12 @@ anarbe_txt <- function(dataset, x1, x2){
   }
 
 #' @references 
-#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' 
+#' \itemize{
+#' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 #' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' }
+#' 
 #' @importFrom utils read.fwf
 readColumn_txt_anarbe <- function(fileName, keyword = NULL, rangeWord = NULL){
   

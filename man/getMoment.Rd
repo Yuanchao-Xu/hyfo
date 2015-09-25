@@ -22,10 +22,12 @@ getMoment(dis)
 # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
-Lukasz Komsta and Frederick Novomestky (2015). moments: Moments, cumulants, skewness, kurtosis and
+\itemize{
+\item Lukasz Komsta and Frederick Novomestky (2015). moments: Moments, cumulants, skewness, kurtosis and
 related tests. R package version 0.14. http://CRAN.R-project.org/package=moments
 
-R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+\item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+}
 }
 

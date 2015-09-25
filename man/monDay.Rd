@@ -41,7 +41,9 @@ TS_new <- monDay(TS, method = 'mon2day')
 # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
-R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+\itemize{
+\item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+}
 }
 

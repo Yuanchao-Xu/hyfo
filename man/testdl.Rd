@@ -22,8 +22,10 @@ testdl
 A list containing different precipitation time series.
 }
 \references{
-http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
-http://www4.gipuzkoa.net/oohh/web/esp/02.asp
+\itemize{
+\item http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
+\item #' http://www4.gipuzkoa.net/oohh/web/esp/02.asp
+}
 }
 \keyword{datasets}
 

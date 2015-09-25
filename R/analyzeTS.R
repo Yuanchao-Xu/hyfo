@@ -19,7 +19,10 @@
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
 #' @references 
-#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' \itemize{
+#' \item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' }
+#' 
 #' @import ggplot2
 #' @export
 plotTS <- function(TS, type = 'line', output = 'data', name = NULL, ...) {
@@ -116,7 +119,9 @@ plotTS <- function(TS, type = 'line', output = 'data', name = NULL, ...) {
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
 #' @references 
-#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' \itemize{
+#' \item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' }
 #' @export
 #' @import ggplot2
 plotTS_comb <- function(..., nrow = 1, type = 'line', list = NULL, x = 'Date', y = '', title = '', 
@@ -188,8 +193,13 @@ plotTS_comb <- function(..., nrow = 1, type = 'line', list = NULL, x = 'Date', y
 #' 
 #' @export
 #' @references 
-#' J. R. M. Hosking (2015). L-moments. R package, version 2.5. URL:
+#' 
+#' \itemize{
+#' \item J. R. M. Hosking (2015). L-moments. R package, version 2.5. URL:
 #' http://CRAN.R-project.org/package=lmom.
+#' }
+#' 
+#' 
 #' @importFrom lmom samlmu
 #' 
 getLMom <- function(dis){
@@ -217,11 +227,15 @@ getLMom <- function(dis){
 #' 
 #' @export
 #' @references 
-#' Lukasz Komsta and Frederick Novomestky (2015). moments: Moments, cumulants, skewness, kurtosis and
+#' 
+#' \itemize{
+#' \item Lukasz Komsta and Frederick Novomestky (2015). moments: Moments, cumulants, skewness, kurtosis and
 #' related tests. R package version 0.14. http://CRAN.R-project.org/package=moments
 #' 
-#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 #' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' }
+#' 
 #' @importFrom moments skewness kurtosis
 #' @importFrom stats var
 getMoment <- function(dis) {

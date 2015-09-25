@@ -6,8 +6,11 @@
 #' @return The collected data from different excel files.
 #' @export
 #' @references 
-#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' 
+#' \itemize{
+#' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 #' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' }
 #@importFrom utils write.table
 collectData_excel_anarbe <- function(folderName, keyword = NULL, output = TRUE){
 

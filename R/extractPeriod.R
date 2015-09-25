@@ -82,8 +82,12 @@
 #' 
 #' @importFrom zoo as.Date
 #' @references 
-#' Achim Zeileis and Gabor Grothendieck (2005). zoo: S3 Infrastructure for Regular and Irregular Time
+#' 
+#' \itemize{
+#' \item Achim Zeileis and Gabor Grothendieck (2005). zoo: S3 Infrastructure for Regular and Irregular Time
 #' Series. Journal of Statistical Software, 14(6), 1-27. URL http://www.jstatsoft.org/v14/i06/
+#' }
+#'
 #' @export
 extractPeriod <- function(datalist, startDate = NULL, endDate = NULL, commonPeriod = FALSE, 
                           dataframe = NULL, year = NULL, month = NULL) {
@@ -204,8 +208,13 @@ extractPeriod_dataframe <- function(dataframe, startDate, endDate, year = NULL, 
 
 #' @importFrom utils tail
 #' @references 
-#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' 
+#' \itemize{
+#' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 #' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' }
+#' 
+#' 
 extractPeriod_getDate <- function(dataset) {
   
   if (!grepl('-|/', dataset[1, 1])) {

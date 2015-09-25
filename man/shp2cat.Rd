@@ -27,10 +27,12 @@ catchment <- shp2cat(file)
 # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
-Roger Bivand, Tim Keitt and Barry Rowlingson (2015). rgdal: Bindings for the Geospatial Data
+\itemize{
+\item Roger Bivand, Tim Keitt and Barry Rowlingson (2015). rgdal: Bindings for the Geospatial Data
 Abstraction Library. R package version 1.0-4. http://CRAN.R-project.org/package=rgdal
 
-R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+\item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+}
 }
 

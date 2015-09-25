@@ -51,14 +51,16 @@
 #' @importFrom reshape2 melt
 #' @import ggplot2
 #' @references 
-#' Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
+#' 
+#' 
+#' \itemize{
+#' \item Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
 #' 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
-#' 
-#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
-#' 
-#' 
-#' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
+#' \item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 #' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' }
+#'
 #' 
 #' @return The calculated mean value of the input time series and the plot of the result.
 #' @export
@@ -363,7 +365,11 @@ getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', name = 
 #' @export
 #' @import ggplot2
 #' @references 
-#' H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' 
+#' \itemize{
+#' \item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
+#' }
+#' 
 getPreciBar_comb <- function(..., list = NULL, nrow = 1, x = '', y = '', title = '', output = FALSE) {
   if (!is.null(list)) {
     data_ggplot <- do.call('rbind', list)

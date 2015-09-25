@@ -22,7 +22,9 @@ getLMom(dis)
 # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \references{
-J. R. M. Hosking (2015). L-moments. R package, version 2.5. URL:
+\itemize{
+\item J. R. M. Hosking (2015). L-moments. R package, version 2.5. URL:
 http://CRAN.R-project.org/package=lmom.
+}
 }
 
