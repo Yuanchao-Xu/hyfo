@@ -454,6 +454,9 @@ biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = '
       probF <- pgamma(frc[rain], hindcastGamma$estimate[1], rate = hindcastGamma$estimate[2])
       frc[rain] <- qgamma(probF,obsGamma$estimate[1], rate = obsGamma$estimate[2])
       frc[noRain] <- 0
+    } else {
+      warning('All the observations of this cell(station) are lower than the threshold, 
+              no bias correction applied.')
     }
   }
   
