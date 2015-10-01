@@ -117,7 +117,7 @@ readColumn_txt_anarbe <- function(fileName, keyword = NULL, rangeWord = NULL){
   endRow <- which(a == rangeWord[3], arr.ind = TRUE)[, 1]
   endRow <- endRow + as.numeric(rangeWord[4])
   
-  data <- mapply(FUN=function(x1, x2) anarbe_txt(dataset = a, x1, x2), startRow, endRow)
+  data <- mapply(FUN = function(x1, x2) anarbe_txt(dataset = a, x1, x2), startRow, endRow)
   
   data_new <- data.frame(Data = unlist(data[1, ]), target = unlist(data[2, ]))
   message(fileName)

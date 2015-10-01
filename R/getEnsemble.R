@@ -529,6 +529,7 @@ getEnsem_comb <- function(..., list = NULL, nrow = 1, legend = TRUE, x = '', y =
                           output = FALSE) {
   
   if (!is.null(list)) {
+    checkBind(list, 'rbind')
     data_ggplot <- do.call('rbind', list)
   } else {
     plots <- list(...)

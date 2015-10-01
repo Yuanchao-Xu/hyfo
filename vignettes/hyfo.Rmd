@@ -196,7 +196,7 @@ If you want to calculate annual rainfall for a single dataframe containing one t
 a <- getAnnual(dataframe = testdl[[1]])
 ```
 
-`plotTS` is for you to plot time series, with missing values shown in the plot. And also you can use `plotTS_comb` to generate multiple time series plots
+`plotTS` is a powerfull plotting tool for you to plot time series, it can plot different kinds of time series. Sometimes when you finish processing the data, it's very convenient to use `plotTS` to see your results. And also you can use `plotTS_comb` to generate multiple time series plots
 
 ```{r, fig.height=4, fig.width=7}
 a1 <- plotTS(TS = testdl[[1]])

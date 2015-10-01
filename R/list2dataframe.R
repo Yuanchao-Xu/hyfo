@@ -21,8 +21,8 @@
 #' @export
 list2Dataframe <- function(datalist) {
   
-  data <- lapply(datalist, function(x) x[, 2])
-  names <- lapply(datalist, function(x) colnames(x)[2])
+  data <- lapply(datalist, function(x) x[, 2:ncol(x)])
+  names <- lapply(datalist, function(x) colnames(x)[2:ncol(x)])
   names <- do.call('cbind', names)
   Date <- datalist[[1]][, 1]
   data <- data.frame(data)

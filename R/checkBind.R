@@ -12,7 +12,10 @@
 #' checkBind(data,bind)
 #' 
 #' data(testdl)
+#' \dontrun{
 #' checkBind(testdl, 'rbind')
+#' }
+#' # Since the colnames in testdl are not the same, so it cannot be bound.
 #' #
 #' @export
 checkBind <- function(data, bind){
@@ -27,6 +30,14 @@ checkBind <- function(data, bind){
       stop(sprintf('Different Colomn number in %s th of the input list \n', difNum))
       
     }
+    
+    # For rbind, colnames has  to be checked as well.
+    colNameNum <- lapply(data, function(x) colnames(x))
+    sameName <- sapply(1:length(colNameNum), function(x) colNameNum[[x]] == colNameNum[[1]])
+    if (any(!is.null(unlist(colNameNum))) & (any(sameName == FALSE) | any(length(unlist(sameName)) == 0))) {
+      stop('Data in list have Different colnames, which cannot process rbind. ')
+    }
+    
     
   }else if (bind =='cbind') {
     rowNum <- sapply(data, function(x) dim(x)[1])

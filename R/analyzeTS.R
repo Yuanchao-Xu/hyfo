@@ -1,19 +1,41 @@
 #' plot time series, with marks on missing value.
 #' 
-#' @param TS A time series in form of a dataframe.
+#' @param ... input time series.
 #' @param type A string representing the type of the time series, e.g. 'line' or 'bar'.
 #' @param output A string showing which type of output you want. Default is "data", if "ggplot", the 
 #' data that can be directly plotted by ggplot2 will be returned, which is easier for you to make series
 #' plots afterwards. 
 #' @param name If \code{output = 'ggplot'}, name has to be assigned to your output, in order to differentiate
 #' different outputs in the later multiplot using \code{plotTS_comb}.
-#' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'},
-#' \code{x = 'aaa'}, \code{y = 'aaa'}
-#' 
+#' @param plot representing the plot type, there are two types, "norm" and "cum", "norm" gives an normal
+#' plot, and "cum" gives a cumulative plot. Default is "norm".
+#' @param x label for x axis.
+#' @param y label for y axis.
+#' @param title plot title.
+#' @param list If your input is a list of time series, then use \code{list = your time sereis list}
 #' @return A plot of the input time series.
+#' @details 
+#' If your input has more than one time series, the program will only plot the common period of 
+#' different time series.
 #' @examples
 #' plotTS(testdl[[1]])
 #' plotTS(testdl[[1]], x = 'xxx', y = 'yyy', title = 'aaa')
+#' 
+#' # If input is a datalist
+#' plotTS(list = testdl)
+#' # Or if you want to input time series one by one
+#' plotTS(testdl[[1]], testdl[[2]], plot = 'cum')
+#' # You can also directly plot multicolumn dataframe
+#' dataframe <- list2Dataframe(extractPeriod(testdl, commonPeriod = TRUE))
+#' plotTS(dataframe, plot = 'cum')
+#' 
+#' 
+#' # Sometimes you may want to process the dataframe and compare with the original one
+#' dataframe1 <- dataframe
+#' dataframe1[, 2:4] <- dataframe1[, 2:4] + 3
+#' plotTS(dataframe, dataframe1, plot = 'cum')
+#' # But note, if your input is a multi column dataframe, it's better to plot one using plotTS,
+#' # and compare them using plotTS_comb. If all data are in one plot, there might be too messy.
 #' 
 #' 
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
@@ -24,44 +46,91 @@
 #' }
 #' 
 #' @import ggplot2
+#' @importFrom reshape2 melt
 #' @export
-plotTS <- function(TS, type = 'line', output = 'data', name = NULL, ...) {
-  # Check input
+plotTS <- function(..., type = 'line', output = 'data', plot = 'norm', name = NULL, x = NULL, 
+                   y = NULL, title = NULL, list = NULL) {
+  ## arrange input TS or TS list.
+  if (is.null(list)) {
+    list <- list(...)
+    if (!class(list[[1]]) == 'data.frame') {
+      warning('Your input is probably a list, but you forget to add "list = " before it.
+              Try again, or check help for more information.')
+    }
+#     Following part is for plot different time series with different date, but too complicated
+#     using ggplot. and normal use doesn't need such process. So save it as backup.
+#     listNames <- names(list)
+#     # in order to be used later to differentiate lists, there should be a name for each element.
+#     # Then assign the name column to each list element.
+#     if (is.null(listNames)) listNames <- 1:length(list)
+#     
+#     giveName <- function(x, y) {
+#       colnames(x) <- NULL
+#       x$TSname <- rep(listNames[y], nrow(x))
+#       return(x)
+#     }
+#     list1 <- mapply(FUN = giveName, x = list, y = 1:length(list), SIMPLIFY = FALSE)
+#     
+#     checkBind(list1, 'rbind')
+#     
+#     TS <- do.call('rbind', list1)
+  }
+
+  list_common <- extractPeriod(list, commonPeriod = TRUE)
+  TS <- list2Dataframe(list_common)
+  
+  
+  # Check input, only check the first column and first row.
   if (!grepl('-|/', TS[1, 1])) {
     stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
          and use as.Date to convert.')
   }
-  TS[, 1] <- as.Date(TS[, 1])
-  names <- colnames(TS)
-  colnames(TS) <- c('Date', 'value')
-  NAIndex <- which(is.na(TS[, 2]))
-  # assign 0 to NA values
-  TS[NAIndex, 2] <- 0
   
+  TS[, 1] <- as.Date(TS[, 1])
+  colnames(TS)[1] <- 'Date'
+  
+  # first column's name may not be Date, so change its name to Date
+  
+  data_plot <- melt(TS, id.var = 'Date')
+  NAIndex <- which(is.na(data_plot$value))
+  
+  # assign 0 to NA values
+  if (plot == 'norm') {
+    data_plot$value[NAIndex] <- 0
+  } else if (plot == 'cum') {
+    TS[is.na(TS)] <- 0
+    cum <- cbind(data.frame(Date = TS[, 1]), cumsum(TS[2:ncol(TS)]))
+    
+    data_plot <- melt(cum, id.var = 'Date')
+  }
+  
+  
+  # Assigning x, y and title
+  if (is.null(x)) x <- colnames(TS)[1]
+  # y aixs cannot decide if it's a multi column dataframe
+  #if (is.null(y)) y <- names[2]
   
   theme_set(theme_bw())
-  mainLayer <- with(TS, {
-    ggplot(data = TS) +
+  mainLayer <- with(data_plot, {
+    ggplot(data = data_plot) +
     # It's always better to use colname to refer to
-      aes(x = Date, y = value) +
+      aes(x = Date, y = value, color = variable) +
       theme(plot.title = element_text(size = rel(1.8), face = 'bold'),
             axis.text.x = element_text(size = rel(1.8)),
             axis.text.y = element_text(size = rel(1.8)),
             axis.title.x = element_text(size = rel(1.8)),
-            axis.title.y = element_text(size = rel(1.8)),
-            plot.title = element_text(size = rel(1.8), face = 'bold')) +
-      xlab(names[1]) +
-      ylab(names[2]) +
-      labs(empty = NULL, ...)
+            axis.title.y = element_text(size = rel(1.8))) +
+      labs(x = x, y = y, title = title)
   })
+  
   
 #  color <- 'dodgerblue4'
   if (type == 'bar') {
-    secondLayer <- with(TS, {
+    secondLayer <- with(data_plot, {
       geom_bar(stat = 'identity')
     })
   } else if (type == 'line') {
-    secondLayer <- with(TS, {
+    secondLayer <- with(data_plot, {
       geom_line()
     })
   } else {
@@ -70,8 +139,9 @@ plotTS <- function(TS, type = 'line', output = 'data', name = NULL, ...) {
   
   
   missingVLayer <- with(TS, {
-    geom_point(data = TS[NAIndex, ], group = 1, size = 3, shape = 4, color = 'red')
+    geom_point(data = data_plot[NAIndex, ], group = 1, size = 3, shape = 4, color = 'black')
   })
+  
   plotLayer <- mainLayer + secondLayer + missingVLayer
   
   print(plotLayer) 
@@ -80,10 +150,10 @@ plotTS <- function(TS, type = 'line', output = 'data', name = NULL, ...) {
     if (is.null(name)) stop('"name" argument not found, 
                             If you choose "ggplot" as output, please assign a name.')
     
-    TS$name <- rep(name, nrow(TS))     
-    TS$nav <- rep(0, nrow(TS))
-    TS$nav[NAIndex] <- 1
-    return(TS)
+    data_plot$name <- rep(name, nrow(data_plot))     
+    data_plot$nav <- rep(0, nrow(data_plot))
+    data_plot$nav[NAIndex] <- 1
+    return(data_plot)
   }
 }
 
@@ -126,7 +196,13 @@ plotTS <- function(TS, type = 'line', output = 'data', name = NULL, ...) {
 #' @import ggplot2
 plotTS_comb <- function(..., nrow = 1, type = 'line', list = NULL, x = 'Date', y = '', title = '', 
                         output = FALSE){
+  # In ploting the time series, since the data comes from outside of hyfo, 
+  # It's more complicated, since they don't always have the same
+  # column name, if not, there is not possible to do rbind.
+  # So we need to first save the name, and rbind, and put back the name.
+  
   if (!is.null(list)) {
+    checkBind(list, 'rbind')
     data_ggplot <- do.call('rbind', list)
   } else {
     
@@ -139,7 +215,7 @@ plotTS_comb <- function(..., nrow = 1, type = 'line', list = NULL, x = 'Date', y
     warning('Your input is probably a list, but you forget to add "list = " before it.
             Try again, or check help for more information.')
   } else if (is.null(data_ggplot$name)) {
-    stop('No "Name" column in the input data, check the arguments in getPreciBar(), if 
+    stop('No "name" column in the input data, check the arguments in getPreciBar(), if 
          output = "ggplot" is assigned, more info please check ?getPreciBar.')
   }
 
@@ -148,7 +224,7 @@ plotTS_comb <- function(..., nrow = 1, type = 'line', list = NULL, x = 'Date', y
   mainLayer <- with(data_ggplot, {
     ggplot(data = data_ggplot) +
       # It's always better to use colname to refer to
-      aes(x = Date, y = value) +
+      aes(x = Date, y = value, color = variable) +
       theme(plot.title = element_text(size = rel(1.8), face = 'bold'),
             axis.text.x = element_text(angle = 90, hjust = 1, size = rel(1.8)),
             axis.text.y = element_text(size = rel(1.8)),

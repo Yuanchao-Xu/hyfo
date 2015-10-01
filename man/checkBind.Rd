@@ -24,7 +24,10 @@ bind <- 'rbind'
 checkBind(data,bind)
 
 data(testdl)
+\dontrun{
 checkBind(testdl, 'rbind')
+}
+# Since the colnames in testdl are not the same, so it cannot be bound.
 #
 }
 

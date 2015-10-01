@@ -48,9 +48,9 @@
 #' 
 #' Forecast product has to be calibrated, usually the system is doing forecast in real time. So, e.g., if the 
 #' forecast starts from year 2000, assuming you are in year 2003, then you will have 3 years' hindcast 
-#' data (year 2000 - 2003), which can be used to calibrate. And your forecast period is (2003-2004)
+#' data (year 2000-2003), which can be used to calibrate. And your forecast period is (2003-2004)
 #' 
-#' E.g. you have observation from 2001 - 2002, this is your input obs. Then you can take the same 
+#' E.g. you have observation from 2001-2002, this is your input obs. Then you can take the same 
 #' period (2001-2002) from the forecast, which is the hindcast period. For forecast, you can take any period.
 #' The program will evaluate the obs and hindcast, to get the modification of the forecast, and then add the 
 #' modification to the forecast data.
@@ -75,6 +75,7 @@
 #' and the multiplicative to variables with a lower bound (e.g. precipitation, because it also preserves the frequency). 
 #'  
 #'  \strong{eqm}
+#'  
 #' Empirical Quantile Mapping. This is a very extended bias correction method which consists on calibrating the simulated Cumulative Distribution Function (CDF) 
 #' by adding to the observed quantiles both the mean delta change and the individual delta changes in the corresponding quantiles. 
 #' This method is applicable to any kind of variable.
@@ -83,6 +84,7 @@
 #' that the extreme value is an error.
 #'  
 #'  \strong{gqm}
+#'  
 #' Gamma Quantile Mapping. This method is described in Piani et al. 2010 and is applicable only to precipitation. It is based on the initial assumption that both observed
 #' and simulated intensity distributions are well approximated by the gamma distribution, therefore is a parametric q-q map 
 #' that uses the theorical instead of the empirical distribution. 
@@ -233,14 +235,14 @@ biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = '
     # Here I set this situation, firstly set minHindcastPreci to the min of the hindcast. Because in future
     # use, 'eqm' method is going to use this value.
     
-    #set this minHindcastPreci <- min(hindcast, na.rm = TRUE) or change the following condition
-    # to lowerIndex >= 0.
+    # The problem above has been solved.
+    
     
     if (lowerIndex >= 0 & lowerIndex < length(obs)) {
       index <- sort(hindcast, decreasing = FALSE, na.last = NA, index.return = TRUE)$ix
       hindcast_sorted <- sort(hindcast, decreasing = FALSE, na.last = NA)
       # minHindcastPreci is the min preci over threshold FOR ***HINDCAST***
-      # But use obs to get the lowerIndex, so obs[lowerIndex + 1] > prThreshold, but
+      # But use obs to get the lowerIndex, so obs_sorted[lowerIndex + 1] > prThreshold, but
       # hindcast_sorted[lowerIndex + 1] may greater than or smaller than ptThreshold
       
       
@@ -270,6 +272,8 @@ biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = '
         
         # here I don't know why choose 6.
         # Written # [Shape parameter Scale parameter] in original package
+        # according to the reference and gamma distribution, at least 6 values needed to fit gamma
+        # distribution.
         if (length(unique(obs_sorted[(lowerIndex + 1):higherIndex])) < 6) {
           hindcast_sorted[(lowerIndex + 1):higherIndex] <- mean(obs_sorted[(lowerIndex + 1):higherIndex], 
                                                                 na.rm = TRUE)
@@ -332,6 +336,11 @@ biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = '
           lowerIndex <- which(frc < min(hindcast, na.rm = TRUE))
           
           extrapolateIndex <- c(higherIndex, lowerIndex)
+          non_extrapolateIndex <- setdiff(1:length(frc), extrapolateIndex)
+          
+          # In case extrapolateIndex is of length zero, than extrapolate cannot be used afterwards
+          # So use setdiff(1:length(sim), extrapolateIndex), if extrapolateIndex == 0, than it will
+          # return 1:length(sim)
           
           if (length(higherIndex) > 0) {
             maxHindcast <- max(hindcast, na.rm = TRUE)
@@ -345,7 +354,7 @@ biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = '
             frc[lowerIndex] <- frc[lowerIndex] - dif
           }
           
-          frc[-extrapolateIndex] <- quantile(obs, probs = ecdfHindcast(frc[-extrapolateIndex]), 
+          frc[non_extrapolateIndex] <- quantile(obs, probs = ecdfHindcast(frc[-extrapolateIndex]), 
                                              na.rm = TRUE, type = 4)
         } else {
           frc <- quantile(obs, probs = ecdfHindcast(frc), na.rm = TRUE, type = 4)
@@ -380,6 +389,7 @@ biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = '
               lowerIndex <- which(frc[rain] < min(hindcast, na.rm = TRUE))
               
               extrapolateIndex <- c(higherIndex, lowerIndex)
+              non_extrapolateIndex <- setdiff(1:length(rain), extrapolateIndex)
               
               if (length(higherIndex) > 0) {
                 maxHindcast <- max(hindcast, na.rm = TRUE)
@@ -396,14 +406,11 @@ biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = '
               
               # Here the original function doesn't accout for the situation that extraploateIndex is 0
               # if it is 0, rain[-extraploateIndex] would be nothing
-              if (length(extrapolateIndex) != 0) {
-                frc[rain[-extrapolateIndex]] <- quantile(obs[which(obs > prThreshold & !is.na(obs))], 
-                                                       probs = ecdfHindcast(frc[rain[-extrapolateIndex]]), 
+              
+              # Above has been solved by using setdiff.
+              frc[rain[non_extrapolateIndex]] <- quantile(obs[which(obs > prThreshold & !is.na(obs))], 
+                                                       probs = ecdfHindcast(frc[rain[non_extrapolateIndex]]), 
                                                        na.rm = TRUE, type = 4)
-              } else {
-                frc[rain] <- quantile(obs[which(obs > prThreshold & !is.na(obs))], 
-                                      probs = ecdfHindcast(frc[rain]), na.rm = TRUE, type = 4)
-              }
               
             } else {
               

@@ -64,9 +64,9 @@ Hindcast can be the same as forecast, i.e., you can use forecast itself as hindc
 
 Forecast product has to be calibrated, usually the system is doing forecast in real time. So, e.g., if the
 forecast starts from year 2000, assuming you are in year 2003, then you will have 3 years' hindcast
-data (year 2000 - 2003), which can be used to calibrate. And your forecast period is (2003-2004)
+data (year 2000-2003), which can be used to calibrate. And your forecast period is (2003-2004)
 
-E.g. you have observation from 2001 - 2002, this is your input obs. Then you can take the same
+E.g. you have observation from 2001-2002, this is your input obs. Then you can take the same
 period (2001-2002) from the forecast, which is the hindcast period. For forecast, you can take any period.
 The program will evaluate the obs and hindcast, to get the modification of the forecast, and then add the
 modification to the forecast data.
@@ -91,6 +91,7 @@ The additive version is preferably applicable to unbounded variables (e.g. tempe
 and the multiplicative to variables with a lower bound (e.g. precipitation, because it also preserves the frequency).
 
  \strong{eqm}
+
 Empirical Quantile Mapping. This is a very extended bias correction method which consists on calibrating the simulated Cumulative Distribution Function (CDF)
 by adding to the observed quantiles both the mean delta change and the individual delta changes in the corresponding quantiles.
 This method is applicable to any kind of variable.
@@ -99,6 +100,7 @@ It can keep the extreme value, if you choose constant extrapolation method. But 
 that the extreme value is an error.
 
  \strong{gqm}
+
 Gamma Quantile Mapping. This method is described in Piani et al. 2010 and is applicable only to precipitation. It is based on the initial assumption that both observed
 and simulated intensity distributions are well approximated by the gamma distribution, therefore is a parametric q-q map
 that uses the theorical instead of the empirical distribution.
