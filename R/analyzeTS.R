@@ -23,12 +23,14 @@
 #' 
 #' # If input is a datalist
 #' plotTS(list = testdl)
+#' 
 #' # Or if you want to input time series one by one
+#' # If plot = 'cum' then cumulative curve will  be plotted.
 #' plotTS(testdl[[1]], testdl[[2]], plot = 'cum')
+#' 
 #' # You can also directly plot multicolumn dataframe
 #' dataframe <- list2Dataframe(extractPeriod(testdl, commonPeriod = TRUE))
 #' plotTS(dataframe, plot = 'cum')
-#' 
 #' 
 #' # Sometimes you may want to process the dataframe and compare with the original one
 #' dataframe1 <- dataframe
@@ -75,10 +77,11 @@ plotTS <- function(..., type = 'line', output = 'data', plot = 'norm', name = NU
 #     
 #     TS <- do.call('rbind', list1)
   }
-
+  
   list_common <- extractPeriod(list, commonPeriod = TRUE)
   TS <- list2Dataframe(list_common)
   
+  if (!is.null(names(list)) & (ncol(TS) - 1) == length(list)) colnames(TS)[2:(length(list) + 1)] <- names(list)
   
   # Check input, only check the first column and first row.
   if (!grepl('-|/', TS[1, 1])) {
@@ -97,11 +100,13 @@ plotTS <- function(..., type = 'line', output = 'data', plot = 'norm', name = NU
   # assign 0 to NA values
   if (plot == 'norm') {
     data_plot$value[NAIndex] <- 0
+    lineSize <- 0.7
   } else if (plot == 'cum') {
     TS[is.na(TS)] <- 0
     cum <- cbind(data.frame(Date = TS[, 1]), cumsum(TS[2:ncol(TS)]))
     
     data_plot <- melt(cum, id.var = 'Date')
+    lineSize <- 1
   }
   
   
@@ -131,7 +136,7 @@ plotTS <- function(..., type = 'line', output = 'data', plot = 'norm', name = NU
     })
   } else if (type == 'line') {
     secondLayer <- with(data_plot, {
-      geom_line()
+      geom_line(size = lineSize)
     })
   } else {
     stop("No such plot type.")

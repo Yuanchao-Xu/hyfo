@@ -26,7 +26,7 @@
 #' Default is FALSE, refer to details.
 #' @param prThreshold The minimum value that is considered as a non-zero precipitation. Default to 1 (assuming mm).
 #' @param extrapolate When use 'eqm' method, and 'no' is set, modified frc is bounded by the range of obs.
-#' If 'constant' is set, modified frc is not bounded by the range of obs.
+#' If 'constant' is set, modified frc is not bounded by the range of obs. Default is 'no'.
 #' @details 
 #' 
 #' Since climate forecast is based on global condition, when downscaling to different regions, it may include
@@ -105,18 +105,30 @@
 #' hindcast <- datalist[[2]]
 #' obs <- datalist[[3]]
 #' 
+#' 
+#' # The data used here is just for example, so there could be negative data.
+#' 
 #' # default method is delta
 #' frc_new <- biasCorrect(frc, hindcast, obs, input = 'TS')
 #' # for precipitation data, extra process needs to be executed, so you have to tell
 #' # the program to it is a precipitation data.
 #' 
-#' frc_new <- biasCorrect(frc, hindcast, obs, input = 'TS', preci = TRUE)
+#' frc_new1 <- biasCorrect(frc, hindcast, obs, input = 'TS', preci = TRUE)
 #' 
 #' # You can use other methods to biascorrect.
-#' frc_new <- biasCorrect(frc, hindcast, obs, method = 'scaling', scaleType = 'multi', input = 'TS')
+#' frc_new2 <- biasCorrect(frc, hindcast, obs, method = 'scaling', scaleType = 'multi', input = 'TS')
 #' 
-#' frc_new <- biasCorrect(frc, hindcast, obs, method = 'eqm', input = 'TS', preci = TRUE)
-#' frc_new <- biasCorrect(frc, hindcast, obs, method = 'gqm', input = 'TS', preci = TRUE)
+#' # 
+#' frc_new3 <- biasCorrect(frc, hindcast, obs, method = 'eqm', input = 'TS', preci = TRUE)
+#' frc_new4 <- biasCorrect(frc, hindcast, obs, method = 'gqm', input = 'TS', preci = TRUE)
+#' 
+#' plotTS(obs, frc, frc_new, frc_new1, frc_new2, frc_new3, frc_new4, plot = 'cum')
+#' 
+#' # You can also give name to this input list.
+#' TSlist <- list(obs, frc, frc_new, frc_new1, frc_new2, frc_new3, frc_new4)
+#' names(TSlist) <- c('obs', 'frc', 'delta', 'delta_preci', 'scale', 'eqm', 'gqm')
+#' plotTS(list = TSlist, plot = 'cum')
+#' 
 #' 
 #' # If the forecasts you extracted only has incontinuous data for certain months and years, e.g.,
 #' # for seasonal forecasting, forecasts only provide 3-6 months data, so the case can be 
@@ -147,7 +159,7 @@
 #' @export
 
 biasCorrect <- function(frc, hindcast, obs, method = 'delta', scaleType = 'multi', input = 'hyfo', 
-                        preci = FALSE, prThreshold = 0, extrapolate = 'constant'){
+                        preci = FALSE, prThreshold = 0, extrapolate = 'no'){
   
   if (input == 'TS') {
     # First check if the first column is Date
@@ -168,7 +180,8 @@ biasCorrect <- function(frc, hindcast, obs, method = 'delta', scaleType = 'multi
     
     if (ncol(frc) == 2) {
       frc_data <- biasCorrect_core(frc[, 2], hindcast[, 2], obs[, 2], method = method, 
-                                   scaleType = scaleType, preci = preci, prThreshold = prThreshold)
+                                   scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
+                                   extrapolate = extrapolate)
     } else if (ncol(frc) > 2) {
       # In this case more than one value columns exist in the dataset, both frc and hindcast.
       
@@ -176,22 +189,22 @@ biasCorrect <- function(frc, hindcast, obs, method = 'delta', scaleType = 'multi
       
       # For every column, it's biascorrected respectively.
       frc_data <- lapply(2:n, function(x) biasCorrect_core(frc[, x], hindcast[, x], obs[, 2], method = method,
-                                                           scaleType = scaleType, preci = preci, 
-                                                           prThreshold = prThreshold))
+                                                           scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
+                                                           extrapolate = extrapolate))
       frc_data <- do.call('cbind', frc_data)
       
     } else stop('Wrong TS input, check your TS dimension.')
     
+    names <- colnames(frc)
+    frc_new <- data.frame(frc[, 1], frc_data)
+    colnames(frc_new) <- names
     
   } else if (input == 'hyfo') {
+    
     print('Under development...')
   }
-
-  names <- colnames(frc)
-  frc <- data.frame(frc[, 1], frc_data)
-  colnames(frc) <- names
   
-  return(frc)
+  return(frc_new)
 }
 
 
@@ -219,7 +232,7 @@ biasCorrect <- function(frc, hindcast, obs, method = 'delta', scaleType = 'multi
 #' 
 # this is only used to calculate the value column, 
 biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = 'multi', 
-                             preci = FALSE, prThreshold = 0, extrapolate = 'constant'){
+                             preci = FALSE, prThreshold = 0, extrapolate = 'no'){
   # If the variable is precipitation, some further process needs to be added.
   # The process is taken from downscaleR, to provide a more reasonable hindcast, used in the calibration.
   if (preci == TRUE) {

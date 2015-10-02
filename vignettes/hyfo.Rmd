@@ -198,14 +198,43 @@ a <- getAnnual(dataframe = testdl[[1]])
 
 `plotTS` is a powerfull plotting tool for you to plot time series, it can plot different kinds of time series. Sometimes when you finish processing the data, it's very convenient to use `plotTS` to see your results. And also you can use `plotTS_comb` to generate multiple time series plots
 
-```{r, fig.height=4, fig.width=7}
+```{r, fig.height=4, fig.width=7, results='hide'}
 a1 <- plotTS(TS = testdl[[1]])
 
 # You can also choose 'bar' as time series type, default is 'line'. But most of time, 
 # they are not # so different.
 a2 <- plotTS(TS = testdl[[1]], type = 'bar')
 
+# If input is a datalist
+plotTS(list = testdl)
+# Or if you want to input time series one by one
+# if plot = 'cum', then cumulative curve will be plotted.
+plotTS(testdl[[1]], testdl[[2]], plot = 'cum')
 
+# If you want to assign your own name.You can name the list first 
+TSlist <- list(testdl[[1]], testdl[[2]])
+names(TSlist) <- c('1st', '2nd')
+plotTS(list = TSlist, plot = 'cum')
+
+
+
+# You can also directly plot multicolumn dataframe
+dataframe <- list2Dataframe(extractPeriod(testdl, commonPeriod = TRUE))
+plotTS(dataframe, plot = 'cum')
+
+
+# Sometimes you may want to process the dataframe and compare with the original one
+dataframe1 <- dataframe
+dataframe1[, 2:4] <- dataframe1[, 2:4] + 3
+plotTS(dataframe, dataframe1, plot = 'cum')
+# But note, if your input is a multi column dataframe, it's better to plot one using plotTS,
+# and compare them using plotTS_comb. If all data are in one plot, there might be too messy.
+
+```
+
+And also you can use `plotTS_comb` to generate multiple time series plots.
+
+```{r, fig.height=4, fig.width=7 }
 # To use comb function, you have to change output type to 'ggplot'
 
 a1 <- plotTS(TS = testdl[[1]], output = 'ggplot', name = 1)
