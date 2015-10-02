@@ -94,7 +94,7 @@
 #' 
 #' @examples 
 #' 
-#' # Use testdl as an example, we take frc, hindcast and obs from testdl.
+#' # Use the time series from testdl as an example, we take frc, hindcast and obs from testdl.
 #' data(testdl)
 #' 
 #' # common period has to be extracted in order to better train the forecast.
@@ -135,6 +135,13 @@
 #' # for example Dec, Jan and Feb of every year from year 1999-2005.
 #' # In such case, you need to extract certain months and years from observed time series.
 #' # extractPeriod() can be then used.
+#'   
+#'   
+#'    
+#'   
+#'   
+#'   
+#'   
 #'   
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
@@ -200,8 +207,35 @@ biasCorrect <- function(frc, hindcast, obs, method = 'delta', scaleType = 'multi
     colnames(frc_new) <- names
     
   } else if (input == 'hyfo') {
-    
     print('Under development...')
+    
+    
+    ## Check if the data is a hyfo grid data.
+    
+    checkWord <- c('Data', 'xyCoords', 'Dates')
+    if (any(is.na(match(checkWord, attributes(frc)$names)))) {
+      stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
+           check help for details.')
+    }
+    
+    if (any(is.na(match(checkWord, attributes(hindcast)$names)))) {
+      stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
+           check help for details.')
+    }
+    
+    if (any(is.na(match(checkWord, attributes(obs)$names)))) {
+      stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
+           check help for details.')
+    }
+    
+    ## check if they have the same dimension.
+    
+    
+    
+    
+    
+    
+    
   }
   
   return(frc_new)
