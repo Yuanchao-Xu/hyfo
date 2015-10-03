@@ -47,9 +47,13 @@ Xu, Yuanchao(2015). hyfo: Hydrology and Climate Forecasting R Package for Data A
   devtools::install_github('Yuanchao-Xu/hyfo')
 ```
 
-
-
-
+During the installation, if there is some error, you can just follow the error message and reinstall the package with error. The most common message is 
+```{r, eval = FALSE}
+cannot remove previously installed XXX package.
+or
+error in installation of XXX package.
+```
+If so, just use `install.pakcages('xxx')` to reinstall XXX package. And then reinstall hyfo again.
 
 
 # 1. Hydrology

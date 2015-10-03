@@ -1,0 +1,13 @@
+{
+    "path" : "E:/1/R/hyfo/R",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 1
+        },
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}

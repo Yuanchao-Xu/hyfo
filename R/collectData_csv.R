@@ -44,7 +44,7 @@ collectData_csv_anarbe <- function(folderName, output = TRUE){
 
 
 readColumn_csv_anarbe <- function(fileName){
-  data <- read.csv(fileName, skip = 3)
+  data <- read.csv(fileName, skip = 4)
   endIndex <- which(data == '', arr.ind = TRUE)[1]-1
   
   data <- data[1:endIndex, ]
