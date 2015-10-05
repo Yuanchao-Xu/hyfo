@@ -1,0 +1,17 @@
+{
+    "contents" : "## For package updates information\n\n#' @importFrom utils packageDescription\nhyfoUpdates <- function(){\n  page <- readLines('http://yuanchao-xu.github.io/hyfo/')\n  updatesLine <- grep('id=\\\\\"updates\"', page)\n  versionLine <- updatesLine + 2\n  \n  version <- unlist(strsplit(page[versionLine], split = ' '))[2]\n  version_local <- packageDescription(\"hyfo\")$Version\n  # generate message\n  version_msg <- strsplit(strsplit(page[versionLine], split = '<p>')[[1]][2], split = '</p>')[[1]]\n  infoLine <- versionLine + 2\n  info_msg <- strsplit(strsplit(page[infoLine], split = '<p>')[[1]][2], split = '</p>')[[1]]\n  install_msg <- 'You can update by type in: devtools::install_gihub(\"Yuanchao-Xu/hyfo\")'\n  \n  message_out <- NULL\n  if (version != version_local) {\n    message_out <- paste(version_msg, info_msg, install_msg, sep = '\\n')\n  }\n  return(message_out)\n}\n\n.onAttach <- function(libname, pkgname) {\n  message <- suppressWarnings(try(hyfoUpdates(), silent = TRUE))\n  if (grepl('Version', message)) packageStartupMessage(message)\n}\n",
+    "created" : 1444010105268.000,
+    "dirty" : false,
+    "encoding" : "ASCII",
+    "folds" : "",
+    "hash" : "1541238642",
+    "id" : "44DA03F6",
+    "lastKnownWriteTime" : 1444014402,
+    "path" : "E:/1/R/hyfo/R/startup.R",
+    "project_path" : "R/startup.R",
+    "properties" : {
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

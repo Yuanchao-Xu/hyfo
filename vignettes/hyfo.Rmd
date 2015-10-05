@@ -970,7 +970,7 @@ For excel files, if you have access to the dam regulation excel file of the dam 
 
 There are two csv files and txt files included in the package, which can be used as examples.
 
-```{r}
+```{r, eval=FALSE}
 file <- system.file("extdata", "1999.csv", package = "hyfo")
 folder <- strsplit(file, '1999')[[1]][1]
 
