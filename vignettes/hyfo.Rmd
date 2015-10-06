@@ -53,7 +53,7 @@ cannot remove previously installed XXX package.
 or
 error in installation of XXX package.
 ```
-If so, just use `install.pakcages('xxx')` to reinstall XXX package. And then reinstall hyfo again.
+If so, just use `install.pakcages('xxx')` to reinstall XXX package. And then reinstall hyfo again. Other errors can be solved by directly reinsalling hyfo.
 
 
 # 1. Hydrology

@@ -22,6 +22,10 @@ hyfoUpdates <- function(){
 }
 
 .onAttach <- function(libname, pkgname) {
-  message <- suppressWarnings(try(hyfoUpdates(), silent = TRUE))
-  if (grepl('Version', message)) packageStartupMessage(message)
+  message_out <- suppressWarnings(try(hyfoUpdates(), silent = TRUE))
+  if (!is.null(message_out)) {
+    if (grepl('Version', message_out)) {
+      packageStartupMessage(message_out)
+    }
+  }
 }
