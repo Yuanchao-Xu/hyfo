@@ -354,11 +354,7 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', 
                         mv = 0, coord = NULL, ...) {
   # cell should be a vector showing the location, or mean representing the loacation averaged.
   
-  checkWord <- c('Data', 'xyCoords', 'Dates')
-  if (any(is.na(match(checkWord, attributes(dataset)$names)))) {
-    stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
-         check help for details.')
-  }
+  checkHyfo(dataset)
   
   Date <- as.Date(dataset$Dates$start)
   data <- dataset$Data

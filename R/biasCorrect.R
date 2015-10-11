@@ -94,6 +94,31 @@
 #' 
 #' @examples 
 #' 
+#' ######## hyfo grid file biascorrection
+#' ########
+#' 
+#' # If your input is obtained by \code{loadNcdf}, you can also directly biascorrect
+#' # the file.
+#' 
+#' # First load ncdf file.
+#' filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
+#' varname <- getNcdfVar(filePath)    
+#' nc <- loadNcdf(filePath, varname)
+#' 
+#' data(tgridData)
+#' 
+#' # Then we will use nc data as forecasting data, and use itself as hindcast data,
+#' # use tgridData as observation.
+#' 
+#' newFrc <- biasCorrect(nc, nc, tgridData, method = 'scaling')   
+#' newFrc <- biasCorrect(nc, nc, tgridData, method = 'eqm', extrapolate = 'constant', 
+#' preci = TRUE) 
+#' newFrc <- biasCorrect(nc, nc, tgridData, method = 'gqm', preci = TRUE) 
+#' 
+#' 
+#' ######## Time series biascorrection
+#' ########
+#' 
 #' # Use the time series from testdl as an example, we take frc, hindcast and obs from testdl.
 #' data(testdl)
 #' 
@@ -137,12 +162,9 @@
 #' # extractPeriod() can be then used.
 #'   
 #'   
-#'    
-#'   
-#'   
-#'   
-#'   
-#'   
+#'
+#'
+#'
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
 #' 
@@ -162,6 +184,8 @@
 #' 
 #' \item O. Gutjahr and G. Heinemann (2013) Comparing precipitation bias correction methods for high-resolution regional climate simulations using COSMO-CLM, Theoretical and Applied Climatology, 114, 511-529
 #' }
+#' 
+#' @author Yuanchao Xu \email{xuyuanchao37@@gmail.com }, S. Herrera \email{sixto@@predictia.es }
 #' 
 #' @export
 
@@ -207,39 +231,82 @@ biasCorrect <- function(frc, hindcast, obs, method = 'delta', scaleType = 'multi
     colnames(frc_new) <- names
     
   } else if (input == 'hyfo') {
-    print('Under development...')
-    
-    
     ## Check if the data is a hyfo grid data.
+    checkHyfo(frc, hindcast, obs)
     
-    checkWord <- c('Data', 'xyCoords', 'Dates')
-    if (any(is.na(match(checkWord, attributes(frc)$names)))) {
-      stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
-           check help for details.')
+    hindcastData <- hindcast$Data
+    obsData <- obs$Data
+    frcData <- frc$Data
+    
+    ## save frc dimension order, at last, set the dimension back to original dimension
+    frcDim <- attributes(frcData)$dimensions
+    
+    ## ajust the dimension into general dimension order.
+    hindcastData <- adjustDim(hindcastData, ref = c('lon', 'lat', 'time'))
+    obsData <- adjustDim(obsData, ref = c('lon', 'lat', 'time'))
+    
+    ## CheckDimLength, check if all the input dataset has different dimension length
+    # i.e. if they all have the same lon and lat number.
+    checkDimLength(frcData, hindcastData, obsData, dim = c('lon', 'lat'))
+    
+    
+    # Now real bias correction is executed.
+    
+    memberIndex <- match('member', attributes(frcData)$dimensions)
+    
+    # For dataset that has a member part 
+    if (!is.na(memberIndex)) {
+      # check if frcData and hindcastData has the same dimension and length.
+      checkDimLength(frcData, hindcastData, dim = 'member')
+      
+      frcData <- adjustDim(frcData, ref = c('lon', 'lat', 'time', 'member'))
+      
+      # The following code may speed up because it doesn't use for loop.
+      # It firstly combine different array into one array. combine the time 
+      # dimension of frc, hindcast and obs. Then use apply, each time extract 
+      # the total time dimension, and first part is frc, second is hindcast, third
+      # is obs. Then use these three parts to bias correct. All above can be written
+      # in one function and called within apply. But too complicated to understand,
+      # So save it for future use maybe.
+      
+#       for (member in 1:dim(frcData)[4]) {
+#         totalArr <- array(c(frcData[,,, member], hindcastData[,,, member], obsData),
+#                           dim = c(dim(frcData)[1], dim(frcData)[2], 
+#                                                        dim(frcData)[3] + dim(hindcastData)[3] + dim(obsData)[3]))
+#       }
+
+
+      for (member in 1:dim(frcData)[4]) {
+        for (lon in 1:dim(frcData)[1]) {
+          for (lat in 1:dim(frcData)[2]) {
+            frcData[lon, lat,, member] <- biasCorrect_core(frcData[lon, lat,,member], hindcastData[lon, lat,, member], obsData[lon, lat,], method = method,
+                                                           scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
+                                                           extrapolate = extrapolate)
+          }
+        }
+      }
+    } else {
+      frcData <- adjustDim(frcData, ref = c('lon', 'lat', 'time'))
+      for (lon in 1:dim(frcData)[1]) {
+        for (lat in 1:dim(frcData)[2]) {
+          frcData[lon, lat,] <- biasCorrect_core(frcData[lon, lat,], hindcastData[lon, lat,], obsData[lon, lat,], method = method,
+                                                         scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
+                                                         extrapolate = extrapolate)
+        }
+      }
     }
     
-    if (any(is.na(match(checkWord, attributes(hindcast)$names)))) {
-      stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
-           check help for details.')
-    }
-    
-    if (any(is.na(match(checkWord, attributes(obs)$names)))) {
-      stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
-           check help for details.')
-    }
-    
-    ## check if they have the same dimension.
-    
-    
-    
-    
-    
-    
-    
+    frcData <- adjustDim(frcData, ref = frcDim)
+    frc$Data <- frcData
+    frc$biasCorrected_by <- method
+    frc_new <- frc
   }
   
   return(frc_new)
 }
+
+
+
 
 
 #' @importFrom MASS fitdistr
@@ -269,6 +336,18 @@ biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = '
                              preci = FALSE, prThreshold = 0, extrapolate = 'no'){
   # If the variable is precipitation, some further process needs to be added.
   # The process is taken from downscaleR, to provide a more reasonable hindcast, used in the calibration.
+  
+  
+  # check if frc, hindcast or obs are all na values
+  if (!any(!is.na(obs))) {
+    warning('In this cell, obs data is missing. No biasCorrection for this cell.')
+    return(NA)
+  } else if (!any(!is.na(frc)) | !any(!is.na(hindcast))) {
+    warning('In this cell, frc data is missing.No biasCorrection for this cell.')
+    return(NA)
+  }
+    
+    
   if (preci == TRUE) {
     
     # lowerIndex is based on obs
@@ -355,6 +434,7 @@ biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = '
 
   # default is the simplest method in biascorrection, just do simple addition and subtraction.
   if (method == 'delta') {
+    if (length(frc) != length(obs)) stop('This method needs frc data have the same length as obs data.')
     # comes from downscaleR biascorrection method
     frcMean <- mean(obs, na.rm = TRUE)
     hindcastMean <- mean(hindcast, na.rm = TRUE)
@@ -401,7 +481,7 @@ biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = '
             frc[lowerIndex] <- frc[lowerIndex] - dif
           }
           
-          frc[non_extrapolateIndex] <- quantile(obs, probs = ecdfHindcast(frc[-extrapolateIndex]), 
+          frc[non_extrapolateIndex] <- quantile(obs, probs = ecdfHindcast(frc[non_extrapolateIndex]), 
                                              na.rm = TRUE, type = 4)
         } else {
           frc <- quantile(obs, probs = ecdfHindcast(frc), na.rm = TRUE, type = 4)
@@ -464,9 +544,7 @@ biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = '
               frc[rain] <- quantile(obs[which(obs > prThreshold & !is.na(obs))], 
                                     probs = ecdfHindcast(frc[rain]), na.rm = TRUE, type = 4)
             }
-            
           }
-          
           if (length(drizzle) > 0){
             
             # drizzle part is a seperate part. it use the ecdf of frc (larger than minHindcastPreci) to 
@@ -477,7 +555,6 @@ biasCorrect_core <- function(frc, hindcast, obs, method = 'delta', scaleType = '
           }
           
           frc[noRain] <- 0
-          
           
         } else {
           # in this condition minHindcastPreci is the max of hindcast, so all hindcast <= minHindcastPreci

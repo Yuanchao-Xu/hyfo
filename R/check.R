@@ -51,3 +51,39 @@ checkBind <- function(data, bind){
   }
   message('Data list is OK')
 }
+
+# Check if a input file is a hyfo grid file.
+checkHyfo <- function(...) {
+  datalist <- list(...)
+  lapply(datalist, FUN = checkHyfo_core)
+  invisible()
+}
+
+checkHyfo_core <- function(hyfo) {
+  #This is to check if the input is a hyfo list.
+  checkWord <- c('Data', 'xyCoords', 'Dates')
+  if (any(is.na(match(checkWord, attributes(hyfo)$names)))) {
+    stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates",
+check help for details or use loadNCDF to read NetCDF file.
+
+If time series input is needed, and your input is a time series, please put "TS = yourinput".')
+  }
+}
+
+# This check dim is based on the name of the dimension
+checkDimLength <- function(..., dim) {
+  datalist <- list(...)
+  
+  for (x in dim) {
+    dimLength <- sapply(datalist, function(y) calcuDim(y, x))
+    if (any(is.na(dimLength))) stop('No input dimension name, check your dimension name.')
+    if (length(unique(dimLength)) != 1) stop('Input data have different dimemsion length.')
+  }
+  
+  invisible()
+}
+
+calcuDim <- function(data, dim) {
+  dimIndex <- match(dim, attributes(data)$dimensions)
+  dimLength <- dim(data)[dimIndex]
+}

@@ -108,6 +108,31 @@ It can somehow filter some extreme values caused by errors, while keep the extre
 Better have a long period of training, and the if the forecast system is relatively stable.
 }
 \examples{
+######## hyfo grid file biascorrection
+########
+
+# If your input is obtained by \\code{loadNcdf}, you can also directly biascorrect
+# the file.
+
+# First load ncdf file.
+filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
+varname <- getNcdfVar(filePath)
+nc <- loadNcdf(filePath, varname)
+
+data(tgridData)
+
+# Then we will use nc data as forecasting data, and use itself as hindcast data,
+# use tgridData as observation.
+
+newFrc <- biasCorrect(nc, nc, tgridData, method = 'scaling')
+newFrc <- biasCorrect(nc, nc, tgridData, method = 'eqm', extrapolate = 'constant',
+preci = TRUE)
+newFrc <- biasCorrect(nc, nc, tgridData, method = 'gqm', preci = TRUE)
+
+
+######## Time series biascorrection
+########
+
 # Use the time series from testdl as an example, we take frc, hindcast and obs from testdl.
 data(testdl)
 
@@ -154,10 +179,10 @@ plotTS(list = TSlist, plot = 'cum')
 
 
 
-
-
-
 # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+}
+\author{
+Yuanchao Xu \email{xuyuanchao37@gmail.com }, S. Herrera \email{sixto@predictia.es }
 }
 \references{
 Bias correction methods come from \code{biasCorrection} from \code{dowscaleR}

@@ -70,12 +70,7 @@ getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', name = 
   
   if (is.null(TS)) {
     #check input dataset
-    checkWord <- c('Data', 'xyCoords', 'Dates')
-    if (any(is.na(match(checkWord, attributes(dataset)$names)))) {
-      stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
-            check help for details or use loadNCDF to read NetCDF file. 
-           If your input is a time series, put "TS = ".')
-    }
+    checkHyfo(dataset)
     
     startTime <- as.POSIXlt(dataset$Dates$start, tz = 'GMT')
     yearIndex <- startTime$year + 1900

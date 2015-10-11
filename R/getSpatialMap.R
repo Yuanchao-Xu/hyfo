@@ -36,12 +36,7 @@
 getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 
   #check input dataset
-  checkWord <- c('Data', 'xyCoords', 'Dates')
-  if (any(is.na(match(checkWord, attributes(dataset)$names)))) {
-    stop('Input dataset is incorrect, it should contain "Data", "xyCoords", and "Dates", 
-          check help for details.')
-  }
-  
+  checkHyfo(dataset)
   
   #range of the dataset just loaded 
   lon <- dataset$xyCoords$x
@@ -54,6 +49,7 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
   # Dimension needs to be arranged. Make sure first and second dimension is lat and lon.
   # Further may be arranged into a seperate function
   att <- attributes(data)$dimensions
+  if (is.null(att)) stop('No dimnames for the input data, please use loadNcdf to load data.')
   dimIndex <- seq(1, length(att))
   dimIndex1 <- match(c('lon', 'lat', 'time'), att)# match can apply to simple cases
   
@@ -474,47 +470,6 @@ getSpatialMap_comb <- function(..., list = NULL, nrow = 1, x = '', y = '', title
   if (output == TRUE) return(data_ggplot)
 }
 
-
-
-
-chooseDim <- function(array, dim, value, drop = FALSE) { 
-  # Create list representing arguments supplied to [
-  # bquote() creates an object corresponding to a missing argument
-  dimnames <- attributes(array)$dimensions
-  
-  indices <- rep(list(bquote()), length(dim(array)))
-  indices[[dim]] <- value
-  
-  if (dim(array)[dim] < max(value)) {
-    stop('Chosen member exceeds the member range of the dataset.')
-  }
-  
-  # Generate the call to [
-  call <- as.call(c(
-    list(as.name("["), quote(array)),
-    indices,
-    list(drop = drop)))
-  # Print it, just to make it easier to see what's going on
-  # Print(call)
-
-  # Finally, evaluate it
-  output <- eval(call)
-  
-  if (length(dim(output)) == length(dimnames)) {
-    attributes(output)$dimensions <- dimnames
-  } else if (length(dim(output)) < length(dimnames)){
-    
-    # In this case, one dimension is dropped, if value is a number 
-    # and drop == T, this situation can appear. So the dropped dimemsion
-    # should be the chosen dimension.
-    i <- 1:length(dimnames)
-    # get rid of the dropped dimensin
-    i <- i[-dim]
-    attributes(output)$dimensions <- dimnames[i]
-  }
-  
-  return(output)
-}
 
 
 reshapeMatrix <- function(matrix) {

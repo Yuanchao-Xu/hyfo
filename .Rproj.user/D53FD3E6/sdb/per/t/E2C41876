@@ -1,0 +1,17 @@
+{
+    "contents" : "#' Check data for bind function.\n#' \n#' check if the data is available for \\code{rbind()} or \\code{cbind()}\n#' \n#' @param data A list containing different sublists ready to be processed by \\code{do.call('rbind')} \n#' or \\code{do.call('cbind')}\n#' @param bind A string showing which bind you are going to use can be 'rbind' or 'cbind'\n#' @return data can be processed by bind function; data cannot be processed by bind function\n#' @examples\n#' data <- list(c(1,1,1),c(2,2,2))\n#' bind <- 'rbind'\n#' checkBind(data,bind)\n#' \n#' data(testdl)\n#' \\dontrun{\n#' checkBind(testdl, 'rbind')\n#' }\n#' # Since the colnames in testdl are not the same, so it cannot be bound.\n#' #\n#' @export\ncheckBind <- function(data, bind){\n  # data has to be a list of values, and will be used in do.call('rbind')\n  message ('Check if the data list is available for rbind or cbind... \\n')\n  if (bind == 'rbind') {\n    colNum <- sapply(data, function(x) dim(x)[2])\n    colLev <- unique(colNum)\n    if (length(colLev) != 1) {\n      dif <- colLev[2]\n      difNum <- which(colNum == dif)\n      stop(sprintf('Different Colomn number in %s th of the input list \\n', difNum))\n      \n    }\n    \n    # For rbind, colnames has  to be checked as well.\n    colNameNum <- lapply(data, function(x) colnames(x))\n    sameName <- sapply(1:length(colNameNum), function(x) colNameNum[[x]] == colNameNum[[1]])\n    if (any(!is.null(unlist(colNameNum))) & (any(sameName == FALSE) | any(length(unlist(sameName)) == 0))) {\n      stop('Data in list have Different colnames, which cannot process rbind. ')\n    }\n    \n    \n  }else if (bind =='cbind') {\n    rowNum <- sapply(data, function(x) dim(x)[1])\n    rowLev <- unique(rowNum)\n    if (length(rowLev) != 1) {\n      dif <- rowLev[2]\n      difNum <- which(rowNum == dif)\n      stop(sprintf('Different row number in %s th of the input list \\n', rowNum))\n      \n    }\n  }\n  message('Data list is OK')\n}\n\n# Check if a input file is a hyfo grid file.\ncheckHyfo <- function(...) {\n  datalist <- list(...)\n  lapply(datalist, FUN = checkHyfo_core)\n  invisible()\n}\n\ncheckHyfo_core <- function(hyfo) {\n  #This is to check if the input is a hyfo list.\n  checkWord <- c('Data', 'xyCoords', 'Dates')\n  if (any(is.na(match(checkWord, attributes(hyfo)$names)))) {\n    stop('Input dataset is incorrect, it should contain \"Data\", \"xyCoords\", and \"Dates\",\ncheck help for details or use loadNCDF to read NetCDF file.\n\nIf time series input is needed, and your input is a time series, please put \"TS = yourinput\".')\n  }\n}\n\n# This check dim is based on the name of the dimension\ncheckDimLength <- function(..., dim) {\n  datalist <- list(...)\n  \n  for (x in dim) {\n    dimLength <- sapply(datalist, function(y) calcuDim(y, x))\n    if (any(is.na(dimLength))) stop('No input dimension name, check your dimension name.')\n    if (length(unique(dimLength)) != 1) stop('Input data have different dimemsion length.')\n  }\n  \n  invisible()\n}\n\ncalcuDim <- function(data, dim) {\n  dimIndex <- match(dim, attributes(data)$dimensions)\n  dimLength <- dim(data)[dimIndex]\n}\n",
+    "created" : 1444252718561.000,
+    "dirty" : false,
+    "encoding" : "ASCII",
+    "folds" : "",
+    "hash" : "1221253150",
+    "id" : "E2C41876",
+    "lastKnownWriteTime" : 1444338945,
+    "path" : "E:/1/R/hyfo/R/check.R",
+    "project_path" : "R/check.R",
+    "properties" : {
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
