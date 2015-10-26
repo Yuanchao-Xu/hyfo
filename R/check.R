@@ -83,7 +83,6 @@ checkDimLength <- function(..., dim) {
   invisible()
 }
 
-calcuDim <- function(data, dim) {
-  dimIndex <- match(dim, attributes(data)$dimensions)
-  dimLength <- dim(data)[dimIndex]
-}
+
+
+

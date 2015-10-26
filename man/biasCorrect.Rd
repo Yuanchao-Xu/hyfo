@@ -4,7 +4,7 @@
 \alias{biasCorrect}
 \title{Biascorrect the input timeseries or hyfo dataset}
 \usage{
-biasCorrect(frc, hindcast, obs, method = "delta", scaleType = "multi",
+biasCorrect(frc, hindcast, obs, method = "scaling", scaleType = "multi",
   input = "hyfo", preci = FALSE, prThreshold = 0, extrapolate = "no")
 }
 \arguments{
@@ -18,11 +18,11 @@ observation data. Check details for more information.}
 \item{obs}{a hyfo grid data output or a dataframe (time series) consists of Date column and one or more value columns,
 representing the observation data.}
 
-\item{method}{bias correct method, including 'delta', 'scaling'...}
+\item{method}{bias correct method, including 'delta', 'scaling'..., default is 'scaling'}
 
 \item{scaleType}{only when the method "scaling" is chosen, scaleType will be available. Two different types
-of scaling method, 'add' and 'mult', which means additive and multiplicative scaling method. More info check
-details.}
+of scaling method, 'add' and 'multi', which means additive and multiplicative scaling method. More info check
+details. Default scaleType is 'multi'.}
 
 \item{input}{If input is a time series, \code{input = 'TS'} needs to be assigned, or hyfo will take it as
 an hyfo output grid file. Default is hyfo output grid file, where in most of the cases we prefer.}
@@ -49,9 +49,11 @@ some bias, biascorrection is used then to fix the bias.
 
 \strong{Hindcast}
 
-In order to bias correct, we need to pick up some
-data from the forecast to train with the observation, which is called hindcast in this function. Hindcast
-should have \strong{EVERY} attributes that forecast has.
+In order to bias correct, we need to pick up some data from the forecast to train with
+the observation, which is called hindcast in this function. Using hindcast and observation,
+the program can analyze the bias and correct the bias in the forecast.
+
+Hindcast should have \strong{EVERY} attributes that forecast has.
 
 Hindcast is also called re-forecast, is the forecast of the past. E.g. you have a forecast from year 2000-2010, assuming now you are in 2005. So from 2000-2005, this period
 is the hindcast period, and 2005-2010, this period is the forecast period.
@@ -70,9 +72,16 @@ period (2001-2002) from the forecast, which is the hindcast period. For forecast
 The program will evaluate the obs and hindcast, to get the modification of the forecast, and then add the
 modification to the forecast data.
 
+The more categorized input, the more accurate result you will get. E.g., if you want to
+bias correct a forecast for winter season. So you'd better to extract all the winter period
+in the hindcast and observation to train. \code{extractPeriod} can be used for this purpose.
+
 \strong{method}
 
-Different methods used in the bias correction.
+Different methods used in the bias correction. Among which, delta, scaling can be applied
+to different kinds of parameters, with no need to set \code{preci}; eqm has two conditions for rainfall data and other data,
+it needs user to input \code{preci = TRUE/FALSE} to point to different conditions; gqm is
+designed for rainfall data, so \code{preci = TRUE} needs to be set.
 
 \strong{delta}
 
@@ -123,8 +132,8 @@ data(tgridData)
 
 # Then we will use nc data as forecasting data, and use itself as hindcast data,
 # use tgridData as observation.
-
-newFrc <- biasCorrect(nc, nc, tgridData, method = 'scaling')
+newFrc <- biasCorrect(nc, nc, tgridData)
+newFrc <- biasCorrect(nc, nc, tgridData, scaleType = 'add')
 newFrc <- biasCorrect(nc, nc, tgridData, method = 'eqm', extrapolate = 'constant',
 preci = TRUE)
 newFrc <- biasCorrect(nc, nc, tgridData, method = 'gqm', preci = TRUE)
@@ -147,15 +156,16 @@ obs <- datalist[[3]]
 
 # The data used here is just for example, so there could be negative data.
 
-# default method is delta
+# default method is scaling, with 'multi' scaleType
 frc_new <- biasCorrect(frc, hindcast, obs, input = 'TS')
+
 # for precipitation data, extra process needs to be executed, so you have to tell
-# the program to it is a precipitation data.
+# the program that it is a precipitation data.
 
 frc_new1 <- biasCorrect(frc, hindcast, obs, input = 'TS', preci = TRUE)
 
-# You can use other methods to biascorrect.
-frc_new2 <- biasCorrect(frc, hindcast, obs, method = 'scaling', scaleType = 'multi', input = 'TS')
+# You can use other scaling methods to biascorrect.
+frc_new2 <- biasCorrect(frc, hindcast, obs, scaleType = 'add', input = 'TS')
 
 #
 frc_new3 <- biasCorrect(frc, hindcast, obs, method = 'eqm', input = 'TS', preci = TRUE)

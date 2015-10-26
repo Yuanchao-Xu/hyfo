@@ -39,9 +39,11 @@ chooseDim <- function(array, dim, value, drop = FALSE) {
 
 
 adjustDim <- function(data, ref = 'no') {
+  # input data is an array
   # ref is the Data part of a hyfo file, used as reference
   # Further may be arranged into a seperate function
   # the input reference will be put at first, then the rest 
+  if (is.null(data)) return(NULL)
   if (identical(ref, 'no')) {
     # Default
     refOrder <- c('lon', 'lat', 'time')
@@ -69,4 +71,9 @@ adjustDim <- function(data, ref = 'no') {
   return(data)
 }
 
-
+# Belong to checkDimLength
+calcuDim <- function(data, dim) {
+  dimIndex <- match(dim, attributes(data)$dimensions)
+  dimLength <- dim(data)[dimIndex]
+  return(dimLength)
+}

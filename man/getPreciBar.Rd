@@ -66,7 +66,7 @@ IT IS NOT THE LONGITUDE AND LATITUDE. e.g., \code{cell = c(2, 3)}, the program w
 and 3rd latitude, by the increasing order. Longitude comes first.
 }
 \examples{
-#gridData provided by package is the result of \\code{loadGridData{ecomsUDG.Raccess}}
+#gridData provided by package is the result of \\code{loadNcdf()}
 data(tgridData)
 b1 <- getPreciBar(tgridData, method = 'annual')
 b2 <- getPreciBar(tgridData, method = 'meanMonthly')
