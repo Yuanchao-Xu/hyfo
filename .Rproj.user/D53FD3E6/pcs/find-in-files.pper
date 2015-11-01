@@ -4,7 +4,7 @@
         "filePatterns" : [
         ],
         "path" : "E:/1/R/hyfo",
-        "query" : "invisible(",
+        "query" : "multi_biasCorrect",
         "regex" : false
     }
 }

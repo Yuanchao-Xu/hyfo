@@ -86,3 +86,65 @@ checkDimLength <- function(..., dim) {
 
 
 
+###########################################################################################
+##### For biasFactor class
+
+##### Validity functions
+
+checkBiasFactor <- function(object) {
+  errors <- character()
+  if (length(object@biasFactor) == 0) {
+    msg <- 'biasFactors should not be empty.'
+    errors <- c(errors, msg)
+  }
+  
+  if (length(object@method) == 0) {
+    msg <- 'method should not be empty.'
+    errors <- c(errors, msg)
+  }
+  
+  if (length(object@preci) == 0) {
+    msg <- 'preci should not be empty.'  
+    errors <- c(errors, msg)
+  }
+  
+  prThreshold <- object@prThreshold
+  if (length(prThreshold) != 0) {
+    if (prThreshold < 0) {
+      msg <- 'prThreshold should be greater than 0.'
+      errors <- c(errors, msg)
+    }
+  }
+  
+  scaleType <- object@scaleType
+  if (length(scaleType) != 0) {
+    if (scaleType != 'multi' & scaleType != 'add') {
+      msg <- paste('scaleType is ', scaleType, '. Should be "multi" or "add".', sep = '')
+      errors <- c(errors, msg)
+    }
+  }
+  
+  extrapolate <- object@extrapolate
+  if (length(extrapolate) != 0) {
+    if (extrapolate != 'no' & extrapolate != 'constant') {
+      msg <- paste('extrapolate is ', extrapolate, '. Should be "no" or "constant".', sep = '')
+      errors <- c(errors, msg)
+    }
+  }
+  
+  if (length(errors) == 0) TRUE else errors
+}
+
+
+checkBiasFactor.hyfo <- function(object) {
+  errors <- character()
+  length_lonLatDim <- length(object@lonLatDim)
+  if (length_lonLatDim != 2) {
+    msg <- paste('lonLatDim is length ', length_lonLatDim, '. Should be 2', sep = '')
+    errors <- c(errors, msg)
+  }
+  
+  if (length(errors) == 0) TRUE else errors
+}
+
+

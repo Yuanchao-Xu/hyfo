@@ -1,18 +1,23 @@
 Package: hyfo
 Type: Package
-Title: Hydrology and Climate Forecasting R Package for Data Analysis and Visualization
-Version: 1.2.8
-Date: 2015-10-02
+Title: Hydrology and Climate Forecasting R Package for Data Analysis and
+    Visualization
+Version: 1.2.9
+Date: 2015-10-30
 Authors@R: person("Yuanchao", "Xu", email = "xuyuanchao37@gmail.com",
   role = c("aut", "cre"))
-Description: This package can be used as a tool for hydrology and climate forecasting. 
-  There are several tools including data processing, data visualization and data analysis. 
-  For hydrological and hydraulic modellers, hyfo can be a good pre-processing and post-processing 
-  tool for you.
-  hyfo has been tested stable on windows platform.
+Description: This package can be used as a tool for hydrology and climate
+    forecasting. There are several tools including data processing, data
+    visualization and data analysis. For hydrological and hydraulic modellers, hyfo
+    can be a good pre-processing and post-processing tool for you. hyfo has been
+    tested stable on windows platform.
 License: GPL-2
-Depends: R (>= 3.1.0), stats (>= 3.1.3), utils(>= 3.1.3)
-Imports: ggplot2 (>= 1.0.1),
+Depends:
+    R (>= 3.1.0),
+    stats (>= 3.1.3),
+    utils(>= 3.1.3),
+Imports:
+    ggplot2 (>= 1.0.1),
     reshape2 (>= 1.4.1),
     zoo (>= 1.7-12),
     rgdal (>= 0.9-3),
@@ -23,8 +28,10 @@ Imports: ggplot2 (>= 1.0.1),
     maptools (>= 0.8-36),
     rgeos (>= 0.3-8),
     ncdf (>= 1.6.8),
-    MASS (>= 7.3-39)
-Suggests: gridExtra,
+    MASS (>= 7.3-39),
+    methods
+Suggests:
+    gridExtra,
     knitr
 VignetteBuilder: knitr
 LazyData: true

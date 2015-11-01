@@ -1,0 +1,11 @@
+
+hyfo 1.2.9
+==========
+- new biasFactor S4 class added, to avoid set the input type every time.
+- operational bias correction has been changed to generic function.
+- news file added.
+
+
+hyfo 1.2.8
+==========
+- operational bias correction added, in normal function.

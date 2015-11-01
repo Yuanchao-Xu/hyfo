@@ -220,23 +220,14 @@ biasCorrect <- function(frc, hindcast, obs, method = 'scaling', scaleType = 'mul
       warning('time of obs and time of hindcast are not the same, which may cause inaccuracy in 
               the calibration.')
     }
+    n <- ncol(frc)
     
-    if (ncol(frc) == 2) {
-      frc_data <- biasCorrect_core(frc[, 2], hindcast[, 2], obs[, 2], method = method, 
-                                   scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
-                                   extrapolate = extrapolate)
-    } else if (ncol(frc) > 2) {
-      # In this case more than one value columns exist in the dataset, both frc and hindcast.
-      
-      n <- ncol(frc)
-      
-      # For every column, it's biascorrected respectively.
-      frc_data <- lapply(2:n, function(x) biasCorrect_core(frc[, x], hindcast[, x], obs[, 2], method = method,
-                                                           scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
-                                                           extrapolate = extrapolate))
-      frc_data <- do.call('cbind', frc_data)
-      rownames(frc_data) <- NULL
-    } else stop('Wrong TS input, check your TS dimension.')
+    # For every column, it's biascorrected respectively.
+    frc_data <- lapply(2:n, function(x) biasCorrect_core(frc[, x], hindcast[, x], obs[, 2], method = method,
+                                                         scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
+                                                         extrapolate = extrapolate))
+    frc_data <- do.call('cbind', frc_data)
+    rownames(frc_data) <- NULL
     
     names <- colnames(frc)
     frc_new <- data.frame(frc[, 1], frc_data)
