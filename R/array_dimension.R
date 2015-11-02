@@ -55,6 +55,7 @@ adjustDim <- function(data, ref = 'no') {
   }
   
   att <- attributes(data)$dimensions
+  if (is.null(att)) stop('No dimnames in the input data attributes, please use loadNcdf to load data.')
   if (identical(att, refOrder)) return(data)
   
   dimIndex <- seq(1, length(att))

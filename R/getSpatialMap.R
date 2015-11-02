@@ -1,7 +1,7 @@
 #' Get spatial map of the input dataset.
 #' 
 #' @param dataset A list containing different information, should be the result of reading netcdf file using
-#' \code{library(ecomsUDG.Raccess)}.
+#' \code{loadNcdf}.
 #' @param method A string showing different calculating method for the map. More information please refer to
 #' details.
 #' @param member A number showing which member is selected to get, if the dataset has a "member" dimension. Default
@@ -18,7 +18,7 @@
 #' "mean", "max", "min": mean daily, maximum daily, minimum daily precipitation.
 #' @examples
 #' 
-#' #gridData provided in the package is the result of \code {loadGridData{ecomsUDG.Raccess}}
+#' #gridData provided in the package is the result of \code {loadNcdf}
 #' data(tgridData)
 #' getSpatialMap(tgridData, method = 'meanAnnual')
 #' getSpatialMap(tgridData, method = 'winter')
@@ -47,18 +47,7 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
   data <- dataset$Data
   
   # Dimension needs to be arranged. Make sure first and second dimension is lat and lon.
-  # Further may be arranged into a seperate function
-  att <- attributes(data)$dimensions
-  if (is.null(att)) stop('No dimnames for the input data, please use loadNcdf to load data.')
-  dimIndex <- seq(1, length(att))
-  dimIndex1 <- match(c('lon', 'lat', 'time'), att)# match can apply to simple cases
-  
-  # for array this works, or setdiff can be used here to find the nomatch element.
-  dimIndex2 <- dimIndex[-dimIndex1]# choose nomatch
-  
-  
-  data <- aperm(data, c(dimIndex1, dimIndex2))
-  attributes(data)$dimensions <- att[c(dimIndex1, dimIndex2)]
+  data <- adjustDim(data, ref = c('lon', 'lat', 'time'))
   
   # Because in the following part, only 3 dimensions are allowed, so data has to be processed.
   if (member == 'mean' & any(attributes(data)$dimensions == 'member')) {

@@ -78,14 +78,7 @@ getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', name = 
     data <- dataset$Data
   
     # Dimension needs to be arranged. Make sure first and second dimension is lat and lon.
-    att <- attributes(data)$dimensions
-    dimIndex <- seq(1, length(att))
-    dimIndex1 <- match(c('lon', 'lat', 'time'), att)# match can apply to simple cases
-    dimIndex2 <- dimIndex[-dimIndex1]# choose nomatch
-    
-    
-    data <- aperm(data, c(dimIndex1, dimIndex2))
-    attributes(data)$dimensions <- att[c(dimIndex1, dimIndex2)]
+    data <- adjustDim(data, ref = c('lon', 'lat', 'time'))
     
     # Because in the following part, only 3 dimensions are allowed, so data has to be processed.
     if (is.null(member) & any(attributes(data)$dimensions == 'member')) {

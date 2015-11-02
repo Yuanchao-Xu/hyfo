@@ -163,6 +163,7 @@
 #' 
 #' @author Yuanchao Xu \email{xuyuanchao37@@gmail.com }, S. Herrera \email{sixto@@predictia.es }
 #' 
+#' @importFrom methods setMethod
 #' @export
 #' 
 #' 
@@ -175,40 +176,8 @@ setGeneric('getBiasFactor', function(hindcast, obs, method = 'scaling', scaleTyp
 #' @describeIn getBiasFactor
 setMethod('getBiasFactor', signature('data.frame', 'data.frame'), 
           function(hindcast, obs, method, scaleType, preci, prThreshold, extrapolate) {
-            
-            if (!grepl('-|/', obs[1, 1]) | !grepl('-|/', hindcast[1, 1])) {
-              stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
-                   and use as.Date to convert.If your input is a hyfo dataset, put input = "hyfo" as an
-                   argument, check help for more info.')
-            }
-            
-            # change to date type is easier, but in case in future the flood part is added, Date type doesn't have
-            # hour, min and sec, so, it's better to convert it into POSIxlt.
-            
-            # if condition only accepts one condition, for list comparison, there are a lot of conditions, better
-            # further process it, like using any.
-            if (any(as.POSIXlt(hindcast[, 1]) != as.POSIXlt(obs[, 1]))) {
-              warning('time of obs and time of hindcast are not the same, which may cause inaccuracy in 
-                      the calibration.')
-            }
-            n <- ncol(hindcast)
-            
-            # For every column, it's biascorrected respectively.
-            biasFactor <- lapply(2:n, function(x) getBiasFactor_core(hindcast[, x], obs[, 2], method = method,
-                                                                         scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
-                                                                         extrapolate = extrapolate))
-            if (n - 1 > 1) {
-              biasFactor_all <- new('biasFactor.multiMember', biasFactor = biasFactor, memberDim = n - 1,
-                       method = method, preci = preci, prThreshold = prThreshold, scaleType = scaleType, 
-                       extrapolate = extrapolate)
-              
-            } else {
-              biasFactor_all <- new('biasFactor', biasFactor = biasFactor, method = method, 
-                                    preci = preci, prThreshold = prThreshold, scaleType = scaleType, 
-                                    extrapolate = extrapolate)
-            }
-            
-            return(biasFactor_all)
+            result <- getBiasFactor.TS(hindcast, obs, method, scaleType, preci, prThreshold, extrapolate)
+            return(result)
           })
 
 
@@ -217,83 +186,8 @@ setMethod('getBiasFactor', signature('data.frame', 'data.frame'),
 #' @importFrom methods new
 setMethod('getBiasFactor', signature('list', 'list'), 
           function(hindcast, obs, method, scaleType, preci, prThreshold, extrapolate) {
-            
-            ## Check if the data is a hyfo grid data.
-            checkHyfo(hindcast, obs)
-            
-            hindcastData <- hindcast$Data
-            obsData <- obs$Data
-            
-            ## save frc dimension order, at last, set the dimension back to original dimension
-            hindcastDim <- attributes(hindcastData)$dimensions
-            
-            ## ajust the dimension into general dimension order.
-            obsData <- adjustDim(obsData, ref = c('lon', 'lat', 'time'))
-            
-            ## CheckDimLength, check if all the input dataset has different dimension length
-            # i.e. if they all have the same lon and lat number.
-            checkDimLength(hindcastData, obsData, dim = c('lon', 'lat'))
-            
-            
-            # Now real bias correction is executed.
-            
-            memberIndex <- match('member', attributes(hindcastData)$dimensions)
-            
-            # For dataset that has a member part 
-            if (!is.na(memberIndex)) {
-              
-              hindcastData <- adjustDim(hindcastData, ref = c('lon', 'lat', 'time', 'member'))
-              
-              # The following code may speed up because it doesn't use for loop.
-              # It firstly combine different array into one array. combine the time 
-              # dimension of frc, hindcast and obs. Then use apply, each time extract 
-              # the total time dimension, and first part is frc, second is hindcast, third
-              # is obs. Then use these three parts to bias correct. All above can be written
-              # in one function and called within apply. But too complicated to understand,
-              # So save it for future use maybe.
-              
-              #       for (member in 1:dim(frcData)[4]) {
-              #         totalArr <- array(c(frcData[,,, member], hindcastData[,,, member], obsData),
-              #                           dim = c(dim(frcData)[1], dim(frcData)[2], 
-              #                                                        dim(frcData)[3] + dim(hindcastData)[3] + dim(obsData)[3]))
-              #       }
-              
-              biasFactor_all <- vector(mode = "list", length = dim(hindcastData)[4])
-              for (member in 1:dim(hindcastData)[4]) {
-                biasFactor_all[[member]] <- vector(mode = 'list', length = dim(hindcastData)[1])
-                for (lon in 1:dim(hindcastData)[1]) {
-                  biasFactor_all[[member]][[lon]] <- vector(mode = 'list', length = dim(hindcastData)[2])
-                  for (lat in 1:dim(hindcastData)[2]) {
-                    biasFactor_all[[member]][[lon]][[lat]] <- getBiasFactor_core(hindcastData[lon, lat,, member], obsData[lon, lat,], method = method,
-                                                                                 scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
-                                                                                 extrapolate = extrapolate)
-                  }
-                }
-              }
-              
-              biasFactor <- new('biasFactor.hyfo', biasFactor = biasFactor_all, method = method, preci = preci,
-                                prThreshold = prThreshold, scaleType = scaleType, extrapolate = extrapolate, 
-                                lonLatDim = calcuDim(hindcastData, dim = c('lon', 'lat')),
-                                memberDim = calcuDim(hindcastData, dim = 'member'))
-            } else {
-              
-              hindcastData <- adjustDim(hindcastData, ref = c('lon', 'lat', 'time'))
-              
-              biasFactor_all <- vector(mode = 'list', length = dim(hindcastData)[1])
-              for (lon in 1:dim(hindcastData)[1]) {
-                biasFactor_all[[lon]] <- vector(mode = 'list', length = dim(hindcastData)[2]) 
-                for (lat in 1:dim(hindcastData)[2]) {
-                  biasFactor_all[[lon]][[lat]] <- getBiasFactor_core(hindcastData[lon, lat,], obsData[lon, lat,], method = method,
-                                                                     scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
-                                                                     extrapolate = extrapolate)
-                }
-              }
-              biasFactor <- new('biasFactor.hyfo', biasFactor = biasFactor_all, method = method, preci = preci,
-                                prThreshold = prThreshold, scaleType = scaleType, extrapolate = extrapolate, 
-                                lonLatDim = calcuDim(hindcastData, dim = c('lon', 'lat')))
-              
-            }
-            
+            result <- getBiasFactor.list(hindcast, obs, method, scaleType, preci, prThreshold, extrapolate)
+            return(result)
             })
 
 
@@ -459,132 +353,263 @@ setGeneric('applyBiasFactor', function(frc, biasFactor, obs = NULL) {
 #' @importFrom methods setMethod
 setMethod('applyBiasFactor', signature('data.frame', 'biasFactor'), 
           function(frc, biasFactor, obs) {
-            method <- biasFactor@method
-            preci <- biasFactor@preci
-            prThreshold <- biasFactor@prThreshold
-            scaleType <- biasFactor@scaleType
-            extrapolate <- biasFactor@extrapolate
-            memberDim <- biasFactor@memberDim
-            biasFactor <- biasFactor@biasFactor
-            
-         
-            # First check if the first column is Date
-            if (!grepl('-|/', frc[1, 1])) {
-              stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
-           and use as.Date to convert.If your input is a hyfo dataset, put input = "hyfo" as an
-           argument, check help for more info.')
-            }
-            # change to date type is easier, but in case in future the flood part is added, Date type doesn't have
-            # hour, min and sec, so, it's better to convert it into POSIxlt.
-            
-            # In this case more than one value columns exist in the dataset, both frc and hindcast.
-            
-            n <- ncol(frc)
-            if (n-1 != memberDim) stop('frc and biasFactor have different members.')
-            
-        
-            # For every column, it's biascorrected respectively.
-            frc_data <- lapply(2:n, function(x) applyBiasFactor_core(frc[, x], biasFactor = biasFactor[[x - 1]], method = method,
-                                                                     scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
-                                                                     extrapolate = extrapolate, obs = obs[, 2]))
-            frc_data <- do.call('cbind', frc_data)
-            rownames(frc_data) <- NULL
-            
-            names <- colnames(frc)
-            frc_new <- data.frame(frc[, 1], frc_data)
-            colnames(frc_new) <- names
-            
-            return(frc_new)
+            result <- applyBiasFactor.TS(frc, biasFactor, obs)
+            return(result)
           })
            
 #' @describeIn applyBiasFactor
 #' @importFrom methods setMethod
 setMethod('applyBiasFactor', signature('list', 'biasFactor.hyfo'), 
           function(frc, biasFactor, obs) {
-            method <- biasFactor@method
-            preci <- biasFactor@preci
-            prThreshold <- biasFactor@prThreshold
-            scaleType <- biasFactor@scaleType
-            extrapolate <- biasFactor@extrapolate
-            lonLatDim <- biasFactor@lonLatDim
-            memberDim <- biasFactor@memberDim
-            biasFactor <- biasFactor@biasFactor
-            
-            ## Check if the data is a hyfo grid data.
-            checkHyfo(frc)
-            
-            
-            obsData <- obs$Data
-            frcData <- frc$Data
-            
-            ## save frc dimension order, at last, set the dimension back to original dimension
-            frcDim <- attributes(frcData)$dimensions
-            
-            ## ajust the dimension into general dimension order.
-            obsData <- adjustDim(obsData, ref = c('lon', 'lat', 'time'))
-            
-            ## CheckDimLength, check if all the input dataset has different dimension length
-            # i.e. if they all have the same lon and lat number.
-            if (!identical(calcuDim(frcData, dim = c('lon', 'lat')), lonLatDim)) {
-              stop('frc data has different lon and lat from hindcast data.')
-            }
-            
-            
-            # Now real bias correction is executed.
-            
-            memberIndex <- match('member', attributes(frcData)$dimensions)
-            
-            # For dataset that has a member part 
-            if (!is.na(memberIndex)) {
-              # check if frcData and hindcastData has the same dimension and length.
-              if (calcuDim(frcData, dim = 'member') != memberDim) {
-                stop('frc data has different member number from hindcast.')
-              } 
-              
-              frcData <- adjustDim(frcData, ref = c('lon', 'lat', 'time', 'member'))
-              
-              # The following code may speed up because it doesn't use for loop.
-              # It firstly combine different array into one array. combine the time 
-              # dimension of frc, hindcast and obs. Then use apply, each time extract 
-              # the total time dimension, and first part is frc, second is hindcast, third
-              # is obs. Then use these three parts to bias correct. All above can be written
-              # in one function and called within apply. But too complicated to understand,
-              # So save it for future use maybe.
-              
-              #       for (member in 1:dim(frcData)[4]) {
-              #         totalArr <- array(c(frcData[,,, member], hindcastData[,,, member], obsData),
-              #                           dim = c(dim(frcData)[1], dim(frcData)[2], 
-              #                                                        dim(frcData)[3] + dim(hindcastData)[3] + dim(obsData)[3]))
-              #       }
-              
-              
-              for (member in 1:dim(frcData)[4]) {
-                for (lon in 1:dim(frcData)[1]) {
-                  for (lat in 1:dim(frcData)[2]) {
-                    frcData[lon, lat,, member] <- applyBiasFactor_core(frcData[lon, lat,,member], biasFactor = biasFactor[[member]][[lon]][[lat]], method = method,
+            result <- applyBiasFactor.list(frc, biasFactor, obs)
+            return(result)
+          })
+
+
+### generic functions
+getBiasFactor.TS <- function(hindcast, obs, method, scaleType, preci, prThreshold, extrapolate) {
+  
+  if (!grepl('-|/', obs[1, 1]) | !grepl('-|/', hindcast[1, 1])) {
+    stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
+         and use as.Date to convert.If your input is a hyfo dataset, put input = "hyfo" as an
+         argument, check help for more info.')
+  }
+  
+  # change to date type is easier, but in case in future the flood part is added, Date type doesn't have
+  # hour, min and sec, so, it's better to convert it into POSIxlt.
+  
+  # if condition only accepts one condition, for list comparison, there are a lot of conditions, better
+  # further process it, like using any.
+  if (any(as.POSIXlt(hindcast[, 1]) != as.POSIXlt(obs[, 1]))) {
+    warning('time of obs and time of hindcast are not the same, which may cause inaccuracy in 
+            the calibration.')
+  }
+  n <- ncol(hindcast)
+  
+  # For every column, it's biascorrected respectively.
+  biasFactor <- lapply(2:n, function(x) getBiasFactor_core(hindcast[, x], obs[, 2], method = method,
+                                                           scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
+                                                           extrapolate = extrapolate))
+  if (n - 1 > 1) {
+    biasFactor_all <- new('biasFactor.multiMember', biasFactor = biasFactor, memberDim = n - 1,
+                          method = method, preci = preci, prThreshold = prThreshold, scaleType = scaleType, 
+                          extrapolate = extrapolate)
+    
+  } else {
+    biasFactor_all <- new('biasFactor', biasFactor = biasFactor, method = method, 
+                          preci = preci, prThreshold = prThreshold, scaleType = scaleType, 
+                          extrapolate = extrapolate)
+  }
+  
+  return(biasFactor_all)
+}
+
+getBiasFactor.list <- function(hindcast, obs, method, scaleType, preci, prThreshold, extrapolate) {
+  
+  ## Check if the data is a hyfo grid data.
+  checkHyfo(hindcast, obs)
+  
+  hindcastData <- hindcast$Data
+  obsData <- obs$Data
+  
+  ## save frc dimension order, at last, set the dimension back to original dimension
+  hindcastDim <- attributes(hindcastData)$dimensions
+  
+  ## ajust the dimension into general dimension order.
+  obsData <- adjustDim(obsData, ref = c('lon', 'lat', 'time'))
+  
+  ## CheckDimLength, check if all the input dataset has different dimension length
+  # i.e. if they all have the same lon and lat number.
+  checkDimLength(hindcastData, obsData, dim = c('lon', 'lat'))
+  
+  
+  # Now real bias correction is executed.
+  
+  memberIndex <- match('member', attributes(hindcastData)$dimensions)
+  
+  # For dataset that has a member part 
+  if (!is.na(memberIndex)) {
+    
+    hindcastData <- adjustDim(hindcastData, ref = c('lon', 'lat', 'time', 'member'))
+    
+    # The following code may speed up because it doesn't use for loop.
+    # It firstly combine different array into one array. combine the time 
+    # dimension of frc, hindcast and obs. Then use apply, each time extract 
+    # the total time dimension, and first part is frc, second is hindcast, third
+    # is obs. Then use these three parts to bias correct. All above can be written
+    # in one function and called within apply. But too complicated to understand,
+    # So save it for future use maybe.
+    
+    #       for (member in 1:dim(frcData)[4]) {
+    #         totalArr <- array(c(frcData[,,, member], hindcastData[,,, member], obsData),
+    #                           dim = c(dim(frcData)[1], dim(frcData)[2], 
+    #                                                        dim(frcData)[3] + dim(hindcastData)[3] + dim(obsData)[3]))
+    #       }
+    
+    biasFactor_all <- vector(mode = "list", length = dim(hindcastData)[4])
+    for (member in 1:dim(hindcastData)[4]) {
+      biasFactor_all[[member]] <- vector(mode = 'list', length = dim(hindcastData)[1])
+      for (lon in 1:dim(hindcastData)[1]) {
+        biasFactor_all[[member]][[lon]] <- vector(mode = 'list', length = dim(hindcastData)[2])
+        for (lat in 1:dim(hindcastData)[2]) {
+          biasFactor_all[[member]][[lon]][[lat]] <- getBiasFactor_core(hindcastData[lon, lat,, member], obsData[lon, lat,], method = method,
                                                                        scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
-                                                                       extrapolate = extrapolate, obs = obsData[lon, lat,])
-                  }
-                }
-              }
-            } else {
-              frcData <- adjustDim(frcData, ref = c('lon', 'lat', 'time'))
-              for (lon in 1:dim(frcData)[1]) {
-                for (lat in 1:dim(frcData)[2]) {
-                  frcData[lon, lat,] <- applyBiasFactor_core(frcData[lon, lat,], biasFactor = biasFactor[[lon]][[lat]], method = method,
+                                                                       extrapolate = extrapolate)
+        }
+      }
+    }
+    
+    biasFactor <- new('biasFactor.hyfo', biasFactor = biasFactor_all, method = method, preci = preci,
+                      prThreshold = prThreshold, scaleType = scaleType, extrapolate = extrapolate, 
+                      lonLatDim = calcuDim(hindcastData, dim = c('lon', 'lat')),
+                      memberDim = calcuDim(hindcastData, dim = 'member'))
+  } else {
+    
+    hindcastData <- adjustDim(hindcastData, ref = c('lon', 'lat', 'time'))
+    
+    biasFactor_all <- vector(mode = 'list', length = dim(hindcastData)[1])
+    for (lon in 1:dim(hindcastData)[1]) {
+      biasFactor_all[[lon]] <- vector(mode = 'list', length = dim(hindcastData)[2]) 
+      for (lat in 1:dim(hindcastData)[2]) {
+        biasFactor_all[[lon]][[lat]] <- getBiasFactor_core(hindcastData[lon, lat,], obsData[lon, lat,], method = method,
+                                                           scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
+                                                           extrapolate = extrapolate)
+      }
+    }
+    biasFactor <- new('biasFactor.hyfo', biasFactor = biasFactor_all, method = method, preci = preci,
+                      prThreshold = prThreshold, scaleType = scaleType, extrapolate = extrapolate, 
+                      lonLatDim = calcuDim(hindcastData, dim = c('lon', 'lat')))
+    
+  }
+  
+  return(biasFactor)
+}
+
+applyBiasFactor.TS <- function(frc, biasFactor, obs) {
+  method <- biasFactor@method
+  preci <- biasFactor@preci
+  prThreshold <- biasFactor@prThreshold
+  scaleType <- biasFactor@scaleType
+  extrapolate <- biasFactor@extrapolate
+  memberDim <- biasFactor@memberDim
+  biasFactor <- biasFactor@biasFactor
+  
+  
+  # First check if the first column is Date
+  if (!grepl('-|/', frc[1, 1])) {
+    stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
+         and use as.Date to convert.If your input is a hyfo dataset, put input = "hyfo" as an
+         argument, check help for more info.')
+  }
+  # change to date type is easier, but in case in future the flood part is added, Date type doesn't have
+  # hour, min and sec, so, it's better to convert it into POSIxlt.
+  
+  # In this case more than one value columns exist in the dataset, both frc and hindcast.
+  
+  n <- ncol(frc)
+  if (n-1 != memberDim) stop('frc and biasFactor have different members.')
+  
+  
+  # For every column, it's biascorrected respectively.
+  frc_data <- lapply(2:n, function(x) applyBiasFactor_core(frc[, x], biasFactor = biasFactor[[x - 1]], method = method,
+                                                           scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
+                                                           extrapolate = extrapolate, obs = obs[, 2]))
+  frc_data <- do.call('cbind', frc_data)
+  rownames(frc_data) <- NULL
+  
+  names <- colnames(frc)
+  frc_new <- data.frame(frc[, 1], frc_data)
+  colnames(frc_new) <- names
+  
+  return(frc_new)
+  
+}
+
+applyBiasFactor.list <- function(frc, biasFactor, obs) {
+  method <- biasFactor@method
+  preci <- biasFactor@preci
+  prThreshold <- biasFactor@prThreshold
+  scaleType <- biasFactor@scaleType
+  extrapolate <- biasFactor@extrapolate
+  lonLatDim <- biasFactor@lonLatDim
+  memberDim <- biasFactor@memberDim
+  biasFactor <- biasFactor@biasFactor
+  
+  ## Check if the data is a hyfo grid data.
+  checkHyfo(frc)
+  
+  
+  obsData <- obs$Data
+  frcData <- frc$Data
+  
+  ## save frc dimension order, at last, set the dimension back to original dimension
+  frcDim <- attributes(frcData)$dimensions
+  
+  ## ajust the dimension into general dimension order.
+  obsData <- adjustDim(obsData, ref = c('lon', 'lat', 'time'))
+  
+  ## CheckDimLength, check if all the input dataset has different dimension length
+  # i.e. if they all have the same lon and lat number.
+  if (!identical(calcuDim(frcData, dim = c('lon', 'lat')), lonLatDim)) {
+    stop('frc data has different lon and lat from hindcast data.')
+  }
+  
+  
+  # Now real bias correction is executed.
+  
+  memberIndex <- match('member', attributes(frcData)$dimensions)
+  
+  # For dataset that has a member part 
+  if (!is.na(memberIndex)) {
+    # check if frcData and hindcastData has the same dimension and length.
+    if (calcuDim(frcData, dim = 'member') != memberDim) {
+      stop('frc data has different member number from hindcast.')
+    } 
+    
+    frcData <- adjustDim(frcData, ref = c('lon', 'lat', 'time', 'member'))
+    
+    # The following code may speed up because it doesn't use for loop.
+    # It firstly combine different array into one array. combine the time 
+    # dimension of frc, hindcast and obs. Then use apply, each time extract 
+    # the total time dimension, and first part is frc, second is hindcast, third
+    # is obs. Then use these three parts to bias correct. All above can be written
+    # in one function and called within apply. But too complicated to understand,
+    # So save it for future use maybe.
+    
+    #       for (member in 1:dim(frcData)[4]) {
+    #         totalArr <- array(c(frcData[,,, member], hindcastData[,,, member], obsData),
+    #                           dim = c(dim(frcData)[1], dim(frcData)[2], 
+    #                                                        dim(frcData)[3] + dim(hindcastData)[3] + dim(obsData)[3]))
+    #       }
+    
+    
+    for (member in 1:dim(frcData)[4]) {
+      for (lon in 1:dim(frcData)[1]) {
+        for (lat in 1:dim(frcData)[2]) {
+          frcData[lon, lat,, member] <- applyBiasFactor_core(frcData[lon, lat,,member], biasFactor = biasFactor[[member]][[lon]][[lat]], method = method,
                                                              scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
                                                              extrapolate = extrapolate, obs = obsData[lon, lat,])
-                }
-              }
-            }
-            
-            frcData <- adjustDim(frcData, ref = frcDim)
-            frc$Data <- frcData
-            frc$biasCorrected_by <- method
-            frc_new <- frc
-            
-            return(frc_new)
-          })
+        }
+      }
+    }
+  } else {
+    frcData <- adjustDim(frcData, ref = c('lon', 'lat', 'time'))
+    for (lon in 1:dim(frcData)[1]) {
+      for (lat in 1:dim(frcData)[2]) {
+        frcData[lon, lat,] <- applyBiasFactor_core(frcData[lon, lat,], biasFactor = biasFactor[[lon]][[lat]], method = method,
+                                                   scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
+                                                   extrapolate = extrapolate, obs = obsData[lon, lat,])
+      }
+    }
+  }
+  
+  frcData <- adjustDim(frcData, ref = frcDim)
+  frc$Data <- frcData
+  frc$biasCorrected_by <- method
+  frc_new <- frc
+  
+  return(frc_new)
+}
 
 
 #################

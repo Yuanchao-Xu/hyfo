@@ -1,0 +1,18 @@
+{
+    "contents" : "##### Prepared for future use, when hyfo becomes a class.\n\n\n# # change to hyfo\n# setGeneric('as.hyfo', function(x) {\n#   standardGeneric('as.hyfo')\n# })\n# \n# setMethod('as.hyfo', signature('list'),\n#           function(x) {\n#             \n#             if (!is.null(x$Members)) {\n#               hyfo <- new(\"hyfo.multiMember\", varName = x$Variable$varName, xyCoords = x$xyCoords, Dates = x$Dates, Data = x$Data,\n#                           Members = x$Members)\n#             } else {\n#               hyfo <- new(\"hyfo\", varName = x$Variable$varName, xyCoords = x$xyCoords, Dates = x$Dates, Data = x$Data)\n# \n#             }\n#             return(hyfo)            \n#             \n#           })\n# \n",
+    "created" : 1446430652514.000,
+    "dirty" : false,
+    "encoding" : "ASCII",
+    "folds" : "",
+    "hash" : "1692451895",
+    "id" : "6706EE48",
+    "lastKnownWriteTime" : 1446430869,
+    "path" : "E:/1/R/hyfo/R/generics.R",
+    "project_path" : "R/generics.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 13,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

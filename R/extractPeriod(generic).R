@@ -3,14 +3,11 @@
 #' Extract common period or certain period from a list of different dataframes of time series, or from a 
 #' dataframe.
 #' NOTE: all the dates in the datalist should follow the format in ?as.Date{base}.
-#' @param datalist A list of different dataframes of time series .
+#' @param data A list of different dataframes of time series, or a dataframe with first column Date, the rest columns value.
 #' @param startDate A Date showing the start of the extract period, default as NULL, check details.
 #' @param endDate A Date showing the end of the extract period, default as NULL, check details.
 #' @param commonPeriod A boolean showing whether the common period is extracted. If chosen, startDate and endDate
 #' should be NULL.
-#' @param dataframe A dataframe with first column Date, the rest columns value. If your input is a 
-#' dataframe, not time series list, you can put \code{dataframe = yourdataframe}. And certain period will be 
-#' extracted. Note: if your input is a time series, that means all the columns share the same period of date.
 #' @param year extract certain year in the entire time series. if you want to extract year 2000, set \code{year = 2000}
 #' @param month extract certain months in a year. e.g. if you want to extract Jan, Feb of each year, 
 #' set \code{month = c(1, 2)}.
@@ -74,8 +71,8 @@
 #' 
 #' dataframe <- list2Dataframe(datalist_com1)
 #' # now we have a dataframe to extract certain months and years.
-#' dataframe_new <- extractPeriod(dataframe = dataframe, month = c(1,2,3))
-#' dataframe_new <- extractPeriod(dataframe = dataframe, month = c(12,1,2), year = 1995)
+#' dataframe_new <- extractPeriod(dataframe, month = c(1,2,3))
+#' dataframe_new <- extractPeriod(dataframe, month = c(12,1,2), year = 1995)
 #' 
 #' 
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
@@ -89,35 +86,49 @@
 #' }
 #'
 #' @export
-extractPeriod <- function(datalist, startDate = NULL, endDate = NULL, commonPeriod = FALSE, 
-                          dataframe = NULL, year = NULL, month = NULL) {
-  if (!is.null(dataframe)) {
-    dataset <- extractPeriod_dataframe(dataframe, startDate = startDate, endDate = endDate, year = year,
-                                       month = month)
-    
-    
-  } else {
-    if (!is.null(startDate) & !is.null(endDate) & commonPeriod == FALSE) {
-      dataset <- lapply(datalist, extractPeriod_dataframe, startDate = startDate, endDate = endDate, year = year,
-                        month = month)
-    } else if (is.null(startDate) & is.null(endDate) & commonPeriod == TRUE) {
-    
-      Dates <- lapply(datalist, extractPeriod_getDate) 
-      Dates <- do.call('rbind', Dates)
-    
-      startDate <- as.Date(max(Dates[, 1]))
-      endDate <- as.Date(min(Dates[, 2]))
-    
-      dataset <- lapply(datalist, extractPeriod_dataframe, startDate = startDate, endDate = endDate, year = year,
-                        month = month)
-    
-    } else {
-      stop('Enter startDate and endDate, set commonPeriod as False, or simply set commonPeriod as TRUE')
-    }
-  }
-  
-  return(dataset)
-}
+setGeneric('extractPeriod', function(data, startDate = NULL, endDate = NULL, commonPeriod = FALSE, 
+                                     year = NULL, month = NULL) {
+  standardGeneric('extractPeriod')
+})
+
+
+#' @describeIn extractPeriod
+#' @importFrom methods setMethod
+setMethod('extractPeriod', signature('data.frame'),
+          function(data, startDate, endDate, commonPeriod, year, month) {
+            dataframe <- data
+            dataset <- extractPeriod_dataframe(dataframe, startDate = startDate, endDate = endDate, year = year,
+                                               month = month)
+            return(dataset)
+          
+})
+
+
+#' @describeIn extractPeriod
+#' @importFrom methods setMethod
+setMethod('extractPeriod', signature('list'),
+          function(data, startDate, endDate, commonPeriod, year, month) {
+            datalist <- data
+            if (!is.null(startDate) & !is.null(endDate) & commonPeriod == FALSE) {
+              dataset <- lapply(data, extractPeriod_dataframe, startDate = startDate, endDate = endDate, year = year,
+                                month = month)
+            } else if (is.null(startDate) & is.null(endDate) & commonPeriod == TRUE) {
+              
+              Dates <- lapply(datalist, extractPeriod_getDate) 
+              Dates <- do.call('rbind', Dates)
+              
+              startDate <- as.Date(max(Dates[, 1]))
+              endDate <- as.Date(min(Dates[, 2]))
+              
+              dataset <- lapply(datalist, extractPeriod_dataframe, startDate = startDate, endDate = endDate, year = year,
+                                month = month)
+              
+            } else {
+              stop('Enter startDate and endDate, set commonPeriod as False, or simply set commonPeriod as TRUE')
+            }
+            return(dataset)
+          })
+
 
 
 
@@ -138,13 +149,13 @@ extractPeriod_dataframe <- function(dataframe, startDate, endDate, year = NULL, 
     stop('startDate and endDate exceeds the date limits in dataframe. Check datalsit please.')
   }
   output <- dataframe[startIndex:endIndex, ]
-
+  
   
   if (!is.null(year)) {
     Date <- as.POSIXlt(output[, 1])
     yea <- Date$year + 1900
     mon <- Date$mon + 1
-      
+    
     if (is.null(month) || !any(sort(month) != month)) {
       DateIndex <- which(yea %in% year)
       if (length(DateIndex) == 0) stop('No input years in the input ts, check your input.')
@@ -164,7 +175,7 @@ extractPeriod_dataframe <- function(dataframe, startDate, endDate, year = NULL, 
         stop('Cannot find input months and input years in the input time series.')
       }
       output <- output[startIndex:endIndex, ]
-        
+      
       if (any(diff(year) != 1)) {
         # if year is not continuous, like 1999, 2003, 2005, than we have to sift again.  
         Date <- as.POSIXlt(output[, 1])
@@ -183,27 +194,27 @@ extractPeriod_dataframe <- function(dataframe, startDate, endDate, year = NULL, 
         
         # cannot directly return output here, because sometimes, month can be incontinuous,
         # we still need the next process to sift month.
-        }
       }
-      
     }
-  
     
-    if (!is.null(month)) {
-      Date <- as.POSIXlt(output[, 1])
-      mon <- Date$mon + 1
-    
-      # %in% can deal with multiple equalities
-      DateIndex <- which(mon %in% month)
-      
-      if (length(DateIndex) == 0) stop('No input months in the input ts, check your input.')
-      
-      output <- output[DateIndex, ]
   }
   
-
+  
+  if (!is.null(month)) {
+    Date <- as.POSIXlt(output[, 1])
+    mon <- Date$mon + 1
+    
+    # %in% can deal with multiple equalities
+    DateIndex <- which(mon %in% month)
+    
+    if (length(DateIndex) == 0) stop('No input months in the input ts, check your input.')
+    
+    output <- output[DateIndex, ]
+  }
+  
+  
   return(output)  
-}
+  }
 
 
 #' @importFrom utils tail
@@ -219,14 +230,14 @@ extractPeriod_getDate <- function(dataset) {
   
   if (!grepl('-|/', dataset[1, 1])) {
     stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base}, 
-          and use as.Date to convert.')
+         and use as.Date to convert.')
   }
   start <- as.Date(dataset[1, 1])
   end <- as.Date(tail(dataset[, 1], 1))
   
   
   return(c(start, end))
-}
+  }
 
 
 

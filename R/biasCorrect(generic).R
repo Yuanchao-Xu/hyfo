@@ -1,5 +1,6 @@
 
 
+
 #' Biascorrect the input timeseries or hyfo dataset
 #' 
 #' Biascorrect the input time series or dataset, the input time series or dataset should consist of observation, hindcast, and forecast.
@@ -19,8 +20,6 @@
 #' @param scaleType only when the method "scaling" is chosen, scaleType will be available. Two different types
 #' of scaling method, 'add' and 'multi', which means additive and multiplicative scaling method. More info check 
 #' details. Default scaleType is 'multi'.
-#' @param input If input is a time series, \code{input = 'TS'} needs to be assigned, or hyfo will take it as 
-#' an hyfo output grid file. Default is hyfo output grid file, where in most of the cases we prefer.
 #' @param preci If the precipitation is biascorrected, then you have to assign \code{preci = TRUE}. Since for
 #' precipitation, some biascorrect methods may not apply to, or some methods are specially for precipitation. 
 #' Default is FALSE, refer to details.
@@ -145,19 +144,19 @@
 #' # The data used here is just for example, so there could be negative data.
 #' 
 #' # default method is scaling, with 'multi' scaleType
-#' frc_new <- biasCorrect(frc, hindcast, obs, input = 'TS')
+#' frc_new <- biasCorrect(frc, hindcast, obs)
 #' 
 #' # for precipitation data, extra process needs to be executed, so you have to tell
 #' # the program that it is a precipitation data.
 #' 
-#' frc_new1 <- biasCorrect(frc, hindcast, obs, input = 'TS', preci = TRUE)
+#' frc_new1 <- biasCorrect(frc, hindcast, obs, preci = TRUE)
 #' 
 #' # You can use other scaling methods to biascorrect.
-#' frc_new2 <- biasCorrect(frc, hindcast, obs, scaleType = 'add', input = 'TS')
+#' frc_new2 <- biasCorrect(frc, hindcast, obs, scaleType = 'add')
 #' 
 #' # 
-#' frc_new3 <- biasCorrect(frc, hindcast, obs, method = 'eqm', input = 'TS', preci = TRUE)
-#' frc_new4 <- biasCorrect(frc, hindcast, obs, method = 'gqm', input = 'TS', preci = TRUE)
+#' frc_new3 <- biasCorrect(frc, hindcast, obs, method = 'eqm', preci = TRUE)
+#' frc_new4 <- biasCorrect(frc, hindcast, obs, method = 'gqm', preci = TRUE)
 #' 
 #' plotTS(obs, frc, frc_new, frc_new1, frc_new2, frc_new3, frc_new4, plot = 'cum')
 #' 
@@ -198,115 +197,133 @@
 #' }
 #' 
 #' @author Yuanchao Xu \email{xuyuanchao37@@gmail.com }, S. Herrera \email{sixto@@predictia.es }
-#' 
+#' @importFrom methods setMethod
 #' @export
+#' 
+setGeneric('biasCorrect', function(frc, hindcast, obs, method = 'scaling', scaleType = 'multi', 
+                                   preci = FALSE, prThreshold = 0, extrapolate = 'no') {
+  standardGeneric('biasCorrect')
+})
 
-biasCorrect <- function(frc, hindcast, obs, method = 'scaling', scaleType = 'multi', input = 'hyfo', 
-                        preci = FALSE, prThreshold = 0, extrapolate = 'no'){
+#' @describeIn biasCorrect
+setMethod('biasCorrect', signature('data.frame', 'data.frame', 'data.frame'),
+          function(frc, hindcast, obs, method, scaleType, preci, prThreshold, extrapolate) {
+            result <- biasCorrect.TS(frc, hindcast, obs, method, scaleType, preci, prThreshold, extrapolate)
+            return(result)
+          })
+
+#' @describeIn biasCorrect
+setMethod('biasCorrect', signature('list', 'list', 'list'), 
+          function(frc, hindcast, obs, method, scaleType, preci, prThreshold, extrapolate) {
+            result <- biasCorrect.list(frc, hindcast, obs, method, scaleType, preci, prThreshold, extrapolate)
+            return(result)
+          })
+
+
+biasCorrect.TS <- function(frc, hindcast, obs, method, scaleType, preci, prThreshold, extrapolate) {
+  # First check if the first column is Date
+  if (!grepl('-|/', obs[1, 1]) | !grepl('-|/', hindcast[1, 1]) | !grepl('-|/', frc[1, 1])) {
+    stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
+         and use as.Date to convert.If your input is a hyfo dataset, put input = "hyfo" as an
+         argument, check help for more info.')
+  }
+  # change to date type is easier, but in case in future the flood part is added, Date type doesn't have
+  # hour, min and sec, so, it's better to convert it into POSIxlt.
   
-  if (input == 'TS') {
-    # First check if the first column is Date
-    if (!grepl('-|/', obs[1, 1]) | !grepl('-|/', hindcast[1, 1]) | !grepl('-|/', frc[1, 1])) {
-      stop('First column is not date or Wrong Date formate, check the format in ?as.Date{base} 
-           and use as.Date to convert.If your input is a hyfo dataset, put input = "hyfo" as an
-           argument, check help for more info.')
-    }
-    # change to date type is easier, but in case in future the flood part is added, Date type doesn't have
-    # hour, min and sec, so, it's better to convert it into POSIxlt.
+  # if condition only accepts one condition, for list comparison, there are a lot of conditions, better
+  # further process it, like using any.
+  if (any(as.POSIXlt(hindcast[, 1]) != as.POSIXlt(obs[, 1]))) {
+    warning('time of obs and time of hindcast are not the same, which may cause inaccuracy in 
+                      the calibration.')
+  }
+  n <- ncol(frc)
+  
+  # For every column, it's biascorrected respectively.
+  frc_data <- lapply(2:n, function(x) biasCorrect_core(frc[, x], hindcast[, x], obs[, 2], method = method,
+                                                       scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
+                                                       extrapolate = extrapolate))
+  frc_data <- do.call('cbind', frc_data)
+  rownames(frc_data) <- NULL
+  
+  names <- colnames(frc)
+  frc_new <- data.frame(frc[, 1], frc_data)
+  colnames(frc_new) <- names
+  return(frc_new)
+}
+
+biasCorrect.list <- function(frc, hindcast, obs, method, scaleType, preci, prThreshold, extrapolate) {
+  ## Check if the data is a hyfo grid data.
+  checkHyfo(frc, hindcast, obs)
+  
+  hindcastData <- hindcast$Data
+  obsData <- obs$Data
+  frcData <- frc$Data
+  
+  ## save frc dimension order, at last, set the dimension back to original dimension
+  frcDim <- attributes(frcData)$dimensions
+  
+  ## ajust the dimension into general dimension order.
+  hindcastData <- adjustDim(hindcastData, ref = c('lon', 'lat', 'time'))
+  obsData <- adjustDim(obsData, ref = c('lon', 'lat', 'time'))
+  
+  ## CheckDimLength, check if all the input dataset has different dimension length
+  # i.e. if they all have the same lon and lat number.
+  checkDimLength(frcData, hindcastData, obsData, dim = c('lon', 'lat'))
+  
+  
+  # Now real bias correction is executed.
+  
+  memberIndex <- match('member', attributes(frcData)$dimensions)
+  
+  # For dataset that has a member part 
+  if (!is.na(memberIndex)) {
+    # check if frcData and hindcastData has the same dimension and length.
+    checkDimLength(frcData, hindcastData, dim = 'member')
     
-    # if condition only accepts one condition, for list comparison, there are a lot of conditions, better
-    # further process it, like using any.
-    if (any(as.POSIXlt(hindcast[, 1]) != as.POSIXlt(obs[, 1]))) {
-      warning('time of obs and time of hindcast are not the same, which may cause inaccuracy in 
-              the calibration.')
-    }
-    n <- ncol(frc)
+    frcData <- adjustDim(frcData, ref = c('lon', 'lat', 'time', 'member'))
     
-    # For every column, it's biascorrected respectively.
-    frc_data <- lapply(2:n, function(x) biasCorrect_core(frc[, x], hindcast[, x], obs[, 2], method = method,
-                                                         scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
-                                                         extrapolate = extrapolate))
-    frc_data <- do.call('cbind', frc_data)
-    rownames(frc_data) <- NULL
+    # The following code may speed up because it doesn't use for loop.
+    # It firstly combine different array into one array. combine the time 
+    # dimension of frc, hindcast and obs. Then use apply, each time extract 
+    # the total time dimension, and first part is frc, second is hindcast, third
+    # is obs. Then use these three parts to bias correct. All above can be written
+    # in one function and called within apply. But too complicated to understand,
+    # So save it for future use maybe.
     
-    names <- colnames(frc)
-    frc_new <- data.frame(frc[, 1], frc_data)
-    colnames(frc_new) <- names
-    
-  } else if (input == 'hyfo') {
-    ## Check if the data is a hyfo grid data.
-    checkHyfo(frc, hindcast, obs)
-    
-    hindcastData <- hindcast$Data
-    obsData <- obs$Data
-    frcData <- frc$Data
-    
-    ## save frc dimension order, at last, set the dimension back to original dimension
-    frcDim <- attributes(frcData)$dimensions
-    
-    ## ajust the dimension into general dimension order.
-    hindcastData <- adjustDim(hindcastData, ref = c('lon', 'lat', 'time'))
-    obsData <- adjustDim(obsData, ref = c('lon', 'lat', 'time'))
-    
-    ## CheckDimLength, check if all the input dataset has different dimension length
-    # i.e. if they all have the same lon and lat number.
-    checkDimLength(frcData, hindcastData, obsData, dim = c('lon', 'lat'))
+    #       for (member in 1:dim(frcData)[4]) {
+    #         totalArr <- array(c(frcData[,,, member], hindcastData[,,, member], obsData),
+    #                           dim = c(dim(frcData)[1], dim(frcData)[2], 
+    #                                                        dim(frcData)[3] + dim(hindcastData)[3] + dim(obsData)[3]))
+    #       }
     
     
-    # Now real bias correction is executed.
-    
-    memberIndex <- match('member', attributes(frcData)$dimensions)
-    
-    # For dataset that has a member part 
-    if (!is.na(memberIndex)) {
-      # check if frcData and hindcastData has the same dimension and length.
-      checkDimLength(frcData, hindcastData, dim = 'member')
-      
-      frcData <- adjustDim(frcData, ref = c('lon', 'lat', 'time', 'member'))
-      
-      # The following code may speed up because it doesn't use for loop.
-      # It firstly combine different array into one array. combine the time 
-      # dimension of frc, hindcast and obs. Then use apply, each time extract 
-      # the total time dimension, and first part is frc, second is hindcast, third
-      # is obs. Then use these three parts to bias correct. All above can be written
-      # in one function and called within apply. But too complicated to understand,
-      # So save it for future use maybe.
-      
-#       for (member in 1:dim(frcData)[4]) {
-#         totalArr <- array(c(frcData[,,, member], hindcastData[,,, member], obsData),
-#                           dim = c(dim(frcData)[1], dim(frcData)[2], 
-#                                                        dim(frcData)[3] + dim(hindcastData)[3] + dim(obsData)[3]))
-#       }
-      
-      
-      for (member in 1:dim(frcData)[4]) {
-        for (lon in 1:dim(frcData)[1]) {
-          for (lat in 1:dim(frcData)[2]) {
-            frcData[lon, lat,, member] <- biasCorrect_core(frcData[lon, lat,,member], hindcastData[lon, lat,, member], obsData[lon, lat,], method = method,
-                                                           scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
-                                                           extrapolate = extrapolate)
-          }
-        }
-      }
-    } else {
-      frcData <- adjustDim(frcData, ref = c('lon', 'lat', 'time'))
+    for (member in 1:dim(frcData)[4]) {
       for (lon in 1:dim(frcData)[1]) {
         for (lat in 1:dim(frcData)[2]) {
-          frcData[lon, lat,] <- biasCorrect_core(frcData[lon, lat,], hindcastData[lon, lat,], obsData[lon, lat,], method = method,
+          frcData[lon, lat,, member] <- biasCorrect_core(frcData[lon, lat,,member], hindcastData[lon, lat,, member], obsData[lon, lat,], method = method,
                                                          scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
                                                          extrapolate = extrapolate)
         }
       }
     }
-    
-    frcData <- adjustDim(frcData, ref = frcDim)
-    frc$Data <- frcData
-    frc$biasCorrected_by <- method
-    frc_new <- frc
+  } else {
+    frcData <- adjustDim(frcData, ref = c('lon', 'lat', 'time'))
+    for (lon in 1:dim(frcData)[1]) {
+      for (lat in 1:dim(frcData)[2]) {
+        frcData[lon, lat,] <- biasCorrect_core(frcData[lon, lat,], hindcastData[lon, lat,], obsData[lon, lat,], method = method,
+                                               scaleType = scaleType, preci = preci, prThreshold = prThreshold, 
+                                               extrapolate = extrapolate)
+      }
+    }
   }
   
+  frcData <- adjustDim(frcData, ref = frcDim)
+  frc$Data <- frcData
+  frc$biasCorrected_by <- method
+  frc_new <- frc
   return(frc_new)
 }
+
 
 
 
@@ -345,14 +362,14 @@ biasCorrect_core <- function(frc, hindcast, obs, method, scaleType, preci, prThr
     warning('In this cell, frc, hindcast or obs data is missing. No biasCorrection for this cell.')
     return(NA)
   }
-    
-    
+  
+  
   if (preci == TRUE) {
     preprocessHindcast_res <- preprocessHindcast(hindcast = hindcast, obs = obs, prThreshold = prThreshold)
     hindcast <- preprocessHindcast_res[[1]]
     minHindcastPreci <- preprocessHindcast_res[[2]]
   }
-
+  
   # default is the simplest method in biascorrection, just do simple addition and subtraction.
   if (method == 'delta') {
     if (length(frc) != length(obs)) stop('This method needs frc data have the same length as obs data.')
@@ -378,7 +395,7 @@ biasCorrect_core <- function(frc, hindcast, obs, method, scaleType, preci, prThr
       frc <- biasCorrect_core_eqm_nonPreci(frc, hindcast, obs, extrapolate, prThreshold)
     } else {
       frc <- biasCorrect_core_eqm_preci(frc, hindcast, obs, minHindcastPreci, extrapolate,
-                                           prThreshold)
+                                        prThreshold)
     }
     
   } else if (method == 'gqm') {
@@ -508,7 +525,7 @@ biasCorrect_core_eqm_nonPreci <- function(frc, hindcast, obs, extrapolate, prThr
 }
 
 biasCorrect_core_eqm_preci <- function(frc, hindcast, obs, minHindcastPreci, extrapolate, 
-                                 prThreshold) {
+                                       prThreshold) {
   
   # Most of time this condition seems useless because minHindcastPreci comes from hindcast, so there will be
   # always hindcast > minHindcastPreci exists.
@@ -607,4 +624,4 @@ biasCorrect_core_gqm <- function(frc, hindcast, obs, prThreshold, minHindcastPre
             no bias correction applied.')
   }
   return(frc)
-}
+  }

@@ -8,7 +8,7 @@ getSpatialMap(dataset, method = NULL, member = "mean", ...)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of reading netcdf file using
-\code{library(ecomsUDG.Raccess)}.}
+\code{loadNcdf}.}
 
 \item{method}{A string showing different calculating method for the map. More information please refer to
 details.}
@@ -34,7 +34,7 @@ Month(number 1 to 12): MEAN month rainfall of each year is plotted, e.g. MEAN ma
 "mean", "max", "min": mean daily, maximum daily, minimum daily precipitation.
 }
 \examples{
-#gridData provided in the package is the result of \\code {loadGridData{ecomsUDG.Raccess}}
+#gridData provided in the package is the result of \\code {loadNcdf}
 data(tgridData)
 getSpatialMap(tgridData, method = 'meanAnnual')
 getSpatialMap(tgridData, method = 'winter')

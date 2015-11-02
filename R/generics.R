@@ -1,50 +1,22 @@
-# 
-# print <- function(object, ...) {
-#   UseMethod('print')
-# }
-# 
-# print.biasFactor <- function(object, ...) {
-#   msg <- paste('biasFactor of method ', object@method)
-#   if (length(object@memberDim)) msgM <- paste('There are', object@memberDim, 'members existing in the forecasting data.')
-#   return(c(msg, msgM))
-# }
+##### Prepared for future use, when hyfo becomes a class.
 
-#' #### Generics of biasFactor
-# @param object biasFactor object
-# @export
-# setGeneric('print', function(object) {
-#   standardGeneric('print')
+
+# # change to hyfo
+# setGeneric('as.hyfo', function(x) {
+#   standardGeneric('as.hyfo')
 # })
 # 
+# setMethod('as.hyfo', signature('list'),
+#           function(x) {
+#             
+#             if (!is.null(x$Members)) {
+#               hyfo <- new("hyfo.multiMember", varName = x$Variable$varName, xyCoords = x$xyCoords, Dates = x$Dates, Data = x$Data,
+#                           Members = x$Members)
+#             } else {
+#               hyfo <- new("hyfo", varName = x$Variable$varName, xyCoords = x$xyCoords, Dates = x$Dates, Data = x$Data)
 # 
-# setMethod('print', signature('biasFactor'), function(object) {
-#   msg <- paste('biasFactor of method ', object@method)
-#   if (length(object@memberDim)) msgM <- paste('There are', object@memberDim, 'members existing in the forecasting data.')
-#   return(c(msg, msgM))
-# })
-
-# #' @export
-# #' @param a biasFactor object
-# size <- function(x, ...) {
-#   UseMethod('size', x)
-# }
+#             }
+#             return(hyfo)            
+#             
+#           })
 # 
-# #' @describeIn size
-# size.biasFactor <-function(object) {
-#   if (length(object@lonLatDim) == 0) {
-#     return (1)
-#   } else {
-#     lonLat <- object@lonLatDim
-#     msg <- paste('Grid file with', lonLat[1], 'grids in longitude, ', lonLat[2], 'grids in latitude.')
-#     return(msg)
-#   }
-# }
-
-##### hyfo
-
-# hyfo, TS and datalist should be three kinds of objects, so that many functions in hyfo can be split
-# into different generic methods, then no need to set up input = TS or input = hyfo.
-# But too much work to re-construct all the functions.
-
-# For new methods, it should set up different generic methods for hyfo, TS, and grid file from 
-# downscaleR.
