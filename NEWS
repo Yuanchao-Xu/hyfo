@@ -1,10 +1,11 @@
-hyfo 1.3.0
+hyfo 1.3.1
 ==========
-Date: 2015.11.2
+Date: 2015.11.3
 
-- new generic function biasCorrect, extractPeriod, resample added, 
+- new generic function biasCorrect, extractPeriod, resample, getAnnual, getPreciBar added,
   No need to designate inputtype any more, R will detect automatically.
-- new user manual added.
+- coordinates conversion function extracted.
+- new user manual about real time bias correction and resample added.
 
 
 

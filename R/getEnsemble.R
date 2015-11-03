@@ -360,33 +360,11 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', 
   data <- dataset$Data
   
   # Dimension needs to be arranged. Make sure first and second dimension is lat and lon.
-  att <- attributes(data)$dimensions
-  dimIndex <- seq(1, length(att))
-  dimIndex1 <- match(c('lon', 'lat', 'time'), att)# match can apply to simple cases
-  dimIndex2 <- dimIndex[-dimIndex1]# choose nomatch
-  
-  data <- aperm(data, c(dimIndex1, dimIndex2))
-  attributes(data)$dimensions <- att[c(dimIndex1, dimIndex2)]
+  data <- adjustDim(data, ref = c('lon', 'lat', 'time'))
   
   if (!is.null(coord)) {
-    if (length(coord) == 2) {
-      # corrdinates
-      lonC <- coord[1]
-      latC <- coord[2]
-      
-      lon <- dataset$xyCoords$x
-      lat <- dataset$xyCoords$y
-      
-      # Index
-      lonI <- which(abs(lon - lonC) == min(abs(lon - lonC), na.rm = TRUE)) 
-      latI <- which(abs(lat - latC) == min(abs(lat - latC), na.rm = TRUE))
-      
-      cell <- c(max(lonI), max(latI))
-      
-    } else stop('Wrong coord input, should be c(lon, lat). Lon and lat should be within the dataset range.')
+    cell <- coord2cell(coord, dataset$xyCoords$x, dataset$xyCoords$y)
   } 
-  
-  
   
   
   if (!any(attributes(data)$dimensions == 'member')){

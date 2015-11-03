@@ -8,6 +8,14 @@ hyfoUpdates <- function(){
   
   version <- unlist(strsplit(page[versionLine], split = ' '))[2]
   version_local <- packageDescription("hyfo")$Version
+  
+  
+  # the first tow digit is the most important part of the version
+  version12 <- unlist(strsplit(version, split = "[.]"))[1:2]
+  version_local12 <- unlist(strsplit(version_local, split = "[.]"))[1:2]
+  
+  sameVersion <- version12 == version_local12
+  
   # generate message
   version_msg <- strsplit(strsplit(page[versionLine], split = '<p>')[[1]][2], split = '</p>')[[1]]
   infoLine <- versionLine + 2
@@ -15,7 +23,7 @@ hyfoUpdates <- function(){
   install_msg <- 'You can update by type in: devtools::install_gihub("Yuanchao-Xu/hyfo")'
   
   message_out <- NULL
-  if (version != version_local) {
+  if (any(sameVersion == FALSE)) {
     message_out <- paste(version_msg, info_msg, install_msg, sep = '\n')
   }
   return(message_out)

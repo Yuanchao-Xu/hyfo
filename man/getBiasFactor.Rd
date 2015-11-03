@@ -5,7 +5,7 @@
 \alias{getBiasFactor}
 \alias{getBiasFactor,data.frame,data.frame-method}
 \alias{getBiasFactor,list,list-method}
-\title{Get bias factor for multi-bias correction or operational (real time) bias correction.}
+\title{Get bias factor for multi/operational/real time bias correction.}
 \usage{
 getBiasFactor(hindcast, obs, method = "scaling", scaleType = "multi",
   preci = FALSE, prThreshold = 0, extrapolate = "no")
@@ -42,7 +42,7 @@ Default is FALSE, refer to details.}
 If 'constant' is set, modified frc is not bounded by the range of obs. Default is 'no'.}
 }
 \description{
-When you do multi bias correction or operational (real time) bias correction. It's too expensive
+When you do multi/operational/real time bias correction. It's too expensive
 to input hindcast and obs every time. Especially when you have a long period of hindcast
 and obs, but only a short period of frc, it's too unecessary to read and compute hindcast
 and obs everytime. Therefore, biasFactor is designed. Using \code{getBiasFactor}, you can
@@ -122,7 +122,7 @@ obs <- datalist[[3]]
 
 # The data used here is just for example, so there could be negative data.
 
-# default method is delta
+# default method is scaling
 biasFactor <- getBiasFactor(hindcast, obs)
 frc_new <- applyBiasFactor(frc, biasFactor)
 

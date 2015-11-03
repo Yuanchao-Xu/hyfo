@@ -3,8 +3,8 @@
         "caseSensitive" : false,
         "filePatterns" : [
         ],
-        "path" : "E:/1/R/hyfo",
-        "query" : "multi_biasCorrect",
+        "path" : "E:/1/R/hyfo/R",
+        "query" : "default method is",
         "regex" : false
     }
 }

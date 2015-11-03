@@ -1,14 +1,10 @@
 #' get mean rainfall bar plot of the input dataset or time series.
 #' 
-#' @param dataset A list containing different information, should be the result of reading netcdf file using
-#' \code{loadNcdf}, or load functions from \code{ecomsUDG.Raccess}
+#' @param data A list containing different information, should be the result of reading netcdf file using
+#' \code{loadNcdf}, or load functions from \code{ecomsUDG.Raccess}, or a time series, with first column the Date, second the value.
+#' Time series can be an ENSEMBLE containning different members. Than the mean value will be given and the range will be given.
 #' @param method A string showing the calculating method of the input time series. More information
 #' please refer to the details.
-#' @param TS A time series, with first column the Date, second the value. If TS is not empty, 
-#' hyfo will take data from TS, not consider dataset, so you should only have one input, dataset
-#' or the time series. If your input is a time series, \code{TS = yourTS} has to be put as an argument,
-#' or the program may take it as a dataet, and will give an error. TS can be an ENSEMBLE containning 
-#' different members. Than the mean value will be given and the range will be given.
 #' @param cell A vector containing the locaton of the cell, e.g. c(2, 3), default is "mean", representing
 #' the spatially averaged value. Check details for more information.
 #' @param output A string showing the type of the output, if \code{output = 'ggplot'}, the returned 
@@ -47,9 +43,6 @@
 #' 
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
-#' @importFrom stats median
-#' @importFrom reshape2 melt
-#' @import ggplot2
 #' @references 
 #' 
 #' 
@@ -64,59 +57,98 @@
 #' 
 #' @return The calculated mean value of the input time series and the plot of the result.
 #' @export
-getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', name = NULL, 
-                        plotRange = TRUE, member = NULL, omitNA = TRUE, TS = NULL, info = FALSE,
-                        ...) {
-  
-  if (is.null(TS)) {
-    #check input dataset
-    checkHyfo(dataset)
-    
-    startTime <- as.POSIXlt(dataset$Dates$start, tz = 'GMT')
-    yearIndex <- startTime$year + 1900
-    monthIndex <- startTime$mon + 1
-    data <- dataset$Data
-  
-    # Dimension needs to be arranged. Make sure first and second dimension is lat and lon.
-    data <- adjustDim(data, ref = c('lon', 'lat', 'time'))
-    
-    # Because in the following part, only 3 dimensions are allowed, so data has to be processed.
-    if (is.null(member) & any(attributes(data)$dimensions == 'member')) {
-      dimIndex3 <- which(attributes(data)$dimensions != 'member')
-      data <- apply(data, MARGIN = dimIndex3, FUN = mean, na.rm = TRUE)
-    } else if (!is.null(member) & any(attributes(data)$dimensions == 'member')) {
-      dimIndex3 <- which(attributes(data)$dimensions == 'member')
-      data <- chooseDim(data, dimIndex3, member, drop = TRUE)
-    } else if (!is.null(member) & !any(attributes(data)$dimensions == 'member')){
-      stop('There is no member part in the dataset, but you choose one, check the input
-           dataset or change your arguments.')
-    }
-    
-    TS <- apply(data, MARGIN = 3, FUN = mean, na.rm = TRUE) 
+setGeneric('getPreciBar', function(data, method, cell = 'mean', output = 'data', name = NULL, 
+                                   plotRange = TRUE, member = NULL, omitNA = TRUE, info = FALSE,
+                                   ...) {
+  standardGeneric('getPreciBar')
+})
 
+#' @describeIn getPreciBar
+setMethod('getPreciBar', signature('list'), 
+          function(data, method, cell, output, name, plotRange, member, omitNA, info, ...) {
+            TS <- getPreciBar.list(data, cell, member)
+            # for hyfo file, in order to process the data, year and month index need to be provided.
+            startTime <- as.POSIXlt(data$Dates$start, tz = 'GMT')
+            yearIndex <- startTime$year + 1900
+            monthIndex <- startTime$mon + 1
+            
+            result <- getPreciBar.plot(TS, method, output, name, plotRange, omitNA, info, yearIndex,
+                                       monthIndex, ...)
+            return(result)
+})
+
+#' @describeIn getPreciBar
+setMethod('getPreciBar', signature('data.frame'), 
+          function(data, method, cell, output, name, plotRange, member, omitNA, info, ...) {
+            TS <- getPreciBar.TS(data)
+            result <- getPreciBar.plot(TS, method, output, name, plotRange, omitNA, info, ...)
+            return(result)
+})
+
+
+getPreciBar.list <- function(dataset, cell, member) {
+  #check input dataset
+  checkHyfo(dataset)
+  
+  data <- dataset$Data
+  
+  # Dimension needs to be arranged. Make sure first and second dimension is lat and lon.
+  data <- adjustDim(data, ref = c('lon', 'lat', 'time'))
+  
+  # Because in the following part, only 3 dimensions are allowed, so data has to be processed.
+  if (is.null(member) & any(attributes(data)$dimensions == 'member')) {
+    dimIndex3 <- which(attributes(data)$dimensions != 'member')
+    data <- apply(data, MARGIN = dimIndex3, FUN = mean, na.rm = TRUE)
+  } else if (!is.null(member) & any(attributes(data)$dimensions == 'member')) {
+    dimIndex3 <- which(attributes(data)$dimensions == 'member')
+    data <- chooseDim(data, dimIndex3, member, drop = TRUE)
+  } else if (!is.null(member) & !any(attributes(data)$dimensions == 'member')){
+    stop('There is no member part in the dataset, but you choose one, check the input
+         dataset or change your arguments.')
+  }
+  
+  if (identical(cell, 'mean')) {
+    TS <- apply(data, MARGIN = 3, FUN = mean, na.rm = TRUE) 
+  } else {
+    TS <- data[cell[1], cell[2], ]
+  }
+  
+  return(TS)
+}
+
+
+#' @importFrom reshape2 melt
+getPreciBar.TS <- function(TS) {
+  
+  Date <- as.POSIXlt(TS[, 1])
+  yearIndex <- Date$year + 1900
+  monthIndex <- Date$mon + 1
+  n <- ncol(TS) - 1
+  
+  if ( n == 1) {
+    TS <- TS[, 2]
   } else {
     
-    Date <- as.POSIXlt(TS[, 1])
-    yearIndex <- Date$year + 1900
-    monthIndex <- Date$mon + 1
-    n <- ncol(TS) - 1
+    TS <- TS[, -1]
+    # month index should be repeat, but years cannot.
+    yearIndex <- sapply(1:n, function(x) yearIndex + x - 1)
+    dim(yearIndex) <- c(n * nrow(yearIndex), 1)
     
-    if ( n == 1) {
-      TS <- TS[, 2]
-    } else {
-      
-      TS <- TS[, -1]
-      # month index should be repeat, but years cannot.
-      yearIndex <- sapply(1:n, function(x) yearIndex + x - 1)
-      dim(yearIndex) <- c(n * nrow(yearIndex), 1)
-      
-      monthIndex <- rep(monthIndex, n)
-      TS <- melt(TS)[, 2]
-      
-    }
-
+    monthIndex <- rep(monthIndex, n)
+    TS <- melt(TS)[, 2]
+    
   }
-    
+  return(TS)
+}
+
+
+#' @importFrom stats median
+#' @importFrom reshape2 melt
+#' @import ggplot2
+getPreciBar.plot <- function(TS, method, output, name, plotRange, omitNA, info, 
+                             yearIndex = NULL, monthIndex = NULL, ...) {
+  
+  
   if (method == 'meanMonthly') {
     
     monthlyPreci <- tapply(TS, INDEX = list(yearIndex, monthIndex), FUN = sum, na.rm = omitNA)
@@ -183,11 +215,11 @@ getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', name = 
     wm <- match(c(3, 4, 5), unique(monthIndex))
     if (length(which(!is.na(wm))) < 3) {
       stop('Spring has less than 3 months, check data and try to calculate every month
-  seperately or choose another season.')
+           seperately or choose another season.')
     }
     
     seasonalPreci <- getMeanPreci(TS, method = 'spring', yearIndex = yearIndex,
-                              monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
+                                  monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
     plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
     plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
     
@@ -196,59 +228,59 @@ getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', name = 
     ylim <- c(0, max(seasonalPreci, na.rm = TRUE) * 1.1)
     
     
-  } else if (method == 'summer') {
-    
-    wm <- match(c(6, 7, 8), unique(monthIndex))
-    if (length(which(!is.na(wm))) < 3) {
-      stop('Summer has less than 3 months, check data and try to calculate every month
-  seperately or choose another season.')
-    }
-    
-    seasonalPreci <- getMeanPreci(TS, method = 'summer', yearIndex = yearIndex,
-                                  monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
-    plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
-    plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
-    
-    title <- paste('Summer', 'Precipitation over Whole Period', sep = ' ')
-    xlab <- 'Year'
-    ylim <- c(0, max(seasonalPreci, na.rm = TRUE) * 1.1)
-    
-    
-  } else if (method == 'autumn') {
-    wm <- match(c(9, 10, 11), unique(monthIndex))
-    if (length(which(!is.na(wm))) < 3) {
-      stop('Autumn has less than 3 months, check data and try to calculate every month
-  seperately or choose another season.')
-    }
-    
-    seasonalPreci <- getMeanPreci(TS, method = 'autumn', yearIndex = yearIndex,
-                                  monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
-    plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
-    plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
-    
-    title <- paste('Autumn', 'Precipitation over Whole Period', sep = ' ')
-    xlab <- 'Year'
-    ylim <- c(0, max(seasonalPreci, na.rm = TRUE) * 1.1)
-    
-  } else if (method == 'winter') {
-    wm <- match(c(12, 1, 2), unique(monthIndex))
-    if (length(which(!is.na(wm))) < 3) {
-      stop('Winter has less than 3 months, check data and try to calculate every month
-  seperately or choose another season.')
-    }
-    
-    seasonalPreci <- getMeanPreci(TS, method = 'winter', yearIndex = yearIndex,
-                                  monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
-    plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
-    plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
-    
-    title <- paste('Winter', 'Precipitation over Whole Period', sep = ' ')
-    xlab <- 'Year'
-    ylim <- c(0, max(seasonalPreci, na.rm = TRUE) * 1.1)
-    
-  } else {
-    stop(paste('No method called "', method, '", check help for information'))
-  }
+    } else if (method == 'summer') {
+      
+      wm <- match(c(6, 7, 8), unique(monthIndex))
+      if (length(which(!is.na(wm))) < 3) {
+        stop('Summer has less than 3 months, check data and try to calculate every month
+             seperately or choose another season.')
+      }
+      
+      seasonalPreci <- getMeanPreci(TS, method = 'summer', yearIndex = yearIndex,
+                                    monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
+      plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
+      plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
+      
+      title <- paste('Summer', 'Precipitation over Whole Period', sep = ' ')
+      xlab <- 'Year'
+      ylim <- c(0, max(seasonalPreci, na.rm = TRUE) * 1.1)
+      
+      
+      } else if (method == 'autumn') {
+        wm <- match(c(9, 10, 11), unique(monthIndex))
+        if (length(which(!is.na(wm))) < 3) {
+          stop('Autumn has less than 3 months, check data and try to calculate every month
+               seperately or choose another season.')
+        }
+        
+        seasonalPreci <- getMeanPreci(TS, method = 'autumn', yearIndex = yearIndex,
+                                      monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
+        plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
+        plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
+        
+        title <- paste('Autumn', 'Precipitation over Whole Period', sep = ' ')
+        xlab <- 'Year'
+        ylim <- c(0, max(seasonalPreci, na.rm = TRUE) * 1.1)
+        
+        } else if (method == 'winter') {
+          wm <- match(c(12, 1, 2), unique(monthIndex))
+          if (length(which(!is.na(wm))) < 3) {
+            stop('Winter has less than 3 months, check data and try to calculate every month
+                 seperately or choose another season.')
+          }
+          
+          seasonalPreci <- getMeanPreci(TS, method = 'winter', yearIndex = yearIndex,
+                                        monthIndex = monthIndex, fullResults = TRUE, omitNA = omitNA)
+          plotPreci <- data.frame(Index = names(seasonalPreci), Preci = seasonalPreci)
+          plotPreci$Index <- factor(plotPreci$Index, levels = plotPreci$Index, ordered = TRUE)
+          
+          title <- paste('Winter', 'Precipitation over Whole Period', sep = ' ')
+          xlab <- 'Year'
+          ylim <- c(0, max(seasonalPreci, na.rm = TRUE) * 1.1)
+          
+          } else {
+            stop(paste('No method called "', method, '", check help for information'))
+          }
   
   
   xlim <- c(0, length(rownames(plotPreci))) 
@@ -272,26 +304,26 @@ getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', name = 
   
   mainLayer <- with(plotPreci, {
     ggplot(plotPreci) +
-    geom_bar(aes(x = Index, y = Preci), stat = 'identity', colour = 'black', fill = 'cyan2', width = rel(.4)) +
-    xlab(xlab) +
-    ylab('Precipitation (mm)') +
-    ggtitle(title) +
-    labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
-    theme(plot.title = element_text(size = rel(1.6), face = 'bold'),
-          axis.title.x = element_text(size = rel(1.6)),
-          axis.title.y = element_text(size = rel(1.6)),
-          axis.text.x = element_text(angle = 90, hjust = 1, size = rel(1.9)),
-          axis.text.y = element_text(size = rel(1.9)))
-#    geom_text(x = min(xlim) + 0.95 * (max(xlim) - min(xlim)), y = min(ylim) + 0.15 * (max(ylim) - min(ylim)),
-#              label = word)+
-#     geom_hline(yintercept = meanValue) +
-#     geom_text(x = min(xlim) + 0.3 * (max(xlim) - min(xlim)), y = meanValue + 3, vjust = 0, label = 'mean') +
-#     geom_hline(yintercept = medianValue, colour = 'red') +
-#     geom_text(x = min(xlim) + 0.6 * (max(xlim) - min(xlim)), y = medianValue + 3, vjust = 0,
-#               label = 'median', colour = 'red')
+      geom_bar(aes(x = Index, y = Preci), stat = 'identity', colour = 'black', fill = 'cyan2', width = rel(.4)) +
+      xlab(xlab) +
+      ylab('Precipitation (mm)') +
+      ggtitle(title) +
+      labs(empty = NULL, ...) +#in order to pass "...", arguments shouldn't be empty.
+      theme(plot.title = element_text(size = rel(1.6), face = 'bold'),
+            axis.title.x = element_text(size = rel(1.6)),
+            axis.title.y = element_text(size = rel(1.6)),
+            axis.text.x = element_text(angle = 90, hjust = 1, size = rel(1.9)),
+            axis.text.y = element_text(size = rel(1.9)))
+    #    geom_text(x = min(xlim) + 0.95 * (max(xlim) - min(xlim)), y = min(ylim) + 0.15 * (max(ylim) - min(ylim)),
+    #              label = word)+
+    #     geom_hline(yintercept = meanValue) +
+    #     geom_text(x = min(xlim) + 0.3 * (max(xlim) - min(xlim)), y = meanValue + 3, vjust = 0, label = 'mean') +
+    #     geom_hline(yintercept = medianValue, colour = 'red') +
+    #     geom_text(x = min(xlim) + 0.6 * (max(xlim) - min(xlim)), y = medianValue + 3, vjust = 0,
+    #               label = 'median', colour = 'red')
   })
   
-
+  
   if (plotRange) {
     if (is.null(plotPreci$maxValue)) {
       message('There is no plotRange for this method')
@@ -318,6 +350,11 @@ getPreciBar <- function(dataset, method, cell = 'mean', output = 'data', name = 
     return(plotPreci)
   }
 }
+
+
+
+
+
 
 
 #' Combine bars together
@@ -399,10 +436,10 @@ getPreciBar_comb <- function(..., list = NULL, nrow = 1, x = '', y = '', title =
     })       
     mainLayer <- mainLayer + rangeLayer
   }
-
+  
   
   suppressWarnings(print(mainLayer))
   
   if (output == TRUE) return(data_ggplot)
-}
+  }
 
