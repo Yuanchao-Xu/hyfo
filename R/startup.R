@@ -16,16 +16,21 @@ hyfoUpdates <- function(){
   
   sameVersion <- version12 == version_local12
   
-  # generate message
-  version_msg <- strsplit(strsplit(page[versionLine], split = '<p>')[[1]][2], split = '</p>')[[1]]
-  infoLine <- versionLine + 2
-  info_msg <- strsplit(strsplit(page[infoLine], split = '<p>')[[1]][2], split = '</p>')[[1]]
-  install_msg <- 'You can update by type in: devtools::install_gihub("Yuanchao-Xu/hyfo")'
-  
-  message_out <- NULL
   if (any(sameVersion == FALSE)) {
-    message_out <- paste(version_msg, info_msg, install_msg, sep = '\n')
-  }
+    # generate message
+    version_msg <- strsplit(strsplit(page[versionLine], split = '<p>')[[1]][2], split = '</p>')[[1]]
+    infoLine_start <- versionLine + 2
+    infoLine_end <- grep('<p>For historical releases and the introduction of updates about each version', page) - 1
+    info_msg <- character()
+    for (infoLine in infoLine_start:infoLine_end) {
+      info_line <- strsplit(strsplit(page[infoLine], split = '>')[[1]][2], split = '<')[[1]][1]
+      if (!is.na(info_line)) info_msg <- c(info_msg, info_line)
+    }
+    
+    install_msg <- 'You can update by type in: devtools::install_gihub("Yuanchao-Xu/hyfo")'
+    
+    message_out <- paste(version_msg, paste(info_msg, collapse = '\n'), install_msg, sep = '\n')
+  } else message_out <- NULL
   return(message_out)
 }
 
