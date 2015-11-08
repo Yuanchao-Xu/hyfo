@@ -1,7 +1,7 @@
 #' Extract period from list or dataframe.
 #' 
 #' Extract common period or certain period from a list of different dataframes of time series, or from a 
-#' dataframe.
+#' dataframe. It is a generic function, see \code{?debug()} for how to debug S4 method.
 #' NOTE: all the dates in the datalist should follow the format in ?as.Date{base}.
 #' @param data A list of different dataframes of time series, or a dataframe with first column Date, the rest columns value.
 #' @param startDate A Date showing the start of the extract period, default as NULL, check details.

@@ -53,7 +53,7 @@ taken.}
 The calculated mean value of the input time series and the plot of the result.
 }
 \description{
-get mean rainfall bar plot of the input dataset or time series.
+It is a generic function, see \code{?debug()} for how to debug S4 method.
 }
 \details{
 There are following methods to be selected,
@@ -81,6 +81,13 @@ and 3rd latitude, by the increasing order. Longitude comes first.
 data(tgridData)
 b1 <- getPreciBar(tgridData, method = 'annual')
 b2 <- getPreciBar(tgridData, method = 'meanMonthly')
+
+data(testdl)
+TS  <- testdl[[1]]
+a <- getPreciBar(TS, method = 'spring')
+# if info = T, the information will be given at the bottom.
+a <- getPreciBar(TS, method = 'spring', info = TRUE)
+
 
 # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }

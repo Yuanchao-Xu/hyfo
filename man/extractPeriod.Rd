@@ -36,7 +36,7 @@ A list or a dataframe with all the time series inside containing the same period
 }
 \description{
 Extract common period or certain period from a list of different dataframes of time series, or from a
-dataframe.
+dataframe. It is a generic function, see \code{?debug()} for how to debug S4 method.
 NOTE: all the dates in the datalist should follow the format in ?as.Date{base}.
 }
 \details{

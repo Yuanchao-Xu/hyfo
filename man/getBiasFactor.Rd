@@ -50,6 +50,8 @@ get the biasFactor with hindcast and observation, then you can use \code{applyBi
 apply the biasFactor to different forecasts.
 }
 \details{
+It is a generic function, see \code{?debug()} for how to debug S4 method.
+
 Information about the method and how biasCorrect works can be found in \code{\link{biasCorrect}}
 
 \strong{why use biasFactor}
@@ -89,6 +91,10 @@ varname <- getNcdfVar(filePath)
 nc <- loadNcdf(filePath, varname)
 
 data(tgridData)
+# Since the example data, has some NA values, the process will include some warning #message,
+# which can be ignored in this case.
+
+
 
 # Then we will use nc data as forecasting data, and use itself as hindcast data,
 # use tgridData as observation.

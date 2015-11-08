@@ -7,7 +7,9 @@
 #' observation and hindcast should belong to the same period, in order to calibrate. Then the modified forecast
 #' will be returned. If the input is a time series, first column should be date column and rest columns should be 
 #' the value column. If the input is a hyfo dataset, the dataset should be the result of \code{loadNcdf}, or a list
-#' file with the same format.
+#' file with the same format. 
+#' 
+#' It is a generic function, see \code{?debug()} for how to debug S4 method.
 #' 
 #' @param frc a hyfo grid data output or a dataframe (time series) consists of Date column and one or more value columns, 
 #' representing the forecast to be calibrated.
@@ -116,6 +118,11 @@
 #' nc <- loadNcdf(filePath, varname)
 #' 
 #' data(tgridData)
+#' # Since the example data, has some NA values, the process will include some warning #message, 
+#' # which can be ignored in this case.
+#' 
+#' 
+#' 
 #' 
 #' # Then we will use nc data as forecasting data, and use itself as hindcast data,
 #' # use tgridData as observation.

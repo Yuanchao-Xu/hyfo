@@ -383,8 +383,8 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, point = 
 #' #The output should be 'ggplot'
 #' a1 <- getSpatialMap(tgridData, method = 'summer', output = 'ggplot', name = 'a1')
 #' a2 <- getSpatialMap(tgridData, method = 'winter', output = 'ggplot', name = 'a2')
-#'# a3 <- getSpatialMap(tgridData, method = 'mean', output = 'ggplot', name = 'a3')
-#'# a4 <- getSpatialMap(tgridData, method = 'max', output = 'ggplot', name = 'a4')
+#' a3 <- getSpatialMap(tgridData, method = 'mean', output = 'ggplot', name = 'a3')
+#' a4 <- getSpatialMap(tgridData, method = 'max', output = 'ggplot', name = 'a4')
 #' getSpatialMap_comb(a1, a2)
 #' 
 #' # or you can put them into a list.
@@ -425,7 +425,7 @@ getSpatialMap_comb <- function(..., list = NULL, nrow = 1, x = '', y = '', title
          output = "ggplot" is assigned, more info please check ?getSpatialMap().')
   }
   
-  data_ggplot$Name <- factor(data_ggplot$Name, levels = data_ggplot$Name, ordered = TRUE)
+  data_ggplot$Name <- factor(data_ggplot$Name, levels = unique(data_ggplot$Name), ordered = TRUE)
   
 #   lim <- getLim(data_ggplot$lon, data_ggplot$lat)
 #   xlim <- lim[[1]]                                  

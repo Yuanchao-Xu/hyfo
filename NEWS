@@ -1,3 +1,13 @@
+hyfo 1.3.2
+==========
+Date: 2015.11.7
+
+- bug fixed about getPreciBar, signature('data.frame')
+- vignettes updated about bug and hided the warning information.
+- Add how to debug in the documentation for the generic functions.
+
+
+
 hyfo 1.3.1
 ==========
 Date: 2015.11.3

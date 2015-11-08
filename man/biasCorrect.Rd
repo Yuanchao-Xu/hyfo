@@ -52,6 +52,8 @@ the value column. If the input is a hyfo dataset, the dataset should be the resu
 file with the same format.
 }
 \details{
+It is a generic function, see \code{?debug()} for how to debug S4 method.
+
 Since climate forecast is based on global condition, when downscaling to different regions, it may include
 some bias, biascorrection is used then to fix the bias.
 
@@ -143,6 +145,11 @@ varname <- getNcdfVar(filePath)
 nc <- loadNcdf(filePath, varname)
 
 data(tgridData)
+# Since the example data, has some NA values, the process will include some warning #message,
+# which can be ignored in this case.
+
+
+
 
 # Then we will use nc data as forecasting data, and use itself as hindcast data,
 # use tgridData as observation.

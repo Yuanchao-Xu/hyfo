@@ -1,5 +1,7 @@
 #' get mean rainfall bar plot of the input dataset or time series.
 #' 
+#' It is a generic function, see \code{?debug()} for how to debug S4 method.
+#' 
 #' @param data A list containing different information, should be the result of reading netcdf file using
 #' \code{loadNcdf}, or load functions from \code{ecomsUDG.Raccess}, or a time series, with first column the Date, second the value.
 #' Time series can be an ENSEMBLE containning different members. Than the mean value will be given and the range will be given.
@@ -41,6 +43,13 @@
 #' b1 <- getPreciBar(tgridData, method = 'annual')
 #' b2 <- getPreciBar(tgridData, method = 'meanMonthly')
 #' 
+#' data(testdl)
+#' TS  <- testdl[[1]]
+#' a <- getPreciBar(TS, method = 'spring')
+#' # if info = T, the information will be given at the bottom.
+#' a <- getPreciBar(TS, method = 'spring', info = TRUE)
+#' 
+#' 
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
 #' @references 
@@ -80,8 +89,12 @@ setMethod('getPreciBar', signature('list'),
 #' @describeIn getPreciBar
 setMethod('getPreciBar', signature('data.frame'), 
           function(data, method, cell, output, name, plotRange, member, omitNA, info, ...) {
+            Date <- as.POSIXlt(TS[, 1])
+            yearIndex <- Date$year + 1900
+            monthIndex <- Date$mon + 1
             TS <- getPreciBar.TS(data)
-            result <- getPreciBar.plot(TS, method, output, name, plotRange, omitNA, info, ...)
+            result <- getPreciBar.plot(TS, method, output, name, plotRange, omitNA, info, 
+                                       yearIndex, monthIndex, ...)
             return(result)
 })
 
@@ -120,9 +133,9 @@ getPreciBar.list <- function(dataset, cell, member) {
 #' @importFrom reshape2 melt
 getPreciBar.TS <- function(TS) {
   
-  Date <- as.POSIXlt(TS[, 1])
-  yearIndex <- Date$year + 1900
-  monthIndex <- Date$mon + 1
+#  Date <- as.POSIXlt(TS[, 1])
+#  yearIndex <- Date$year + 1900
+#  monthIndex <- Date$mon + 1
   n <- ncol(TS) - 1
   
   if ( n == 1) {
@@ -131,10 +144,10 @@ getPreciBar.TS <- function(TS) {
     
     TS <- TS[, -1]
     # month index should be repeat, but years cannot.
-    yearIndex <- sapply(1:n, function(x) yearIndex + x - 1)
-    dim(yearIndex) <- c(n * nrow(yearIndex), 1)
+#    yearIndex <- sapply(1:n, function(x) yearIndex + x - 1)
+#    dim(yearIndex) <- c(n * nrow(yearIndex), 1)
     
-    monthIndex <- rep(monthIndex, n)
+#    monthIndex <- rep(monthIndex, n)
     TS <- melt(TS)[, 2]
     
   }

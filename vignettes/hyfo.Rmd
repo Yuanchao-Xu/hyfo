@@ -16,13 +16,15 @@ vignette: "%\\VignetteIndexEntry{hyfo easy start} \n%\\VignetteEngine{knitr::rma
 
 **Official Website is [http://yuanchao-xu.github.io/hyfo](http://yuanchao-xu.github.io/hyfo)**
 
-hyfo is designed for hydrology and climate forecasting anaylasis, containing a number of tools including data extration, data processing and data visulization.
+hyfo is an R package, initially designed for the European Project EUPORIAS, and cooperated with DHI Denmark, which was then extended to other uses in hydrology, hydraulics and climate.
+
+This package mainly focuses on data process and visulization in hydrology and climate forecasting. Main function includes NetCDF file processing, data extraction, data downscaling, data resampling, gap filler of precipitation, bias correction of forecasting data, flexible time series plot, and spatial map generation. It is a good pre-processing and post-processing tool for hydrological and hydraulic modellers.
 
 **If you feel hyfo is of a little help, please cite it as following:**
 
 Xu, Yuanchao(2015). hyfo: Hydrology and Climate Forecasting R Package for Data Analysis and Visualization. Retrieved from http://yuanchao-xu.github.io/hyfo/
 
-[Author's linkedin profile](https://dk.linkedin.com/in/xuyuanchao37)
+[Author in this corner](https://dk.linkedin.com/in/xuyuanchao37)
 
 #### TIPS
 * For the hydrology tools part, the minimum time unit is a day, i.e., it mainly focuses on water resource and some long term analysis. For flood analysis part, it will be added in future.
@@ -201,7 +203,7 @@ a <- getAnnual(testdl, output = 'mean', title = 'aaa', x = 'aaa', y = 'aaa')
 
 If you want to calculate annual rainfall for a single dataframe containing one time series. You can use the argument `dataframe =`. NOTE, if you don't put `dataframe =`, hyfo may take it as a list, which will give an error.
 ```{r, fig.height=4, fig.width=7}
-a <- getAnnual(dataframe = testdl[[1]])
+a <- getAnnual(testdl[[1]])
 ```
 
 `plotTS` is a powerfull plotting tool for you to plot time series, it can plot different kinds of time series. Sometimes when you finish processing the data, it's very convenient to use `plotTS` to see your results. And also you can use `plotTS_comb` to generate multiple time series plots
@@ -479,30 +481,30 @@ Sometimes we need to know not only the annual precipitation, but also the precip
 ```{r, fig.height=5, fig.width=7}
 data(testdl)
 TS  <- testdl[[1]]
-a <- getPreciBar(TS = TS, method = 'spring')
+a <- getPreciBar(TS, method = 'spring')
 # if info = T, the information will be given at the bottom.
-a <- getPreciBar(TS = TS, method = 'spring', info = TRUE)
+a <- getPreciBar(TS, method = 'spring', info = TRUE)
 
 ```
 If missing value is wanted, set `omitNA = FALSE`.
 ```{r, fig.height=5, fig.width=7}
-a <- getPreciBar(TS = TS, method = 'winter', omitNA = FALSE)
+a <- getPreciBar(TS, method = 'winter', omitNA = FALSE)
 ```
 Get special month precipitation, e.g. march.
 ```{r, fig.height=5, fig.width=7}
-a <-getPreciBar(TS = TS, method = 3)
+a <-getPreciBar(TS, method = 3)
 ```
 We can also get annual precipitation, plot figure and assign title ans axis.
 ```{r, fig.height=5, fig.width=7}
-a <- getPreciBar(TS = TS, method = 'annual', x = 'aaa', title = 'aaa')
+a <- getPreciBar(TS, method = 'annual', x = 'aaa', title = 'aaa')
 ```
 
 
 If `output = 'ggplot'` is chosen, the the output can be used in `getPreciBar_comb`, to generate multiple plots.
 
 ```{r, fig.height=5, fig.width=7}
-a1 <- getPreciBar(TS = TS, method = 1, output = 'ggplot', name = 'Jan')
-a2 <- getPreciBar(TS = TS, method = 2, output = 'ggplot', name = 'Feb')
+a1 <- getPreciBar(TS, method = 1, output = 'ggplot', name = 'Jan')
+a2 <- getPreciBar(TS, method = 2, output = 'ggplot', name = 'Feb')
 getPreciBar_comb(a1, a2)
 ```
 
@@ -735,6 +737,32 @@ hyfo provides bias correction for both grid data and time series, among which ti
 
 No need to designate input type, R will detect automatically.
 
+For hyfo grid file bias correction.
+```{r, warning=FALSE}
+######## hyfo grid file biascorrection
+########
+
+# If your input is obtained by \code{loadNcdf}, you can also directly biascorrect
+# the file.
+ 
+# First load ncdf file.
+filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
+varname <- getNcdfVar(filePath)    
+nc <- loadNcdf(filePath, varname)
+ 
+data(tgridData)
+# Since the example data, has some NA values, the process will include some warning     # message, which can be ignored in this case.
+ 
+# Then we will use nc data as forecasting data, and use itself as hindcast data,
+# use tgridData as observation.
+newFrc <- biasCorrect(nc, nc, tgridData)  
+newFrc <- biasCorrect(nc, nc, tgridData, scaleType = 'add')   
+newFrc <- biasCorrect(nc, nc, tgridData, method = 'eqm', extrapolate = 'constant', 
+preci = TRUE) 
+newFrc <- biasCorrect(nc, nc, tgridData, method = 'gqm', preci = TRUE) 
+```
+
+For time series bias correciton.
 ```{r}
 # Use testdl as an example, we take frc, hindcast and obs from testdl.
 data(testdl)
@@ -782,7 +810,7 @@ Details can be found in `?getBiasFactor` or `?applyBiasFactor`, for bias correct
 
 For hyfo grid file real time bias correction.
 
-```{r}
+```{r, warning=FALSE}
 ######## hyfo grid file biascorrection
 ########
  
@@ -795,6 +823,7 @@ varname <- getNcdfVar(filePath)
 nc <- loadNcdf(filePath, varname)
  
 data(tgridData)
+# Since the example data, has some NA values, the process will include some warning #message, which can be ignored in this case.
  
 # Then we will use nc data as forecasting data, and use itself as hindcast data,
 # use tgridData as observation.
@@ -966,7 +995,7 @@ getSpatialMap_comb(list = c, nrow = 4)
 
 Basically, bar plot follows the same rule as part 2.4.1 spatial map, only a few cases that needs to pay attention.
 
-```{r, fig.show='hide', fig.height=6, fig.width=9, results='hide'}
+```{r, fig.show='hide', fig.height=6, fig.width=9, results='hide', message=FALSE}
 b1 <- getPreciBar(tgridData, method = 'spring', output = 'ggplot', name = 'spring')
 b2 <- getPreciBar(tgridData, method = 'summer', output = 'ggplot', name = 'summer')
 b3 <- getPreciBar(tgridData, method = 'autumn', output = 'ggplot', name = 'autumn')
@@ -977,7 +1006,7 @@ b4 <- getPreciBar(tgridData, method = 'winter', output = 'ggplot', name = 'winte
 getPreciBar_comb(b1, b2, b3, b4, nrow = 2)
 ```
 
-```{r, fig.show='hide', fig.height=6, fig.width=9, results='hide'}
+```{r, fig.show='hide', fig.height=6, fig.width=9, results='hide', message=FALSE}
 c <- lapply(1:12, function(x) getPreciBar(tgridData, method = x, output = 'ggplot', 
                                           name = x))
 ```

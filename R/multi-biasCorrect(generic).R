@@ -11,6 +11,7 @@
 #' get the biasFactor with hindcast and observation, then you can use \code{applyBiasFactor} to 
 #' apply the biasFactor to different forecasts. 
 #' 
+#' It is a generic function, see \code{?debug()} for how to debug S4 method.
 #' 
 #' @param hindcast a hyfo grid data output or a dataframe(time series) consists of Date column and one or more value columns, 
 #' representing the hindcast data. This data will be used in the calibration of the forecast, so it's better to have the same date period as
@@ -67,6 +68,10 @@
 #' nc <- loadNcdf(filePath, varname)
 #' 
 #' data(tgridData)
+#' # Since the example data, has some NA values, the process will include some warning #message, 
+#' # which can be ignored in this case.
+#' 
+#' 
 #' 
 #' # Then we will use nc data as forecasting data, and use itself as hindcast data,
 #' # use tgridData as observation.
@@ -202,6 +207,7 @@ setMethod('getBiasFactor', signature('list', 'list'),
 #' get the biasFactor with hindcast and observation, then you can use \code{applyBiasFactor} to 
 #' apply the biasFactor to different forecasts. 
 #' 
+#' It is a generic function, see \code{?debug()} for how to debug S4 method.
 #' 
 #' @param frc a hyfo grid data output or a dataframe(time series) consists of Date column and one or more value columns, 
 #' representing the frc data. Check details for more information.
@@ -248,6 +254,10 @@ setMethod('getBiasFactor', signature('list', 'list'),
 #' nc <- loadNcdf(filePath, varname)
 #' 
 #' data(tgridData)
+#' #' # Since the example data, has some NA values, the process will include some warning #message, 
+#' # which can be ignored in this case.
+#' 
+#' 
 #' 
 #' # Then we will use nc data as forecasting data, and use itself as hindcast data,
 #' # use tgridData as observation.
