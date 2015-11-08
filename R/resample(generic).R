@@ -1,4 +1,7 @@
-#' Monthly data to daily data and the reverse conversion.
+#' Resample your time series or ncdf files.
+#' 
+#' Resameple your time series or ncdf files, more info pleae see details.
+#' 
 #' 
 #' @param data a hyfo grid data or a time series, with first column date, and second column value. The date column should
 #' follow the format in \code{as.Date}, i.e. seperate with "-" or "/". Check details for more information.
@@ -10,6 +13,10 @@
 #' time series doesn't start from the beginning of a month or ends to the end of a month, e.g. 
 #' from 1999-3-14 to 2008-2-2, the first and last generated date could be wrong. Not only the date, but also the data, because you are 
 #' not calculating based on a intact month. 
+#' 
+#' It is a generic function, if in your case you need to debug, please see \code{?debug()} 
+#' for how to debug S4 method.
+#' 
 #' @return converted time series.
 #' @examples
 #' # Daily to monthly

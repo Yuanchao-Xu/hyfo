@@ -32,8 +32,6 @@ get the biasFactor with hindcast and observation, then you can use \code{applyBi
 apply the biasFactor to different forecasts.
 }
 \details{
-It is a generic function, see \code{?debug()} for how to debug S4 method.
-
 Information about the method and how biasCorrect works can be found in \code{\link{biasCorrect}}
 
 \strong{why use biasFactor}
@@ -53,6 +51,10 @@ time you get a new forecast. That's too expensive.
 For some practical use in forecasting, there isn't a so high demand for accuracy. E.g.,
 Maybe for February and March, you can use the same biasFactor, no need to do the computation
 again.
+
+
+It is a generic function, if in your case you need to debug, please see \code{?debug()}
+for how to debug S4 method.
 }
 \section{Methods (by class)}{
 \itemize{
@@ -154,7 +156,7 @@ plotTS(list = TSlist, plot = 'cum')
 # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \author{
-Yuanchao Xu \email{xuyuanchao37@gmail.com }, S. Herrera \email{sixto@predictia.es }
+Yuanchao Xu \email{xuyuanchao37@gmail.com }
 }
 \references{
 Bias correction methods come from \code{biasCorrection} from \code{dowscaleR}

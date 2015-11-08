@@ -52,8 +52,6 @@ the value column. If the input is a hyfo dataset, the dataset should be the resu
 file with the same format.
 }
 \details{
-It is a generic function, see \code{?debug()} for how to debug S4 method.
-
 Since climate forecast is based on global condition, when downscaling to different regions, it may include
 some bias, biascorrection is used then to fix the bias.
 
@@ -125,6 +123,9 @@ that uses the theorical instead of the empirical distribution.
 
 It can somehow filter some extreme values caused by errors, while keep the extreme value. Seems more reasonable.
 Better have a long period of training, and the if the forecast system is relatively stable.
+
+It is a generic function, if in your case you need to debug, please see \code{?debug()}
+for how to debug S4 method.
 }
 \section{Methods (by class)}{
 \itemize{
@@ -213,7 +214,7 @@ plotTS(list = TSlist, plot = 'cum')
 # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
 \author{
-Yuanchao Xu \email{xuyuanchao37@gmail.com }, S. Herrera \email{sixto@predictia.es }
+Yuanchao Xu \email{xuyuanchao37@gmail.com }
 }
 \references{
 Bias correction methods come from \code{biasCorrection} from \code{dowscaleR}

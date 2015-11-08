@@ -11,8 +11,6 @@
 #' get the biasFactor with hindcast and observation, then you can use \code{applyBiasFactor} to 
 #' apply the biasFactor to different forecasts. 
 #' 
-#' It is a generic function, see \code{?debug()} for how to debug S4 method.
-#' 
 #' @param hindcast a hyfo grid data output or a dataframe(time series) consists of Date column and one or more value columns, 
 #' representing the hindcast data. This data will be used in the calibration of the forecast, so it's better to have the same date period as
 #' observation data. Check details for more information.
@@ -53,6 +51,9 @@
 #' For some practical use in forecasting, there isn't a so high demand for accuracy. E.g.,
 #' Maybe for February and March, you can use the same biasFactor, no need to do the computation 
 #' again. 
+#'  
+#' It is a generic function, if in your case you need to debug, please see \code{?debug()} 
+#' for how to debug S4 method.  
 #'  
 #' @examples 
 #' 
@@ -166,7 +167,7 @@
 #' \item O. Gutjahr and G. Heinemann (2013) Comparing precipitation bias correction methods for high-resolution regional climate simulations using COSMO-CLM, Theoretical and Applied Climatology, 114, 511-529
 #' }
 #' 
-#' @author Yuanchao Xu \email{xuyuanchao37@@gmail.com }, S. Herrera \email{sixto@@predictia.es }
+#' @author Yuanchao Xu \email{xuyuanchao37@@gmail.com }
 #' 
 #' @importFrom methods setMethod
 #' @export
@@ -207,8 +208,6 @@ setMethod('getBiasFactor', signature('list', 'list'),
 #' get the biasFactor with hindcast and observation, then you can use \code{applyBiasFactor} to 
 #' apply the biasFactor to different forecasts. 
 #' 
-#' It is a generic function, see \code{?debug()} for how to debug S4 method.
-#' 
 #' @param frc a hyfo grid data output or a dataframe(time series) consists of Date column and one or more value columns, 
 #' representing the frc data. Check details for more information.
 #' @param biasFactor a file containing all the information of the calibration, will be
@@ -239,6 +238,10 @@ setMethod('getBiasFactor', signature('list', 'list'),
 #' For some practical use in forecasting, there isn't a so high demand for accuracy. E.g.,
 #' Maybe for February and March, you can use the same biasFactor, no need to do the computation 
 #' again. 
+#' 
+#' 
+#' It is a generic function, if in your case you need to debug, please see \code{?debug()} 
+#' for how to debug S4 method.
 #'  
 #' @examples 
 #' 
@@ -352,7 +355,7 @@ setMethod('getBiasFactor', signature('list', 'list'),
 #' \item O. Gutjahr and G. Heinemann (2013) Comparing precipitation bias correction methods for high-resolution regional climate simulations using COSMO-CLM, Theoretical and Applied Climatology, 114, 511-529
 #' }
 #' 
-#' @author Yuanchao Xu \email{xuyuanchao37@@gmail.com }, S. Herrera \email{sixto@@predictia.es }
+#' @author Yuanchao Xu \email{xuyuanchao37@@gmail.com }
 #' 
 #' @export
 setGeneric('applyBiasFactor', function(frc, biasFactor, obs = NULL) {

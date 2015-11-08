@@ -9,7 +9,6 @@
 #' the value column. If the input is a hyfo dataset, the dataset should be the result of \code{loadNcdf}, or a list
 #' file with the same format. 
 #' 
-#' It is a generic function, see \code{?debug()} for how to debug S4 method.
 #' 
 #' @param frc a hyfo grid data output or a dataframe (time series) consists of Date column and one or more value columns, 
 #' representing the forecast to be calibrated.
@@ -102,7 +101,8 @@
 #' It can somehow filter some extreme values caused by errors, while keep the extreme value. Seems more reasonable.
 #' Better have a long period of training, and the if the forecast system is relatively stable.
 #' 
-#' 
+#' It is a generic function, if in your case you need to debug, please see \code{?debug()} 
+#' for how to debug S4 method.
 #'  
 #' @examples 
 #' 
@@ -203,7 +203,7 @@
 #' \item O. Gutjahr and G. Heinemann (2013) Comparing precipitation bias correction methods for high-resolution regional climate simulations using COSMO-CLM, Theoretical and Applied Climatology, 114, 511-529
 #' }
 #' 
-#' @author Yuanchao Xu \email{xuyuanchao37@@gmail.com }, S. Herrera \email{sixto@@predictia.es }
+#' @author Yuanchao Xu \email{xuyuanchao37@@gmail.com }
 #' @importFrom methods setMethod
 #' @export
 #' 

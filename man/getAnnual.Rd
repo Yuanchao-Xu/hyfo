@@ -32,7 +32,11 @@ The annual rainfall and the number of missing data of each year and each rainfal
 will also be plotted. If output "mean" is seleted, the mean annual rainfall will be returned.
 }
 \description{
-It is a generic function, see \code{?debug()} for how to debug S4 method.
+Get annual rainfall of different raninfall time series.
+}
+\details{
+It is a generic function, if in your case you need to debug, please see \code{?debug()}
+for how to debug S4 method.
 }
 \section{Methods (by class)}{
 \itemize{

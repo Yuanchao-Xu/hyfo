@@ -1,6 +1,7 @@
 #' Get annual rainfall of different rainfall time series
 #' 
-#' It is a generic function, see \code{?debug()} for how to debug S4 method.
+#' Get annual rainfall of different raninfall time series.
+#' 
 #' 
 #' @param data A list containing different time series of different rainfall gauges. Or a dataframe with first column Date and the rest columns the value of different
 #' gauging stations. Usually an output of \code{list2Dataframe}.
@@ -12,6 +13,10 @@
 #' @param ... \code{title, x, y} showing the title and x and y axis of the plot. e.g. \code{title = 'aaa'}
 #' @return The annual rainfall and the number of missing data of each year and each rainfall gauge, which 
 #' will also be plotted. If output "mean" is seleted, the mean annual rainfall will be returned.
+#' @details 
+#' It is a generic function, if in your case you need to debug, please see \code{?debug()} 
+#' for how to debug S4 method.
+#' 
 #' @examples
 #' #datalist is provided by the package as a test.
 #' data(testdl)

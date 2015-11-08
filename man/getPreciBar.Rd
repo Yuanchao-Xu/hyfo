@@ -53,7 +53,7 @@ taken.}
 The calculated mean value of the input time series and the plot of the result.
 }
 \description{
-It is a generic function, see \code{?debug()} for how to debug S4 method.
+get mean rainfall bar plot of the input dataset or time series.
 }
 \details{
 There are following methods to be selected,
@@ -69,6 +69,10 @@ Month(number 1 to 12): month rainfall of each year is plotted, e.g. march rainfa
 \code{cell} representing the location of the cell, NOTE: this location means the index of the cell,
 IT IS NOT THE LONGITUDE AND LATITUDE. e.g., \code{cell = c(2, 3)}, the program will take the 2nd longitude
 and 3rd latitude, by the increasing order. Longitude comes first.
+
+
+It is a generic function, if in your case you need to debug, please see \code{?debug()}
+for how to debug S4 method.
 }
 \section{Methods (by class)}{
 \itemize{

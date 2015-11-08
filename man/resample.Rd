@@ -5,7 +5,7 @@
 \alias{resample}
 \alias{resample,data.frame-method}
 \alias{resample,list-method}
-\title{Monthly data to daily data and the reverse conversion.}
+\title{Resample your time series or ncdf files.}
 \usage{
 resample(data, method)
 
@@ -24,7 +24,7 @@ data to daily data.e.g. "mon2day" and "day2mon".}
 converted time series.
 }
 \description{
-Monthly data to daily data and the reverse conversion.
+Resameple your time series or ncdf files, more info pleae see details.
 }
 \details{
 Note, when you want to change daily data to monthly data, a new date column will be generated,
@@ -32,6 +32,9 @@ usually the date column will be the middle date of each month, 15th, or 16th. Ho
 time series doesn't start from the beginning of a month or ends to the end of a month, e.g.
 from 1999-3-14 to 2008-2-2, the first and last generated date could be wrong. Not only the date, but also the data, because you are
 not calculating based on a intact month.
+
+It is a generic function, if in your case you need to debug, please see \code{?debug()}
+for how to debug S4 method.
 }
 \section{Methods (by class)}{
 \itemize{

@@ -1,6 +1,7 @@
 #' get mean rainfall bar plot of the input dataset or time series.
 #' 
-#' It is a generic function, see \code{?debug()} for how to debug S4 method.
+#' get mean rainfall bar plot of the input dataset or time series.
+#' 
 #' 
 #' @param data A list containing different information, should be the result of reading netcdf file using
 #' \code{loadNcdf}, or load functions from \code{ecomsUDG.Raccess}, or a time series, with first column the Date, second the value.
@@ -36,6 +37,10 @@
 #' \code{cell} representing the location of the cell, NOTE: this location means the index of the cell,
 #' IT IS NOT THE LONGITUDE AND LATITUDE. e.g., \code{cell = c(2, 3)}, the program will take the 2nd longitude
 #' and 3rd latitude, by the increasing order. Longitude comes first.
+#' 
+#' 
+#' It is a generic function, if in your case you need to debug, please see \code{?debug()} 
+#' for how to debug S4 method.
 #' 
 #' @examples
 #' #gridData provided by package is the result of \code{loadNcdf()}

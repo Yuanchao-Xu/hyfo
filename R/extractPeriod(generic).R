@@ -1,7 +1,7 @@
 #' Extract period from list or dataframe.
 #' 
 #' Extract common period or certain period from a list of different dataframes of time series, or from a 
-#' dataframe. It is a generic function, see \code{?debug()} for how to debug S4 method.
+#' dataframe. 
 #' NOTE: all the dates in the datalist should follow the format in ?as.Date{base}.
 #' @param data A list of different dataframes of time series, or a dataframe with first column Date, the rest columns value.
 #' @param startDate A Date showing the start of the extract period, default as NULL, check details.
@@ -34,7 +34,8 @@
 #' Well, if you set \code{year = 1998 : 1999}, hyfo will take month 10, 11 and 12 from year 1997, and month 1 from 1998,
 #' then, take month 10, 11 and 12 from year 1998, month 1 from 1999. So you only have to care about the latter year.
 #' 
-#' 
+#' It is a generic function, if in your case you need to debug, please see \code{?debug()} 
+#' for how to debug S4 method.
 #' 
 #' @return A list or a dataframe with all the time series inside containing the same period.
 #' @examples
