@@ -2,7 +2,7 @@ Package: hyfo
 Type: Package
 Title: Hydrology and Climate Forecasting R Package for Data Analysis and
     Visualization
-Version: 1.3.2
+Version: 1.3.3
 Date: 2015-11-3
 Authors@R: person("Yuanchao", "Xu", email = "xuyuanchao37@gmail.com",
   role = c("aut", "cre"))

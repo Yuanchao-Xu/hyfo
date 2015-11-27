@@ -19,7 +19,7 @@ readData_folder <- function(folderName, keyword) {
 }
 
 
-#' @importFrom utils choose.dir
+# @importFrom utils choose.dir
 #' @references 
 #' 
 #' \itemize{
@@ -29,20 +29,23 @@ readData_folder <- function(folderName, keyword) {
 #' 
 
 readData <- function(keyword, folderName) {
-  message('Choose the main folder that, in it, there are different folders representing different gauging stations,
-           all the gauging stations have precipitation data, some of them also have discharge data,
-           this function is to open different gauging folders and read the data, arragen them together.')
-  message('\n\n
-           new file is a list based file and needs to be read by dget()')
+  message('This function is only windows based, if you are using windows platform (real
+          operational system, not virtual machine), and want to use this function, please
+          contact the author (xuyuanchao37@gmail.com) for the windows version.')
+#   message('Choose the main folder that, in it, there are different folders representing different gauging stations,
+#            all the gauging stations have precipitation data, some of them also have discharge data,
+#            this function is to open different gauging folders and read the data, arragen them together.')
+#   message('\n\n
+#            new file is a list based file and needs to be read by dget()')
   
-  fileNames <- list.files(folderName, full.names = TRUE)
-  data <- lapply(fileNames, FUN = readData_folder, keyword = keyword)
-  
-  names <- sapply(c(1:length(data)), function(x) colnames(data[[x]])[2])
-  names(data) <- names
-  
-  fileName <- file.choose(new = TRUE)
-  dput(data, file = fileName)
-  
-  return(data)
+#   fileNames <- list.files(folderName, full.names = TRUE)
+#   data <- lapply(fileNames, FUN = readData_folder, keyword = keyword)
+#   
+#   names <- sapply(c(1:length(data)), function(x) colnames(data[[x]])[2])
+#   names(data) <- names
+#   
+#   fileName <- file.choose(new = TRUE)
+#   dput(data, file = fileName)
+#   
+#   return(data)
 }
