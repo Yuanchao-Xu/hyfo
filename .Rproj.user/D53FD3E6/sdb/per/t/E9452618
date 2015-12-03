@@ -1,0 +1,17 @@
+{
+    "contents" : "# Sample .travis.yml for R projects\n\nlanguage: r\nwarnings_are_errors: true\nsudo: required\nenv:\n  global:\n    - CRAN: http://cran.rstudio.com\n    - NOT_CRAN = true\n    - _R_CHECK_CRAN_INCOMING_ = false",
+    "created" : 1449171460599.000,
+    "dirty" : false,
+    "encoding" : "ASCII",
+    "folds" : "",
+    "hash" : "3886110020",
+    "id" : "E9452618",
+    "lastKnownWriteTime" : 1449171599,
+    "path" : "E:/1/R/hyfo/.travis.yml",
+    "project_path" : ".travis.yml",
+    "properties" : {
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "type" : "yaml"
+}
