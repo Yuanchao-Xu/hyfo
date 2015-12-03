@@ -13,5 +13,5 @@ Xu, Yuanchao(2015). hyfo: Hydrology and Climate Forecasting R Package for Data A
 
 [Author in this corner](https://dk.linkedin.com/in/xuyuanchao37)
 
-
+[![Travis-CI Build Status](https://travis-ci.org/Yuanchao-Xu/hyfo.svg?branch=master)](https://travis-ci.org/Yuanchao-Xu/hyfo)
 

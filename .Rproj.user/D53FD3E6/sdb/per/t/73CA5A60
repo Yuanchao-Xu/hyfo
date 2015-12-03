@@ -1,0 +1,17 @@
+{
+    "contents" : "# Sample .travis.yml for R projects\n\nlanguage: r\nwarnings_are_errors: true\nsudo: required\n",
+    "created" : 1449100601672.000,
+    "dirty" : false,
+    "encoding" : "ASCII",
+    "folds" : "",
+    "hash" : "456493592",
+    "id" : "73CA5A60",
+    "lastKnownWriteTime" : 1449100566,
+    "path" : "E:/1/R/hyfo/.travis.yml",
+    "project_path" : ".travis.yml",
+    "properties" : {
+    },
+    "relative_order" : 9,
+    "source_on_save" : false,
+    "type" : "yaml"
+}
