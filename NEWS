@@ -4,7 +4,7 @@ Date: 2015.11.27
 
 - Delete readData_folder, since it's only windows based, add information to get special 
 version for windows users.
-
+- travis test added.
 
 
 hyfo 1.3.2
