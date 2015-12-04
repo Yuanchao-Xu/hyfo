@@ -18,6 +18,8 @@
 #' "mean", "max", "min": mean daily, maximum daily, minimum daily precipitation.
 #' @examples
 #' 
+#' 
+#' \dontrun{
 #' #gridData provided in the package is the result of \code {loadNcdf}
 #' data(tgridData)
 #' getSpatialMap(tgridData, method = 'meanAnnual')
@@ -29,6 +31,8 @@
 #' file <- system.file("extdata", "point.txt", package = "hyfo")
 #' point <- read.table(file, header = TRUE, sep = ',' )
 #' getSpatialMap(tgridData, method = 'winter', catchment = testCat, point = point)
+#' }
+#' 
 #' 
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
@@ -196,6 +200,8 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 #'default is about precipitation.
 #' @return A matrix representing the raster map is returned, and the map is plotted.
 #' @examples
+#' 
+#' \dontrun{
 #' data(tgridData)# the result of \code{loadNcdf}
 #' #the output type of has to be default or 'data'.
 #' a1 <- getSpatialMap(tgridData, method = 'mean')
@@ -210,6 +216,9 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 #' #Or to investigate the difference between winter value and summer value.
 #' a6 <- a3 - a4
 #' getSpatialMap_mat(a6)
+#' 
+#' }
+#' 
 #' 
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
@@ -379,6 +388,9 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, point = 
 #' @param output A boolean, if chosen TRUE, the output will be given.
 #' @return A combined map.
 #' @examples
+#' 
+#' 
+#' \dontrun{
 #' data(tgridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
 #' #The output should be 'ggplot'
 #' a1 <- getSpatialMap(tgridData, method = 'summer', output = 'ggplot', name = 'a1')
@@ -389,6 +401,9 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, point = 
 #' 
 #' # or you can put them into a list.
 #' getSpatialMap_comb(list = list(a1, a2), nrow = 2)
+#' }
+#' 
+#' 
 #' 
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 

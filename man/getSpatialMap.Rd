@@ -34,6 +34,7 @@ Month(number 1 to 12): MEAN month rainfall of each year is plotted, e.g. MEAN ma
 "mean", "max", "min": mean daily, maximum daily, minimum daily precipitation.
 }
 \examples{
+\dontrun{
 #gridData provided in the package is the result of \\code {loadNcdf}
 data(tgridData)
 getSpatialMap(tgridData, method = 'meanAnnual')
@@ -45,6 +46,8 @@ getSpatialMap(tgridData, method = 'winter', catchment = testCat)
 file <- system.file("extdata", "point.txt", package = "hyfo")
 point <- read.table(file, header = TRUE, sep = ',' )
 getSpatialMap(tgridData, method = 'winter', catchment = testCat, point = point)
+}
+
 
 # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }

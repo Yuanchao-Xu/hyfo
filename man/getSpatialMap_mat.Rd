@@ -47,6 +47,7 @@ replot the matrix output from \code{getSpatialMap}, when \code{output = 'data'} 
 value.
 }
 \examples{
+\dontrun{
 data(tgridData)# the result of \\code{loadNcdf}
 #the output type of has to be default or 'data'.
 a1 <- getSpatialMap(tgridData, method = 'mean')
@@ -61,6 +62,9 @@ getSpatialMap_mat(a4)
 #Or to investigate the difference between winter value and summer value.
 a6 <- a3 - a4
 getSpatialMap_mat(a6)
+
+}
+
 
 # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 }
