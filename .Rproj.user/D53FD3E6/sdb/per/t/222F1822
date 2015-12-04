@@ -1,12 +1,12 @@
 {
-    "contents" : "hyfo 1.3.3\n==========\nDate: 2015.11.27\n\n- Delete readData_folder, since it's only windows based, add information to get special \nversion for windows users.\n- travis test added.\n\n\nhyfo 1.3.2\n==========\nDate: 2015.11.7\n\n- bug fixed about getPreciBar, signature('data.frame')\n- vignettes updated about bug and hided the warning information.\n- Add how to debug in the documentation for the generic functions.\n\n\n\nhyfo 1.3.1\n==========\nDate: 2015.11.3\n\n- new generic function biasCorrect, extractPeriod, resample, getAnnual, getPreciBar added. No need to designate input type any more, R will detect automatically.\n- coordinates conversion function extracted.\n- new user manual about real time bias correction and resample added.\n\n\n\nhyfo 1.2.9\n==========\nDate: 2015.10.30\n\n- new biasFactor S4 class added, to avoid set the input type every time.\n- operational bias correction has been changed to generic function.\n- news file added.\n\n\n\nhyfo 1.2.8\n==========\nDate: 2015.10.10\n\n- operational bias correction added, in normal function.",
+    "contents" : "hyfo 1.3.3\n==========\nDate: 2015.11.27\n\n- Delete readData_folder, since it's only windows based, add information to get special version for windows users.\n- travis test added.\n\n\nhyfo 1.3.2\n==========\nDate: 2015.11.7\n\n- bug fixed about getPreciBar, signature('data.frame')\n- vignettes updated about bug and hided the warning information.\n- Add how to debug in the documentation for the generic functions.\n\n\n\nhyfo 1.3.1\n==========\nDate: 2015.11.3\n\n- new generic function biasCorrect, extractPeriod, resample, getAnnual, getPreciBar added. No need to designate input type any more, R will detect automatically.\n- coordinates conversion function extracted.\n- new user manual about real time bias correction and resample added.\n\n\n\nhyfo 1.2.9\n==========\nDate: 2015.10.30\n\n- new biasFactor S4 class added, to avoid set the input type every time.\n- operational bias correction has been changed to generic function.\n- news file added.\n\n\n\nhyfo 1.2.8\n==========\nDate: 2015.10.10\n\n- operational bias correction added, in normal function.",
     "created" : 1446423165783.000,
     "dirty" : false,
     "encoding" : "ASCII",
     "folds" : "",
-    "hash" : "4165712095",
+    "hash" : "946343609",
     "id" : "222F1822",
-    "lastKnownWriteTime" : 1449101282,
+    "lastKnownWriteTime" : 1449245656,
     "path" : "E:/1/R/hyfo/NEWS",
     "project_path" : "NEWS",
     "properties" : {
