@@ -12,5 +12,3 @@ apt_packages:
   - udunits-bin
   - libudunits2-dev
   - netcdf-bin
-  - ncdf
-  - rgdal
