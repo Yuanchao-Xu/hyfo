@@ -8,6 +8,7 @@ env:
     - NOT_CRAN = true
 before_install: 
 #  echo "options(repos = c(CRAN='http://cran.rstudio.com'))" > ~/.Rprofile
+  - sudo apt-get autoclean
   - sudo aptitude install libgdal-dev
 apt_packages:
   - libnetcdf-dev
