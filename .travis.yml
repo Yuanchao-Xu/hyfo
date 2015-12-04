@@ -12,4 +12,5 @@ apt_packages:
   - udunits-bin
   - libudunits2-dev
   - netcdf-bin
+  - libhdf5-serial-dev
   - libgdal-dev
