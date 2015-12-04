@@ -8,5 +8,6 @@ env:
     - NOT_CRAN = true
 before_install: echo "options(repos = c(CRAN='http://cran.rstudio.com'))" > ~/.Rprofile
 apt_packages:
-  - rgdal-dev
-  - ncdf-dev
+  - libnetcdf-dev
+  - udunits-bin
+  - libudunits2-dev
