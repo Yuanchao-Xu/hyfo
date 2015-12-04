@@ -5,6 +5,5 @@ warnings_are_errors: true
 sudo: required
 env:
   global:
-    - CRAN: http://cran.rstudio.com
     - NOT_CRAN = true
-    - _R_CHECK_CRAN_INCOMING_ = false
+before_install: echo "options(repos = c(CRAN='http://cran.rstudio.com'))" > ~/.Rprofile
