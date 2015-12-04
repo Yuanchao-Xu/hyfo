@@ -2,14 +2,11 @@
 title: '[hyfo Easy Start](http://yuanchao-xu.github.io/hyfo/)'
 author: '[Yuanchao Xu](https://dk.linkedin.com/in/xuyuanchao37)'
 date: '`r Sys.Date()`'
-output:
-  pdf_document:
-    toc: yes
-    toc_depth: 3
-  html_document:
-    toc: yes
-vignette: "%\\VignetteIndexEntry{hyfo easy start} \n%\\VignetteEngine{knitr::rmarkdown}
-  \n%\\VignetteEncoding{ASCII}\n"
+output: rmarkdown::html_vignette
+vignette: > 
+  %\\VignetteIndexEntry{hyfo easy start} 
+  %\\VignetteEngine{knitr::rmarkdown}
+  %\\VignetteEncoding{ASCII}
 ---
 
 # Introduction

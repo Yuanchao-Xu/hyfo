@@ -1,0 +1,17 @@
+{
+    "contents" : "---\ntitle: \"Vignette Title\"\nauthor: \"Vignette Author\"\ndate: \"`r Sys.Date()`\"\noutput: rmarkdown::html_vignette\nvignette: >\n  %\\VignetteIndexEntry{Vignette Title}\n  %\\VignetteEngine{knitr::rmarkdown}\n  %\\VignetteEncoding{UTF-8}\n---\n\nVignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:\n\n- Never uses retina figures\n- Has a smaller default figure size\n- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style\n\n## Vignette Info\n\nNote the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\\VignetteIndexEntry` to match the title of your vignette.\n\n## Styles\n\nThe `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:\n\n    output: \n      rmarkdown::html_vignette:\n        css: mystyles.css\n\n## Figures\n\nThe figure sizes have been customised so that you can easily put two images side-by-side. \n\n```{r, fig.show='hold'}\nplot(1:10)\nplot(10:1)\n```\n\nYou can enable figure captions by `fig_caption: yes` in YAML:\n\n    output:\n      rmarkdown::html_vignette:\n        fig_caption: yes\n\nThen you can use the chunk option `fig.cap = \"Your figure caption.\"` in **knitr**.\n\n## More Examples\n\nYou can write math expressions, e.g. $Y = X\\beta + \\epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.\n\n```{r, echo=FALSE, results='asis'}\nknitr::kable(head(mtcars, 10))\n```\n\nAlso a quote using `>`:\n\n> \"He who gives up [code] safety for [code] speed deserves neither.\"\n([via](https://twitter.com/hadleywickham/status/504368538874703872))\n",
+    "created" : 1449237288261.000,
+    "dirty" : false,
+    "encoding" : "ASCII",
+    "folds" : "",
+    "hash" : "2745807193",
+    "id" : "8C65F1A7",
+    "lastKnownWriteTime" : 1449237285,
+    "path" : "E:/1/R/hyfo/vignettes/my-vignette.Rmd",
+    "project_path" : "vignettes/my-vignette.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "type" : "r_markdown"
+}
