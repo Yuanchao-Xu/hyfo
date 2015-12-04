@@ -1,12 +1,12 @@
 {
-    "contents" : "# Sample .travis.yml for R projects\n\nlanguage: r\nwarnings_are_errors: true\nsudo: required\nenv:\n  global:\n    - NOT_CRAN = true\nbefore_install: echo \"options(repos = c(CRAN='http://cran.rstudio.com'))\" > ~/.Rprofile\napt_packages:\n  - libnetcdf-dev\n  - udunits-bin\n  - libudunits2-dev\n  - netcdf-bin\n  - libhdf5-dev\n  - libhdf5-serial-dev\n  - libgdal-dev\n",
+    "contents" : "# Sample .travis.yml for R projects\n\nlanguage: r\nwarnings_are_errors: true\nsudo: required\nenv:\n  global:\n    - NOT_CRAN = true\nbefore_install: \n  echo \"options(repos = c(CRAN='http://cran.rstudio.com'))\" > ~/.Rprofile\n  sudo apt-get autoclean\napt_packages:\n  - libnetcdf-dev\n  - udunits-bin\n  - libudunits2-dev\n  - netcdf-bin\n  - libhdf5-dev\n  - libhdf5-serial-dev\n  - libgdal-dev\n",
     "created" : 1449171460599.000,
     "dirty" : false,
     "encoding" : "ASCII",
     "folds" : "",
-    "hash" : "2941597794",
+    "hash" : "1842397969",
     "id" : "E9452618",
-    "lastKnownWriteTime" : 1449268516,
+    "lastKnownWriteTime" : 1449269233,
     "path" : "E:/1/R/hyfo/.travis.yml",
     "project_path" : ".travis.yml",
     "properties" : {
