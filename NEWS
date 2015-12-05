@@ -4,8 +4,8 @@ Date: 2015.12.5
 
 - travis check passed, change the rgdal version from 0.9-3 back to 0.8-16 due to the lack of packages on travis ubuntu.
 - changed .yml file to fix the problem with No repository set, so cyclic dependency check skipped.
-- submitted to CRAN
-
+- on CRAN
+- fully supported for windows, Linux and OS.
 
 
 
