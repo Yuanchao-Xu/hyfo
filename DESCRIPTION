@@ -19,7 +19,7 @@ Imports:
     ggplot2 (>= 1.0.1),
     reshape2 (>= 1.4.1),
     zoo (>= 1.7-12),
-    rgdal (>= 0.9-3),
+    rgdal (>= 0.8-16),
     plyr (>= 1.8.3),
     moments (>= 0.14),
     lmom (>= 2.5),
