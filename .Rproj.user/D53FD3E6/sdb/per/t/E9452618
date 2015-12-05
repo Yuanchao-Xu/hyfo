@@ -1,12 +1,12 @@
 {
-    "contents" : "# Sample .travis.yml for R projects\n\nlanguage: r\nwarnings_are_errors: true\nsudo: required\nenv:\n  global:\n    - NOT_CRAN = true\n#before_install: \n#  echo \"options(repos = c(CRAN='http://cran.rstudio.com'))\" > ~/.Rprofile\n#  - sudo apt-get autoclean\n#  - sudo aptitude install libgdal-dev\napt_packages:\n  - libnetcdf-dev\n  - udunits-bin\n  - libudunits2-dev\n  - netcdf-bin\n  - libproj-dev\n  - libcurl4-gnutls-dev\n  - libdap-dev\n  - libgdal-dev\n  - libgdal1h\n  - libhdf5-7\n  - libhdf5-dev\n  - libhdf5-serial-dev\n  - libgdal-dev\n  - libgdal1-dev\n",
+    "contents" : "# Sample .travis.yml for R projects\n\nlanguage: r\nwarnings_are_errors: true\nsudo: required\nenv:\n  global:\n    - NOT_CRAN = true\n#before_install: \n#  echo \"options(repos = c(CRAN='http://cran.rstudio.com'))\" > ~/.Rprofile\n#  - sudo apt-get autoclean\n#  - sudo aptitude install libgdal-dev\napt_packages:\n  - libnetcdf-dev\n  - udunits-bin\n  - libudunits2-dev\n  - netcdf-bin\n  - libproj-dev\n  - libcurl4-gnutls-dev\n  - libdap-dev\n  - libgdal-dev\n  - libgdal1h\n  - libhdf5-dev\n  - libhdf5-serial-dev\n  - libgdal-dev\n  - libgdal1-dev\n",
     "created" : 1449171460599.000,
     "dirty" : false,
     "encoding" : "ASCII",
     "folds" : "",
-    "hash" : "2299330666",
+    "hash" : "1325643563",
     "id" : "E9452618",
-    "lastKnownWriteTime" : 1449314171,
+    "lastKnownWriteTime" : 1449314461,
     "path" : "E:/1/R/hyfo/.travis.yml",
     "project_path" : ".travis.yml",
     "properties" : {
