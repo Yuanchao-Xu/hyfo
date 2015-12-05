@@ -15,4 +15,5 @@ apt_packages:
   - udunits-bin
   - libudunits2-dev
   - netcdf-bin
-  - libproj-dev
+r_packages:
+  - sp
