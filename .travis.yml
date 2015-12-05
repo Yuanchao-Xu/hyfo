@@ -6,12 +6,12 @@ sudo: required
 env:
   global:
     - NOT_CRAN = true
-before_install: 
+#before_install: 
 #  echo "options(repos = c(CRAN='http://cran.rstudio.com'))" > ~/.Rprofile
-  - sudo apt-get autoclean
-  - sudo aptitude install libgdal-dev
-apt_packages:
-  - libnetcdf-dev
-  - udunits-bin
-  - libudunits2-dev
-  - netcdf-bin
+#  - sudo apt-get autoclean
+#  - sudo aptitude install libgdal-dev
+#apt_packages:
+#  - libnetcdf-dev
+#  - udunits-bin
+#  - libudunits2-dev
+#  - netcdf-bin
