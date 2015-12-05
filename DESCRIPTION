@@ -1,11 +1,11 @@
 Package: hyfo
 Type: Package
-Title: Hydrology and Climate Forecasting R Package for Data Analysis and Visualization
+Title: Hydrology and Climate Forecasting
 Version: 1.3.3
 Date: 2015-11-3
 Authors@R: person("Yuanchao", "Xu", email = "xuyuanchao37@gmail.com",
   role = c("aut", "cre"))
-Description: An R package focuses on data processing and visulization in hydrology and
+Description: Focuses on data processing and visualization in hydrology and
     climate forecasting. Main function includes data extraction, data downscaling, data 
     resampling, gap filler of precipitation, bias correction of forecasting data, flexible
     time series plot, and spatial map generation. It is a good pre-processing and 
