@@ -16,4 +16,3 @@ apt_packages:
   - libudunits2-dev
   - netcdf-bin
   - libproj-dev
-  - libgdal-dev
