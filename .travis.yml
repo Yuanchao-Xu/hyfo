@@ -15,5 +15,6 @@ apt_packages:
   - udunits-bin
   - libudunits2-dev
   - netcdf-bin
-  - libgdal1-dev
   - libproj-dev
+  - libgdal-dev
+  - libgdal1-dev
