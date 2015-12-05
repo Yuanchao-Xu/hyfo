@@ -16,5 +16,6 @@ apt_packages:
   - libudunits2-dev
   - netcdf-bin
   - libproj-dev
+  - libhdf5-serial-dev
   - libgdal-dev
   - libgdal1-dev
