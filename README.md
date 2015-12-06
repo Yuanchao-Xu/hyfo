@@ -4,13 +4,13 @@
 
 ## Installation
 
-Get the released version from CRAN:
+Released version from CRAN, for beginners and normal users:
 
 ```R
 install.packages("hyfo")
 ```
 
-Or the development version from github:
+Development version from github, for experienced users and those who are interested in investigating:
 
 ```R
 install.packages("devtools")
