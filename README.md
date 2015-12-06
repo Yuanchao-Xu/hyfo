@@ -13,7 +13,8 @@ install.packages("hyfo")
 Or the development version from github:
 
 ```R
-# install.packages("devtools")
+install.packages("devtools")
+# You can ignore the line above, if you have already installed devtools
 devtools::install_github("Yuanchao-Xu/hyfo")
 ```
 
