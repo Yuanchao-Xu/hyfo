@@ -1,6 +1,7 @@
-hyfo 1.3.5
+
+hyfo 1.3.6
 ==========
-Date: 2015.12.5
+Date: 2015.12.6
 
 - travis check passed, change the rgdal version from 0.9-3 back to 0.8-16 due to the lack of packages on travis ubuntu.
 - changed .yml file to fix the problem with No repository set, so cyclic dependency check skipped.
