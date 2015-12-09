@@ -391,7 +391,7 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, point = 
 #' 
 #' 
 #' \dontrun{
-#' data(tgridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
+#' data(tgridData)# the result of \code{\link{loadNcdf}}
 #' #The output should be 'ggplot'
 #' a1 <- getSpatialMap(tgridData, method = 'summer', output = 'ggplot', name = 'a1')
 #' a2 <- getSpatialMap(tgridData, method = 'winter', output = 'ggplot', name = 'a2')

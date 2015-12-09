@@ -8,8 +8,7 @@ downscaleNcdf(gridData, year = NULL, month = NULL, lon = NULL,
   lat = NULL)
 }
 \arguments{
-\item{gridData}{A hyfo list file or the list file from \code{loadECOMS{ecomsUDG.Raccess}}
-or \code{loadGridData{ecomsUDG.Raccess}}}
+\item{gridData}{A hyfo list file from \code{\link{loadNcdf}}}
 
 \item{year}{A vector of the target year. e.g. \code{year = 2000}, \code{year = 1980:2000}}
 

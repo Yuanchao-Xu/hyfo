@@ -155,8 +155,7 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
 
 
 #' Downscale NetCDF file
-#' @param gridData A hyfo list file or the list file from \code{loadECOMS{ecomsUDG.Raccess}}
-#'  or \code{loadGridData{ecomsUDG.Raccess}}
+#' @param gridData A hyfo list file from \code{\link{loadNcdf}}
 #' @param year A vector of the target year. e.g. \code{year = 2000}, \code{year = 1980:2000}
 #' @param month A vector of the target month. e.g. \code{month = 2}, \code{month = 3:12}
 #' @param lon A vector of the range of the downscaled longitude, should contain a max value
@@ -311,8 +310,7 @@ downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat =
 
 
 #' Write to NetCDF file using hyfo list file
-#' @param gridData A hyfo list file or the list file from \code{loadECOMS{ecomsUDG.Raccess}}
-#'  or \code{loadGridData{ecomsUDG.Raccess}}
+#' @param gridData A hyfo list file from \code{\link{loadNcdf}}
 #' @param filePath A path of the new NetCDF file, should end with ".nc"
 #' @param missingValue A number representing the missing value in the NetCDF file, default
 #' is 1e20

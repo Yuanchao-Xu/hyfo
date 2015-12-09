@@ -8,8 +8,7 @@ writeNcdf(gridData, filePath, missingValue = 1e+20, tz = "GMT",
   units = NULL)
 }
 \arguments{
-\item{gridData}{A hyfo list file or the list file from \code{loadECOMS{ecomsUDG.Raccess}}
-or \code{loadGridData{ecomsUDG.Raccess}}}
+\item{gridData}{A hyfo list file from \code{\link{loadNcdf}}}
 
 \item{filePath}{A path of the new NetCDF file, should end with ".nc"}
 

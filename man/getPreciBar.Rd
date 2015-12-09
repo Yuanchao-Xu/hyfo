@@ -20,7 +20,7 @@ getPreciBar(data, method, cell = "mean", output = "data", name = NULL,
 }
 \arguments{
 \item{data}{A list containing different information, should be the result of reading netcdf file using
-\code{loadNcdf}, or load functions from \code{ecomsUDG.Raccess}, or a time series, with first column the Date, second the value.
+\code{\link{loadNcdf}}, or a time series, with first column the Date, second the value.
 Time series can be an ENSEMBLE containning different members. Than the mean value will be given and the range will be given.}
 
 \item{method}{A string showing the calculating method of the input time series. More information

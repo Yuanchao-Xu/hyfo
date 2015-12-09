@@ -8,8 +8,7 @@ getFrcEnsem(dataset, cell = "mean", plot = "norm", output = "data",
   name = NULL, mv = 0, coord = NULL, ...)
 }
 \arguments{
-\item{dataset}{A list containing different information, should be the result of reading netcdf file using
-\code{library(ecomsUDG.Raccess)}.}
+\item{dataset}{A list containing different information, should be the result of \code{\link{loadNcdf}}}
 
 \item{cell}{A vector containing the locaton of the cell, e.g. c(2, 3), default is "mean", representing
 the spatially averaged value. Check details for more information.}

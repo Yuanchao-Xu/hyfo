@@ -275,8 +275,7 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
 #' an ensemble time sereis will be returned, if forecasting data doesn't have a member session, a singe time
 #' series will be returned.
 #' 
-#' @param dataset A list containing different information, should be the result of reading netcdf file using
-#' \code{library(ecomsUDG.Raccess)}.
+#' @param dataset A list containing different information, should be the result of \code{\link{loadNcdf}}
 #' @param cell A vector containing the locaton of the cell, e.g. c(2, 3), default is "mean", representing
 #' the spatially averaged value. Check details for more information.
 #' @param plot A string showing whether the plot will be shown, e.g., 'norm' means normal plot (without any process), 

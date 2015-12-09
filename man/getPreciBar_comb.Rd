@@ -39,7 +39,7 @@ They are both monthly precipitation, and they share x axis.
 and short term mean monthly precipitation. They are both mean monthly precipitation.
 }
 \examples{
-data(tgridData)# the result of \\code{loadGridData{ecomsUDG.Raccess}}
+data(tgridData)# the result of \\code{\\link{loadNcdf}}
 #output type of getPreciBar() has to be 'ggplot'.
 b1 <- getPreciBar(tgridData, method = 2, output = 'ggplot', name = 'b1')
 b2 <- getPreciBar(tgridData, method = 3, output = 'ggplot', name = 'b2')

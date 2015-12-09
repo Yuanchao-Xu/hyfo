@@ -4,7 +4,7 @@
 #' 
 #' 
 #' @param data A list containing different information, should be the result of reading netcdf file using
-#' \code{loadNcdf}, or load functions from \code{ecomsUDG.Raccess}, or a time series, with first column the Date, second the value.
+#' \code{\link{loadNcdf}}, or a time series, with first column the Date, second the value.
 #' Time series can be an ENSEMBLE containning different members. Than the mean value will be given and the range will be given.
 #' @param method A string showing the calculating method of the input time series. More information
 #' please refer to the details.
@@ -396,7 +396,7 @@ getPreciBar.plot <- function(TS, method, output, name, plotRange, omitNA, info,
 #' @return A combined barplot.
 #' @examples
 #' 
-#' data(tgridData)# the result of \code{loadGridData{ecomsUDG.Raccess}}
+#' data(tgridData)# the result of \code{\link{loadNcdf}}
 #' #output type of getPreciBar() has to be 'ggplot'.
 #' b1 <- getPreciBar(tgridData, method = 2, output = 'ggplot', name = 'b1')
 #' b2 <- getPreciBar(tgridData, method = 3, output = 'ggplot', name = 'b2')
