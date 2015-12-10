@@ -14,19 +14,20 @@
 #' 
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
-#' @import ncdf
+#' @import ncdf4
 #' @references 
 #' 
 #' \itemize{
-#' \item David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
-#' http://CRAN.R-project.org/package=ncdf
+#' \item David Pierce (2015). ncdf4: Interface to Unidata netCDF (Version 4 or
+#' Earlier) Format Data Files. R package version 1.14.1.
+#' http://CRAN.R-project.org/package=ncdf4
 #' }
 #' 
 #' 
 #' 
 #' @export
 getNcdfVar <- function(filePath) {
-  nc <- open.ncdf(filePath)
+  nc <- nc_open(filePath)
   names <- names(nc$var)
   return(names)
 }
@@ -61,12 +62,13 @@ getNcdfVar <- function(filePath) {
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export
-#' @import ncdf
+#' @import ncdf4
 #' @references 
 #' 
 #' \itemize{
-#' \item David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
-#' http://CRAN.R-project.org/package=ncdf
+#' \item David Pierce (2015). ncdf4: Interface to Unidata netCDF (Version 4 or
+#' Earlier) Format Data Files. R package version 1.14.1.
+#' http://CRAN.R-project.org/package=ncdf4
 #' 
 #' \item Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
 #' version 2.2-6. http://meteo.unican.es/ecoms-udg
@@ -74,7 +76,7 @@ getNcdfVar <- function(filePath) {
 #' 
 #' 
 loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
-  nc <- open.ncdf(filePath)
+  nc <- nc_open(filePath)
   
   var <- nc$var
   # Use name to locate the variable
@@ -86,7 +88,7 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
   
   # First needs to identify the variable name, load the right data
   message('Loading data...')
-  nc_data <- get.var.ncdf(nc, var)
+  nc_data <- ncvar_get(nc, var)
   message('Processing...')
   
   dimNames <- unlist(lapply(1:length(var$dim), function(x) var$dim[[x]]$name))
@@ -143,7 +145,7 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
   if (!is.na(dimIndex[4])) gridData$Members <- var$dim[[dimIndex[4]]]$vals
   
   gridData$Loaded <- 'by hyfo package, http://yuanchao-xu.github.io/hyfo/'
-  close.ncdf(nc)
+  nc_close(nc)
   
   output <- downscaleNcdf(gridData, ...)
   
@@ -184,8 +186,6 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
 #' @references 
 #' 
 #' \itemize{
-#' \item David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
-#' http://CRAN.R-project.org/package=ncdf
 #' 
 #' \item Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
 #' version 2.2-6. http://meteo.unican.es/ecoms-udg
@@ -337,12 +337,13 @@ downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat =
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export 
-#' @import ncdf
+#' @import ncdf4
 #' @references 
 #' 
 #' \itemize{
-#' \item #' David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
-#' http://CRAN.R-project.org/package=ncdf
+#' \item David Pierce (2015). ncdf4: Interface to Unidata netCDF (Version 4 or
+#' Earlier) Format Data Files. R package version 1.14.1.
+#' http://CRAN.R-project.org/package=ncdf4
 #' 
 #' \item Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
 #' version 2.2-6. http://meteo.unican.es/ecoms-udg
@@ -354,11 +355,11 @@ writeNcdf <- function(gridData, filePath, missingValue = 1e20, tz = 'GMT', units
   
   name <- gridData$Variable$varName
   # First defines dimensions.
-  dimLon <- dim.def.ncdf('lon', 'degree', gridData$xyCoords$x)
-  dimLat <- dim.def.ncdf('lat', 'degree', gridData$xyCoords$y)
+  dimLon <- ncdim_def('lon', 'degree', gridData$xyCoords$x)
+  dimLat <- ncdim_def('lat', 'degree', gridData$xyCoords$y)
   dimMem <- NULL
   if (!is.null(gridData$Members)) {
-    dimMem <- dim.def.ncdf('member', 'members', 1:length(gridData$Members))
+    dimMem <- ncdim_def('member', 'members', 1:length(gridData$Members))
   }
   
   
@@ -371,7 +372,9 @@ writeNcdf <- function(gridData, filePath, missingValue = 1e20, tz = 'GMT', units
     time <- difftime(dates, dates[1], units = units)
   }
   timeUnits <- paste(units, 'since', dates[1])
-  dimTime <- dim.def.ncdf('time', timeUnits, time)
+  # Here time needs to be numeric, as required by ncdf4 package, which is not the same
+  # with ncdf
+  dimTime <- ncdim_def('time', timeUnits, as.numeric(time))
   
   
   # Depending on whether there is a member part of the dataset.
@@ -380,36 +383,39 @@ writeNcdf <- function(gridData, filePath, missingValue = 1e20, tz = 'GMT', units
   # delete the NULL list, in order that there is no member part in the data.
   dimList <- Filter(Negate(is.null), dimList)
   # Then difines data
-  var <- var.def.ncdf( name, "units", dimList, missingValue)
+  var <- ncvar_def( name, "units", dimList, missingValue)
   
-  nc <- create.ncdf(filePath, var)
+  
+  # Here for ncdf4, there is an option to create version 4 ncdf, in future, it
+  # may added here.
+  nc <- nc_create(filePath, var)
   
   # This part comes from the library downscaleR, can be deleted if you don't 
   # use {ecomsUDG.Raccess}, by adding this, the file can be read by the package {ecomsUDG.Raccess}
-  att.put.ncdf(nc, "time", "standard_name","time")
-  att.put.ncdf(nc, "time", "axis","T")
-  att.put.ncdf(nc, "time", "_CoordinateAxisType","Time")
-  #att.put.ncdf(nc, "time", "_ChunkSize",1)
-  att.put.ncdf(nc, "lon", "standard_name","longitude")
-  att.put.ncdf(nc, "lon", "_CoordinateAxisType","Lon")
-  att.put.ncdf(nc, "lat", "standard_name","latitude")
-  att.put.ncdf(nc, "lat", "_CoordinateAxisType","Lat")
+  ncatt_put(nc, "time", "standard_name","time")
+  ncatt_put(nc, "time", "axis","T")
+  ncatt_put(nc, "time", "_CoordinateAxisType","Time")
+  #ncatt_put(nc, "time", "_ChunkSize",1)
+  ncatt_put(nc, "lon", "standard_name","longitude")
+  ncatt_put(nc, "lon", "_CoordinateAxisType","Lon")
+  ncatt_put(nc, "lat", "standard_name","latitude")
+  ncatt_put(nc, "lat", "_CoordinateAxisType","Lat")
   if (!is.null(dimMem)){
-    att.put.ncdf(nc, "member", "standard_name","realization")
-    att.put.ncdf(nc, "member", "_CoordinateAxisType","Ensemble")
+    ncatt_put(nc, "member", "standard_name","realization")
+    ncatt_put(nc, "member", "_CoordinateAxisType","Ensemble")
     #att.put.ncdf(nc, "member", "ref","http://www.uncertml.org/samples/realisation")
   }
   
   
   # This part has to be put
-  att.put.ncdf(nc, 0, "Conventions","CF-1.4")
-  att.put.ncdf(nc, 0, 'WrittenBy', 'hyfo(http://yuanchao-xu.github.io/hyfo/)')
+  ncatt_put(nc, 0, "Conventions","CF-1.4")
+  ncatt_put(nc, 0, 'WrittenBy', 'hyfo(http://yuanchao-xu.github.io/hyfo/)')
   
   dimIndex <- match(c('lon', 'lat', 'time', 'member'), attributes(gridData$Data)$dimensions)
   dimIndex <- na.omit(dimIndex)
   data <- aperm(gridData$Data, dimIndex)
-  put.var.ncdf(nc, name, data)
-  close.ncdf(nc)
+  ncvar_put(nc, name, data)
+  nc_close(nc)
   
 }
 
@@ -430,7 +436,7 @@ getTimeUnit <- function(dates) {
 
 
 # Save for future use. 
-#' @import ncdf
+#' @import ncdf4
 #' @references 
 #' David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
 #' http://CRAN.R-project.org/package=ncdf

@@ -45,8 +45,6 @@ nc2 <- downscaleNcdf(nc, year = 2005, month = 3:8, lon = c(-2, -0.5), lat = c(43
 }
 \references{
 \itemize{
-\item David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
-http://CRAN.R-project.org/package=ncdf
 
 \item Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
 version 2.2-6. http://meteo.unican.es/ecoms-udg

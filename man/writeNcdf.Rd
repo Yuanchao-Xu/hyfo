@@ -47,8 +47,9 @@ writeNcdf(nc, 'test.nc')
 }
 \references{
 \itemize{
-\item #' David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
-http://CRAN.R-project.org/package=ncdf
+\item David Pierce (2015). ncdf4: Interface to Unidata netCDF (Version 4 or
+Earlier) Format Data Files. R package version 1.14.1.
+http://CRAN.R-project.org/package=ncdf4
 
 \item Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
 version 2.2-6. http://meteo.unican.es/ecoms-udg
