@@ -1,10 +1,10 @@
 {
     "dialog-state" : {
-        "caseSensitive" : false,
+        "caseSensitive" : true,
         "filePatterns" : [
         ],
         "path" : "E:/1/R/hyfo/R",
-        "query" : "gettimeunit",
+        "query" : "grepAndmatch",
         "regex" : false
     }
 }

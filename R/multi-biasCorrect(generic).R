@@ -438,7 +438,7 @@ getBiasFactor.list <- function(hindcast, obs, method, scaleType, preci, prThresh
   
   # Now real bias correction is executed.
   
-  memberIndex <- match('member', attributes(hindcastData)$dimensions)
+  memberIndex <- grepAndMatch('member', attributes(hindcastData)$dimensions)
   
   # For dataset that has a member part 
   if (!is.na(memberIndex)) {
@@ -570,7 +570,7 @@ applyBiasFactor.list <- function(frc, biasFactor, obs) {
   
   # Now real bias correction is executed.
   
-  memberIndex <- match('member', attributes(frcData)$dimensions)
+  memberIndex <- grepAndMatch('member', attributes(frcData)$dimensions)
   
   # For dataset that has a member part 
   if (!is.na(memberIndex)) {

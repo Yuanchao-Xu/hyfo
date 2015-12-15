@@ -59,7 +59,7 @@ adjustDim <- function(data, ref = 'no') {
   if (identical(att, refOrder)) return(data)
   
   dimIndex <- seq(1, length(att))
-  dimIndex1 <- na.omit(match(refOrder, att))# match can apply to simple cases
+  dimIndex1 <- grepAndMatch(refOrder, att)# match can apply to simple cases
   
   
   # for array this works, or setdiff can be used here to find the nomatch element.
@@ -74,7 +74,7 @@ adjustDim <- function(data, ref = 'no') {
 
 # Belong to checkDimLength
 calcuDim <- function(data, dim) {
-  dimIndex <- match(dim, attributes(data)$dimensions)
+  dimIndex <- grepAndMatch(dim, attributes(data)$dimensions)
   dimLength <- dim(data)[dimIndex]
   return(dimLength)
 }

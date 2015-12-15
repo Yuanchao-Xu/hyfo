@@ -5,7 +5,7 @@
 \title{Write to NetCDF file using hyfo list file}
 \usage{
 writeNcdf(gridData, filePath, missingValue = 1e+20, tz = "GMT",
-  units = NULL)
+  units = NULL, version = 3)
 }
 \arguments{
 \item{gridData}{A hyfo list file from \code{\link{loadNcdf}}}
@@ -22,6 +22,8 @@ you can assign it in the argument. If \code{tz = ''}, current time zone will be 
 \item{units}{A string showing in which unit you are putting in the NetCDF file, it can be
 seconds or days and so on. If not specified, the function will pick up the possible largest
 time units from \code{c('weeks', 'days', 'hours', 'mins', 'secs')}}
+
+\item{version}{ncdf file versions, default is 3, if 4 is chosen, output file will be foreced to version 4.}
 }
 \value{
 An NetCDF version 3 file.

@@ -280,7 +280,7 @@ biasCorrect.list <- function(frc, hindcast, obs, method, scaleType, preci, prThr
   
   # Now real bias correction is executed.
   
-  memberIndex <- match('member', attributes(frcData)$dimensions)
+  memberIndex <- grepAndMatch('member', attributes(frcData)$dimensions)
   
   # For dataset that has a member part 
   if (!is.na(memberIndex)) {

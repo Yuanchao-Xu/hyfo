@@ -40,6 +40,10 @@ getNcdfVar <- function(filePath) {
 #' get the basic information about the variables and select the target.
 #' @param tz A string representing the time zone, default is GMT, if you know what time zone is 
 #' you can assign it in the argument. If \code{tz = ''}, current time zone will be taken.
+# @param drop When the time dimension only have one value, the output data will drop
+# this dimension automatically (\code{drop = TRUE}), default value is \code{drop = FALSE}, then time dimension will be added.
+# This argument mainly applies to the later calculations based on hyfo file. If the dimension
+# is dropped, than some calculations may not be processed afterwards. 
 #' @param ... Several arguments including Year, month, lon, lat 
 #' type in \code{?downscaleNcdf} for details.You can load while downscale, 
 #' and also first load than use \code{downscaleNcdf} to downscale.
@@ -86,20 +90,24 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
   var <- eval(call_1)
   if(is.null(var)) stop('No such variable name, check source file.')
   
+  dimNames <- unlist(lapply(1:length(var$dim), function(x) var$dim[[x]]$name))
+  
+  # Only deals with the most common dimensions, futher dimensions will be added in future.
+  dimIndex <- grepAndMatch(c('lon', 'lat', 'time', 'member'), dimNames)
+  if (length(dimIndex) < 3) stop('Your file has less than 3 dimensions.')
+  
   # First needs to identify the variable name, load the right data
   message('Loading data...')
   nc_data <- ncvar_get(nc, var)
   message('Processing...')
   
-  dimNames <- unlist(lapply(1:length(var$dim), function(x) var$dim[[x]]$name))
-  
-  # Only deals with the most common dimensions, futher dimensions will be added in future.
-  dimIndex <- match(c('lon', 'lat', 'time', 'member'), dimNames)
-  
   gridData <- list()
   gridData$Variable$varName <- varname
   gridData$xyCoords$x <- var$dim[[dimIndex[1]]]$vals
+  attributes(gridData$xyCoords$x)$name <- dimNames[dimIndex[1]]
+  
   gridData$xyCoords$y <- var$dim[[dimIndex[2]]]$vals
+  attributes(gridData$xyCoords$y)$name <- dimNames[dimIndex[2]]
   
   # Time part needs to be taken seperately
   
@@ -124,10 +132,9 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
 #   }
   Date <- timeSince + timeDiff
   
-  if (length(Date) == 1) {
-    warning("Only one time step is taken, time dimension is dropped in the original data.
-            But after loading, the time dimension (with length : 1) will be added.")
-  }
+  # data directly loaded from ncdf4 will drop the dimension with only one value.
+  # the varsize shows the real dimension, without any dropping.
+  dim(nc_data) <- var$varsize 
   
   # Right now there is no need to add end Date, in furture, may be added as needed.
   gridData$Dates$start <- as.character(Date)
@@ -135,11 +142,8 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
   # Assing data to grid data
   # At leaset should be 3 dimensions, lon, lat, time. So if less than 3, 
   
-  if (length(dim(nc_data)) < 3) {
-    dim(nc_data) <- c(dim(nc_data), 1) 
-    message('Time dimension is added, make sure in your original data, only time dimension was dropped.')
-  }
   gridData$Data <- nc_data
+  
   attributes(gridData$Data)$dimensions <- dimNames
   
   if (!is.na(dimIndex[4])) gridData$Members <- var$dim[[dimIndex[4]]]$vals
@@ -275,7 +279,7 @@ downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat =
     if (length(targetLonIndex) == 0) stop('Your input lon is too small, try to expand the 
                                           longitude range.') 
     gridData$xyCoords$x <- gridData$xyCoords$x[targetLonIndex]
-    lonDim <- match('lon', attributes(gridData$Data)$dimensions)
+    lonDim <- grepAndMatch('lon', attributes(gridData$Data)$dimensions)
     
     gridData$Data <- chooseDim(gridData$Data, lonDim, targetLonIndex)
   }
@@ -292,7 +296,7 @@ downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat =
     if (length(targetLonIndex) == 0) stop('Your input lat is too small, try to expand the 
                                           latitude range.') 
     gridData$xyCoords$y <- gridData$xyCoords$y[targetLatIndex]
-    latDim <- match('lat', attributes(gridData$Data)$dimensions)
+    latDim <- grepAndMatch('lat', attributes(gridData$Data)$dimensions)
     gridData$Data <- chooseDim(gridData$Data, latDim, targetLatIndex)
   }
   
@@ -319,6 +323,7 @@ downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat =
 #' @param units A string showing in which unit you are putting in the NetCDF file, it can be 
 #' seconds or days and so on. If not specified, the function will pick up the possible largest 
 #' time units from \code{c('weeks', 'days', 'hours', 'mins', 'secs')}
+#' @param version ncdf file versions, default is 3, if 4 is chosen, output file will be foreced to version 4.
 #' @return An NetCDF version 3 file.
 #' @examples 
 #' # First open the test NETcDF file.
@@ -351,12 +356,14 @@ downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat =
 #' }
 #' 
 #' 
-writeNcdf <- function(gridData, filePath, missingValue = 1e20, tz = 'GMT', units = NULL) {
+writeNcdf <- function(gridData, filePath, missingValue = 1e20, tz = 'GMT', units = NULL, version = 3) {
   
   name <- gridData$Variable$varName
   # First defines dimensions.
-  dimLon <- ncdim_def('lon', 'degree', gridData$xyCoords$x)
-  dimLat <- ncdim_def('lat', 'degree', gridData$xyCoords$y)
+  lonName <- attributes(gridData$xyCoords$x)$name
+  latName <- attributes(gridData$xyCoords$y)$name
+  dimLon <- ncdim_def(lonName, 'degree', gridData$xyCoords$x)
+  dimLat <- ncdim_def(latName, 'degree', gridData$xyCoords$y)
   dimMem <- NULL
   if (!is.null(gridData$Members)) {
     dimMem <- ncdim_def('member', 'members', 1:length(gridData$Members))
@@ -378,8 +385,18 @@ writeNcdf <- function(gridData, filePath, missingValue = 1e20, tz = 'GMT', units
   
   
   # Depending on whether there is a member part of the dataset.
-  
+  # default list
   dimList <- list(dimLon, dimLat, dimTime, dimMem)
+  
+  # In order to keep the dim list exactly the same with the original one, it needs to be changed.
+  dimIndex <- grepAndMatch(c('lon', 'lat', 'time', 'member'), attributes(gridData$Data)$dimensions)
+  dimIndex <- na.omit(dimIndex)
+  
+  # Here order is needed, cuz in the procesure above, c('lon', 'lat', 'time', 'member')
+  # is the pattern, while actually, attributes(gridData$Data)$dimensions should be the pattern.
+  # So here needs an order() to get the wanted result.
+  dimList <- dimList[order(dimIndex)]
+  
   # delete the NULL list, in order that there is no member part in the data.
   dimList <- Filter(Negate(is.null), dimList)
   # Then difines data
@@ -388,7 +405,13 @@ writeNcdf <- function(gridData, filePath, missingValue = 1e20, tz = 'GMT', units
   
   # Here for ncdf4, there is an option to create version 4 ncdf, in future, it
   # may added here.
-  nc <- nc_create(filePath, var)
+  if (version == 3) {
+    nc <- nc_create(filePath, var) 
+  } else if (version == 4) {
+    nc <- nc_create(filePath, var, force_v4 = TRUE)
+  } else {
+    stop("Which ncdf version you want? Only 3 and 4 can be selected!")
+  }
   
   # This part comes from the library downscaleR, can be deleted if you don't 
   # use {ecomsUDG.Raccess}, by adding this, the file can be read by the package {ecomsUDG.Raccess}
@@ -396,10 +419,10 @@ writeNcdf <- function(gridData, filePath, missingValue = 1e20, tz = 'GMT', units
   ncatt_put(nc, "time", "axis","T")
   ncatt_put(nc, "time", "_CoordinateAxisType","Time")
   #ncatt_put(nc, "time", "_ChunkSize",1)
-  ncatt_put(nc, "lon", "standard_name","longitude")
-  ncatt_put(nc, "lon", "_CoordinateAxisType","Lon")
-  ncatt_put(nc, "lat", "standard_name","latitude")
-  ncatt_put(nc, "lat", "_CoordinateAxisType","Lat")
+  ncatt_put(nc, lonName, "standard_name","longitude")
+  ncatt_put(nc, lonName, "_CoordinateAxisType","Lon")
+  ncatt_put(nc, latName, "standard_name","latitude")
+  ncatt_put(nc, latName, "_CoordinateAxisType","Lat")
   if (!is.null(dimMem)){
     ncatt_put(nc, "member", "standard_name","realization")
     ncatt_put(nc, "member", "_CoordinateAxisType","Ensemble")
@@ -411,9 +434,9 @@ writeNcdf <- function(gridData, filePath, missingValue = 1e20, tz = 'GMT', units
   ncatt_put(nc, 0, "Conventions","CF-1.4")
   ncatt_put(nc, 0, 'WrittenBy', 'hyfo(http://yuanchao-xu.github.io/hyfo/)')
   
-  dimIndex <- match(c('lon', 'lat', 'time', 'member'), attributes(gridData$Data)$dimensions)
-  dimIndex <- na.omit(dimIndex)
-  data <- aperm(gridData$Data, dimIndex)
+  #data <- aperm(gridData$Data, dimIndex) no need to do this, in the process above
+  # when you define the dimlist, the order of the dimension was fixed.
+  data <- gridData$Data
   ncvar_put(nc, name, data)
   nc_close(nc)
   
@@ -444,4 +467,14 @@ getExtralDim <- function(...) {
   dimList <- list(...)
   
   
+}
+
+# in order to first grep than match.
+# match only provides for exactly match, 
+# dimIndex <- grepAndMatch(c('lon', 'lat', 'time', 'member'), dimNames)
+grepAndMatch <- function(x, table) {
+  index <- unlist(lapply(x, function(x) {
+    a <- grep(x, table)
+  }))
+  return(index)
 }
