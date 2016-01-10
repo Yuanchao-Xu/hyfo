@@ -7,6 +7,7 @@ Date: 2015.12.15
 - minor bug fixed about the loadNcdf, when no dimension found, it will give an error indicating.
 - change most of the match function into grepAndMatch, in order to deal with different dimension names.
 - add name attributes to gridfile$xyCoords$x,y, when writeNcdf, the dim names will be taken from that attribute, which can be exactly the same with the original. 
+- bug fixed for nc files without members.
 
 NOTE:
 ----

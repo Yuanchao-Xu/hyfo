@@ -283,7 +283,7 @@ biasCorrect.list <- function(frc, hindcast, obs, method, scaleType, preci, prThr
   memberIndex <- grepAndMatch('member', attributes(frcData)$dimensions)
   
   # For dataset that has a member part 
-  if (!is.na(memberIndex)) {
+  if (length(memberIndex) != 0) {
     # check if frcData and hindcastData has the same dimension and length.
     checkDimLength(frcData, hindcastData, dim = 'member')
     
