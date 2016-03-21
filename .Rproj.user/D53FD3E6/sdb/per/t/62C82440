@@ -1,0 +1,17 @@
+{
+    "contents" : "Package: hyfo\nType: Package\nTitle: Hydrology and Climate Forecasting\nVersion: 1.3.7\nDate: 2016-3-21\nAuthors@R: person(\"Yuanchao\", \"Xu\", email = \"xuyuanchao37@gmail.com\",\n  role = c(\"aut\", \"cre\"))\nDescription: Focuses on data processing and visualization in hydrology and\n    climate forecasting. Main function includes data extraction, data downscaling, data \n    resampling, gap filler of precipitation, bias correction of forecasting data, flexible\n    time series plot, and spatial map generation. It is a good pre-processing and \n    post-processing tool for hydrological and hydraulic modellers.\nLicense: GPL-2\nDepends: \n    R (>= 3.1.0),\n    stats (>= 3.1.3),\n    utils(>= 3.1.3),\nImports: \n    ggplot2 (>= 1.0.1),\n    reshape2 (>= 1.4.1),\n    zoo (>= 1.7-12),\n    rgdal (>= 0.8-16),\n    plyr (>= 1.8.3),\n    moments (>= 0.14),\n    lmom (>= 2.5),\n    maps(>= 2.3-9),\n    maptools (>= 0.8-36),\n    rgeos (>= 0.3-8),\n    ncdf4 (>= 1.14.1),\n    MASS (>= 7.3-39),\n    methods\nSuggests: \n    gridExtra,\n    knitr,\n    rmarkdown\nVignetteBuilder: knitr\nLazyData: true\nURL: http://yuanchao-xu.github.io/hyfo/\nBugReports: https://github.com/Yuanchao-Xu/hyfo/issues\nRepository: CRAN\n",
+    "created" : 1458576791467.000,
+    "dirty" : false,
+    "encoding" : "ASCII",
+    "folds" : "",
+    "hash" : "355092708",
+    "id" : "62C82440",
+    "lastKnownWriteTime" : 1458576809,
+    "path" : "E:/1/R/hyfo/DESCRIPTION",
+    "project_path" : "DESCRIPTION",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "type" : "dcf"
+}
