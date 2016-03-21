@@ -5,7 +5,7 @@
 \title{plot time series, with marks on missing value.}
 \usage{
 plotTS(..., type = "line", output = "data", plot = "norm", name = NULL,
-  x = NULL, y = NULL, title = NULL, list = NULL)
+  showNA = TRUE, x = NULL, y = NULL, title = NULL, list = NULL)
 }
 \arguments{
 \item{...}{input time series.}
@@ -21,6 +21,8 @@ plot, and "cum" gives a cumulative plot. Default is "norm".}
 
 \item{name}{If \code{output = 'ggplot'}, name has to be assigned to your output, in order to differentiate
 different outputs in the later multiplot using \code{plotTS_comb}.}
+
+\item{showNA}{A boolean representing whether the NA values should be marked, default is TRUE.}
 
 \item{x}{label for x axis.}
 

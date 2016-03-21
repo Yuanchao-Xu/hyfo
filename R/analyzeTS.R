@@ -9,6 +9,7 @@
 #' different outputs in the later multiplot using \code{plotTS_comb}.
 #' @param plot representing the plot type, there are two types, "norm" and "cum", "norm" gives an normal
 #' plot, and "cum" gives a cumulative plot. Default is "norm".
+#' @param showNA A boolean representing whether the NA values should be marked, default is TRUE.
 #' @param x label for x axis.
 #' @param y label for y axis.
 #' @param title plot title.
@@ -50,8 +51,8 @@
 #' @import ggplot2
 #' @importFrom reshape2 melt
 #' @export
-plotTS <- function(..., type = 'line', output = 'data', plot = 'norm', name = NULL, x = NULL, 
-                   y = NULL, title = NULL, list = NULL) {
+plotTS <- function(..., type = 'line', output = 'data', plot = 'norm', name = NULL, showNA = TRUE, 
+                   x = NULL, y = NULL, title = NULL, list = NULL) {
   ## arrange input TS or TS list.
   if (is.null(list)) {
     list <- list(...)
@@ -142,12 +143,16 @@ plotTS <- function(..., type = 'line', output = 'data', plot = 'norm', name = NU
     stop("No such plot type.")
   }
   
+  if (showNA == TRUE) {
+    missingVLayer <- with(TS, {
+      geom_point(data = data_plot[NAIndex, ], group = 1, size = 3, shape = 4, color = 'black')
+    })
+    
+    mainLayer <- mainLayer + missingVLayer
+  }
   
-  missingVLayer <- with(TS, {
-    geom_point(data = data_plot[NAIndex, ], group = 1, size = 3, shape = 4, color = 'black')
-  })
   
-  plotLayer <- mainLayer + secondLayer + missingVLayer
+  plotLayer <- mainLayer + secondLayer
   
   print(plotLayer) 
   
