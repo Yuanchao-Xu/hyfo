@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>hyfo Easy Start by Yuanchao-Xu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <script src="//load.sumome.com/" data-sumo-site-id="aebb8f002ff78e3a2bdefe40afbb987aff193976eaf7076915e442af4bff3a44" async="async"></script>
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">hyfo Easy Start</h1>
+      <h2 class="project-tagline">Hydrology and Climate Forecasting R Package</h2>
+      <a href="https://github.com/Yuanchao-Xu/hyfo" class="btn">View on GitHub</a>
+      <a href="https://github.com/Yuanchao-Xu/hyfo/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/Yuanchao-Xu/hyfo/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h2>
+<a id="welcome" class="anchor" href="#welcome" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Welcome</h2>
+
+<p>hyfo is an <strong>R package</strong>, initially designed for the European Project EUPORIAS, and cooperated with DHI Denmark, which was then extended to other uses in hydrology, hydraulics and climate. </p>
+
+<p>This package mainly focuses on data processing and visulization in hydrology and climate forecasting. Main function includes NetCDF file processing, data extraction, data downscaling, data resampling, gap filler of precipitation, bias correction of forecasting data, flexible time series plot, and spatial map generation. It is a good pre-processing and post-processing tool for hydrological and hydraulic modellers.</p>
+
+<h2>
+<a id="user-manual" class="anchor" href="#user-manual" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>User manual</h2>
+
+<p>pdf version <a href="http://media.wix.com/ugd/199c69_f3c30d4625a545908b5c0f13e17f0b33.pdf">here</a>, easier to download and looks better.</p>
+
+<p>html version <a href="http://rpubs.com/rankthefirst/hyfo">here</a>, easier to copy paste codes.</p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>For released version:</p>
+
+<div class="highlight highlight-source-r"><pre>install.packages(<span class="pl-s"><span class="pl-pds">"</span>hyfo<span class="pl-pds">"</span></span>)</pre></div>
+
+<p>For development version:</p>
+
+<div class="highlight highlight-source-r"><pre>  install.packages(<span class="pl-s"><span class="pl-pds">'</span>devtools<span class="pl-pds">'</span></span>)
+  <span class="pl-c"># Ignore the warning that Rtool is not installed, unless you want other function from devtools.</span>
+  <span class="pl-c"># If "devtools" is already installed in your computer, you can directly run the following code.</span>
+  <span class="pl-e">devtools</span><span class="pl-k">::</span>install_github(<span class="pl-s"><span class="pl-pds">'</span>Yuanchao-Xu/hyfo<span class="pl-pds">'</span></span>)</pre></div>
+
+<p>If you meet with some error during the installation of development version, e.g., </p>
+
+<div class="highlight highlight-source-r"><pre>  <span class="pl-smi">cannot</span> <span class="pl-smi">remove</span> <span class="pl-smi">prior</span> <span class="pl-smi">installation</span> <span class="pl-smi">of</span> <span class="pl-smi">package</span> <span class="pl-s"><span class="pl-pds">'</span>XXX<span class="pl-pds">'</span></span>
+  <span class="pl-smi">or</span>
+  <span class="pl-smi">error</span> <span class="pl-k">in</span> <span class="pl-smi">installation</span> <span class="pl-smi">of</span> <span class="pl-smi">XXX</span> <span class="pl-smi">package</span>.</pre></div>
+
+<p>If so, just use <code>install.pakcages('xxx')</code> to reinstall XXX package. And then reinstall hyfo again. For other errors can be solved by directly reinstall hyfo.</p>
+
+<p>You can also directly download ".tar.gz" file from the link above, and install in an R IDE e.g. Rstudio. <strong>Or</strong> use the <strong>Simpler</strong> way to install the latest version. Remember，your R should be at least R 3.1.0.</p>
+
+<h2>
+<a id="updates" class="anchor" href="#updates" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Updates</h2>
+
+<p>Version 1.3.6 was released</p>
+
+<ul>
+<li>transfer from ncdf to ncdf4</li>
+<li>grepAndMatch created, for capturing dimension names.</li>
+<li>minor bug fixed about the loadNcdf, when no dimension found, it will give an error indicating.</li>
+<li>change most of the match function into grepAndMatch, in order to deal with different dimension names.</li>
+<li>add name attributes to gridfile$xyCoords$x,y, when writeNcdf, the dim names will be taken from that attribute, which can be exactly the same with the original. </li>
+<li>bug fixed for nc files without members.</li>
+</ul>
+
+<p>For historical releases and the introduction of updates about each version, please click <a href="https://github.com/Yuanchao-Xu/hyfo/releases">here</a> </p>
+
+<h2>
+<a id="feedback" class="anchor" href="#feedback" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Feedback</h2>
+
+<p>Any bugs and suggestions are welcomed, please leave a comment <a href="https://github.com/Yuanchao-Xu/hyfo/issues">here</a></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/Yuanchao-Xu/hyfo">hyfo Easy Start</a> is maintained by <a href="https://github.com/Yuanchao-Xu">Yuanchao-Xu</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-65178671-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
