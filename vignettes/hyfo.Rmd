@@ -26,7 +26,6 @@ This package mainly focuses on data process and visulization in hydrology and cl
 
 Xu, Yuanchao(2015). hyfo: Hydrology and Climate Forecasting R Package for Data Analysis and Visualization. Retrieved from http://yuanchao-xu.github.io/hyfo/
 
-[Author in this corner](https://dk.linkedin.com/in/xuyuanchao37)
 
 #### TIPS
 * For the hydrology tools part, the minimum time unit is a day, i.e., it mainly focuses on water resource and some long term analysis. For flood analysis part, it will be added in future.
