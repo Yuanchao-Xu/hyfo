@@ -93,7 +93,7 @@ setGeneric('extractPeriod', function(data, startDate = NULL, endDate = NULL, com
 })
 
 
-#' @describeIn extractPeriod
+#' @rdname extractPeriod
 #' @importFrom methods setMethod
 setMethod('extractPeriod', signature('data.frame'),
           function(data, startDate, endDate, commonPeriod, year, month) {
@@ -105,7 +105,7 @@ setMethod('extractPeriod', signature('data.frame'),
 })
 
 
-#' @describeIn extractPeriod
+#' @rdname extractPeriod
 #' @importFrom methods setMethod
 setMethod('extractPeriod', signature('list'),
           function(data, startDate, endDate, commonPeriod, year, month) {

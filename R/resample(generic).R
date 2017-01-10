@@ -54,14 +54,14 @@ setGeneric('resample', function(data, method) {
 })
 
 
-#' @describeIn resample
+#' @rdname resample
 setMethod('resample', signature('data.frame'),
           function(data, method) {
             result <- resample.TS(data, method)
             return(result)
           })
 
-#' @describeIn resample
+#' @rdname resample
 setMethod('resample', signature('list'),
           function(data, method) {
             result <- resample.list(data, method)

@@ -1,6 +1,15 @@
+hyfo 1.3.8
+==========
+Date: 2017-1-8
+
+- add changes to the new version of roxygen2
+- change biasCorrection's description, change default prThreshold to 0, since not every one is an expert and know how to set it, better keep the original unchanged.
+
+
+
 hyfo 1.3.7
 ==========
-Date: 2016.3.1
+Date: 2016-3-1
 
 - add one more argument to plotTS, to cancel the marking of NA values. For some users, NA values are too many to be plotted.
 
@@ -8,7 +17,7 @@ Date: 2016.3.1
 
 hyfo 1.3.6
 ==========
-Date: 2015.12.15
+Date: 2015-12-15
 
 - transfer from ncdf to ncdf4
 - grepAndMatch created, for capturing dimension names.
@@ -25,7 +34,7 @@ NOTE:
 
 hyfo 1.3.5
 ==========
-Date: 2015.12.6
+Date: 2015-12-6
 
 - travis check passed, change the rgdal version from 0.9-3 back to 0.8-16 due to the lack of packages on travis ubuntu.
 - changed .yml file to fix the problem with No repository set, so cyclic dependency check skipped.
@@ -36,7 +45,7 @@ Date: 2015.12.6
 
 hyfo 1.3.3
 ==========
-Date: 2015.11.27
+Date: 2015-11-27
 
 - Delete readData_folder, since it's only windows based, add information to get special version for windows users.
 - travis test added.
@@ -44,7 +53,7 @@ Date: 2015.11.27
 
 hyfo 1.3.2
 ==========
-Date: 2015.11.7
+Date: 2015-11-7
 
 - bug fixed about getPreciBar, signature('data.frame')
 - vignettes updated about bug and hided the warning information.
@@ -54,7 +63,7 @@ Date: 2015.11.7
 
 hyfo 1.3.1
 ==========
-Date: 2015.11.3
+Date: 2015-11-3
 
 - new generic function biasCorrect, extractPeriod, resample, getAnnual, getPreciBar added. No need to designate input type any more, R will detect automatically.
 - coordinates conversion function extracted.
@@ -64,7 +73,7 @@ Date: 2015.11.3
 
 hyfo 1.2.9
 ==========
-Date: 2015.10.30
+Date: 2015-10-30
 
 - new biasFactor S4 class added, to avoid set the input type every time.
 - operational bias correction has been changed to generic function.

@@ -324,6 +324,7 @@ downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat =
 #' seconds or days and so on. If not specified, the function will pick up the possible largest 
 #' time units from \code{c('weeks', 'days', 'hours', 'mins', 'secs')}
 #' @param version ncdf file versions, default is 3, if 4 is chosen, output file will be foreced to version 4.
+#' @param tz time zone, default is "GMT"
 #' @return An NetCDF version 3 file.
 #' @examples 
 #' # First open the test NETcDF file.

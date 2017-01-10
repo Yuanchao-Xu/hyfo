@@ -1,0 +1,10 @@
+{
+    "dialog-state" : {
+        "caseSensitive" : true,
+        "filePatterns" : [
+        ],
+        "path" : "~/GitHub/hyfo",
+        "query" : "newFrc",
+        "regex" : false
+    }
+}

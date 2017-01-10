@@ -77,7 +77,7 @@ setGeneric('getPreciBar', function(data, method, cell = 'mean', output = 'data',
   standardGeneric('getPreciBar')
 })
 
-#' @describeIn getPreciBar
+#' @rdname getPreciBar
 setMethod('getPreciBar', signature('list'), 
           function(data, method, cell, output, name, plotRange, member, omitNA, info, ...) {
             TS <- getPreciBar.list(data, cell, member)
@@ -91,7 +91,7 @@ setMethod('getPreciBar', signature('list'),
             return(result)
 })
 
-#' @describeIn getPreciBar
+#' @rdname getPreciBar
 setMethod('getPreciBar', signature('data.frame'), 
           function(data, method, cell, output, name, plotRange, member, omitNA, info, ...) {
             Date <- as.POSIXlt(TS[, 1])

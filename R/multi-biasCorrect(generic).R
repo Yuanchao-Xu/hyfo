@@ -179,7 +179,7 @@ setGeneric('getBiasFactor', function(hindcast, obs, method = 'scaling', scaleTyp
   standardGeneric('getBiasFactor')
 })
 
-#' @describeIn getBiasFactor
+#' @rdname getBiasFactor
 setMethod('getBiasFactor', signature('data.frame', 'data.frame'), 
           function(hindcast, obs, method, scaleType, preci, prThreshold, extrapolate) {
             result <- getBiasFactor.TS(hindcast, obs, method, scaleType, preci, prThreshold, extrapolate)
@@ -188,7 +188,7 @@ setMethod('getBiasFactor', signature('data.frame', 'data.frame'),
 
 
 # This is for the grid file from downscaleR
-#' @describeIn getBiasFactor
+#' @rdname getBiasFactor
 #' @importFrom methods new
 setMethod('getBiasFactor', signature('list', 'list'), 
           function(hindcast, obs, method, scaleType, preci, prThreshold, extrapolate) {
@@ -362,7 +362,7 @@ setGeneric('applyBiasFactor', function(frc, biasFactor, obs = NULL) {
   standardGeneric('applyBiasFactor')
 })
 
-#' @describeIn applyBiasFactor
+#' @rdname applyBiasFactor
 #' @importFrom methods setMethod
 setMethod('applyBiasFactor', signature('data.frame', 'biasFactor'), 
           function(frc, biasFactor, obs) {
@@ -370,7 +370,7 @@ setMethod('applyBiasFactor', signature('data.frame', 'biasFactor'),
             return(result)
           })
            
-#' @describeIn applyBiasFactor
+#' @rdname applyBiasFactor
 #' @importFrom methods setMethod
 setMethod('applyBiasFactor', signature('list', 'biasFactor.hyfo'), 
           function(frc, biasFactor, obs) {

@@ -53,7 +53,7 @@ setGeneric('getAnnual', function(data, output = 'series', minRecords = 355,
   standardGeneric('getAnnual')
 })
 
-#' @describeIn getAnnual
+#' @rdname getAnnual
 #' @importFrom methods setMethod
 setMethod('getAnnual', signature('data.frame'), 
           function(data, output, minRecords, ...) {
@@ -62,7 +62,7 @@ setMethod('getAnnual', signature('data.frame'),
             return(result)
 })
 
-#' @describeIn getAnnual
+#' @rdname getAnnual
 #' @importFrom methods setMethod
 setMethod('getAnnual', signature('list'),
           function(data, output, minRecords, ...) {

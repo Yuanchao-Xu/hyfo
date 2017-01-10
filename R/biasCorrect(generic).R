@@ -120,7 +120,7 @@
 #' data(tgridData)
 #' # Since the example data, has some NA values, the process will include some warning #message, 
 #' # which can be ignored in this case.
-#' 
+#' f
 #' 
 #' 
 #' 
@@ -212,14 +212,18 @@ setGeneric('biasCorrect', function(frc, hindcast, obs, method = 'scaling', scale
   standardGeneric('biasCorrect')
 })
 
-#' @describeIn biasCorrect
+
+# Since in new version of roxygen2, describeIn was changed, http://stackoverflow.com/questions/24246594/automatically-document-all-methods-of-an-s4-generic-using-roxygen2
+# so use rdname instead
+#' @rdname biasCorrect
+#' 
 setMethod('biasCorrect', signature('data.frame', 'data.frame', 'data.frame'),
           function(frc, hindcast, obs, method, scaleType, preci, prThreshold, extrapolate) {
             result <- biasCorrect.TS(frc, hindcast, obs, method, scaleType, preci, prThreshold, extrapolate)
             return(result)
           })
 
-#' @describeIn biasCorrect
+#' @rdname biasCorrect
 setMethod('biasCorrect', signature('list', 'list', 'list'), 
           function(frc, hindcast, obs, method, scaleType, preci, prThreshold, extrapolate) {
             result <- biasCorrect.list(frc, hindcast, obs, method, scaleType, preci, prThreshold, extrapolate)
