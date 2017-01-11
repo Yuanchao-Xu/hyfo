@@ -98,7 +98,7 @@ This method is applicable to any kind of variable but it is preferable to avoid 
  (e.g. precipitation, wind speed, etc.) because values out of the variable range could be obtained 
  (e.g. negative wind speeds...)
  
- \strong{scaling}
+\strong{scaling}
  
 This method consists on scaling the simulation  with the difference (additive) or quotient (multiplicative) 
 between the observed and simulated means in the train period. The \code{additive} or \code{multiplicative}
@@ -143,7 +143,7 @@ nc <- loadNcdf(filePath, varname)
 data(tgridData)
 # Since the example data, has some NA values, the process will include some warning #message, 
 # which can be ignored in this case.
-f
+
 
 
 
