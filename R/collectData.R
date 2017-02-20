@@ -19,6 +19,7 @@
 #' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export
+#' @importFrom data.table rbindlist
 collectData <- function(folderName, fileType = NULL, range = NULL, sheetIndex = 1){
   
   message('All the files in the folder should have the same format')
@@ -36,7 +37,7 @@ collectData <- function(folderName, fileType = NULL, range = NULL, sheetIndex = 
     if (length(fileNames) == 0) stop('No csv file in the folder.')
     
     data <- lapply(fileNames, readCsv, range = range)
-    data <- do.call('rbind', data)
+    data <- rbindlist(data)
     
   } else if (fileType == 'txt') {
     fileNames <- list.files(folderName, pattern = '*.txt', full.names = TRUE)

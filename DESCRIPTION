@@ -1,8 +1,8 @@
 Package: hyfo
 Type: Package
 Title: Hydrology and Climate Forecasting
-Version: 1.3.8
-Date: 2017-1-8
+Version: 1.3.9
+Date: 2017-2-20
 Authors@R: person("Yuanchao", "Xu", email = "xuyuanchao37@gmail.com",
   role = c("aut", "cre"))
 Description: Focuses on data processing and visualization in hydrology and
@@ -28,7 +28,8 @@ Imports:
     rgeos (>= 0.3-8),
     ncdf4 (>= 1.14.1),
     MASS (>= 7.3-39),
-    methods
+    methods,
+    data.table
 Suggests:
     gridExtra,
     knitr,

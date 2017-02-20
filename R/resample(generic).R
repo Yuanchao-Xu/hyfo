@@ -71,6 +71,7 @@ setMethod('resample', signature('list'),
 
 
 #' @importFrom stats aggregate
+#' @importFrom data.table rbindlist
 resample.TS <- function(TS, method) {
   if (length(TS) != 2) {
     stop('Time series not correct, should be two columns, Date and value.')
@@ -84,7 +85,7 @@ resample.TS <- function(TS, method) {
     
     data <- apply(TS, MARGIN = 1 , FUN = mon2day)
     
-    output <- do.call('rbind', data)
+    output <- rbindlist(data)
   } else if (method == 'day2mon') {
     Date <- as.Date(TS[, 1])
     year <- format(Date, format = '%Y')

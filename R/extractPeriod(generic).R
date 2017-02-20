@@ -115,7 +115,8 @@ setMethod('extractPeriod', signature('list'),
                                 month = month)
             } else if (is.null(startDate) & is.null(endDate) & commonPeriod == TRUE) {
               
-              Dates <- lapply(datalist, extractPeriod_getDate) 
+              Dates <- lapply(datalist, extractPeriod_getDate)
+              # Here don't know why rbindlist cannot work, change back to do.call
               Dates <- do.call('rbind', Dates)
               
               startDate <- as.Date(max(Dates[, 1]))

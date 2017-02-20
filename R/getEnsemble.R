@@ -486,6 +486,7 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', 
 #' 
 #' @export
 #' @import ggplot2
+#' @importFrom data.table rbindlist
 #' @references 
 #' 
 #' \itemize{
@@ -503,15 +504,15 @@ getEnsem_comb <- function(..., list = NULL, nrow = 1, legend = TRUE, x = '', y =
   
   if (!is.null(list)) {
     checkBind(list, 'rbind')
-    data_ggplot <- do.call('rbind', list)
+    data_ggplot <- rbindlist(list)
   } else {
     plots <- list(...)
     checkBind(plots, 'rbind')
-    data_ggplot <- do.call('rbind', plots)
+    data_ggplot <- rbindlist(plots)
   }  
   #data_ggplot$name <- factor(data_ggplot$name, levels = data_ggplot$name, ordered = TRUE)
   
-  if (!class(data_ggplot) == 'data.frame') {
+  if (!class(data_ggplot)[1] == 'data.table') {
     warning('Your input is probably a list, but you forget to add "list = " before it.
             Try again, or check help for more information.')
   } else if (is.null(data_ggplot$name)) {

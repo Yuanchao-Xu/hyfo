@@ -25,13 +25,15 @@
 #' @source http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
 #' @export
 #' @importFrom utils tail
+#' @importFrom data.table rbindlist
 collectData_csv_anarbe <- function(folderName, output = TRUE){
   
   fileNames <- list.files(folderName, pattern='*.csv', full.names = TRUE)
   data <- lapply(fileNames, readColumn_csv_anarbe)
-  data <- do.call('rbind', data)
+  data <- rbindlist(data)
   data <- data[, 1:2]
-  data[, 1] <- as.Date(data[, 1], format = '%d/%m/%Y')
+  # cus the special structure of data.tables, here should be data[[1]], instead of data[, 1]
+  data[, 1] <- as.Date(data[[1]], format = '%d/%m/%Y')
   
   #newFileName <- file.choose(new = T)
   #write.table(data_new,file=newFileName,row.names = F, col.names = F,sep=',')
@@ -273,6 +275,7 @@ collectData_excel_anarbe <- function(folderName, keyword = NULL, output = TRUE){
 #' @return The collected data from different txt files.
 #' @export
 #' @importFrom utils tail
+#' @importFrom data.table rbindlist
 collectData_txt_anarbe <- function(folderName, output = TRUE, rangeWord = c('Ene       ', -1, 
                                                                             'Total     ', -6)){
   #All the code should be ASCII encode, so there should be no strange symbol.
@@ -294,7 +297,7 @@ collectData_txt_anarbe <- function(folderName, output = TRUE, rangeWord = c('Ene
   
   data <- lapply(fileNames, FUN = readColumn_txt_anarbe, rangeWord = rangeWord)
   
-  data <- do.call('rbind', data)
+  data <- rbindlist(data)
   
   a <- unlist(strsplit(folderName, '\\\\|/'))
   tarName <- tail(a, 2)[1]

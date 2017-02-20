@@ -407,6 +407,7 @@ getPreciBar.plot <- function(TS, method, output, name, plotRange, omitNA, info,
 #' 
 #' @export
 #' @import ggplot2
+#' @importFrom data.table rbindlist
 #' @references 
 #' 
 #' \itemize{
@@ -415,15 +416,15 @@ getPreciBar.plot <- function(TS, method, output, name, plotRange, omitNA, info,
 #' 
 getPreciBar_comb <- function(..., list = NULL, nrow = 1, x = '', y = '', title = '', output = FALSE) {
   if (!is.null(list)) {
-    data_ggplot <- do.call('rbind', list)
+    data_ggplot <- rbindlist(list)
   } else {
     
     bars <- list(...)
     checkBind(bars, 'rbind')
-    data_ggplot <- do.call('rbind', bars)
+    data_ggplot <- rbindlist(bars)
   }
   
-  if (!class(data_ggplot) == 'data.frame') {
+  if (!class(data_ggplot)[1] == 'data.table') {
     warning('Your input is probably a list, but you forget to add "list = " before it.
             Try again, or check help for more information.')
   } else if (is.null(data_ggplot$Name)) {

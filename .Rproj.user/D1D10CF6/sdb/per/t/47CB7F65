@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "chooseDim <- function(array, dim, value, drop = FALSE) { \n  # Create list representing arguments supplied to [\n  # bquote() creates an object corresponding to a missing argument\n  dimnames <- attributes(array)$dimensions\n  \n  indices <- rep(list(bquote()), length(dim(array)))\n  indices[[dim]] <- value\n  \n  if (dim(array)[dim] < max(value)) {\n    stop('Chosen member exceeds the member range of the dataset.')\n  }\n  \n  # Generate the call to [\n  call <- as.call(c(\n    list(as.name(\"[\"), quote(array)),\n    indices,\n    list(drop = drop)))\n  # Print it, just to make it easier to see what's going on\n  # Print(call)\n  \n  # Finally, evaluate it\n  output <- eval(call)\n  \n  if (length(dim(output)) == length(dimnames)) {\n    attributes(output)$dimensions <- dimnames\n  } else if (length(dim(output)) < length(dimnames)){\n    \n    # In this case, one dimension is dropped, if value is a number \n    # and drop == T, this situation can appear. So the dropped dimemsion\n    # should be the chosen dimension.\n    i <- 1:length(dimnames)\n    # get rid of the dropped dimensin\n    i <- i[-dim]\n    attributes(output)$dimensions <- dimnames[i]\n  }\n  \n  return(output)\n}\n\n\nadjustDim <- function(data, ref = 'no') {\n  # input data is an array\n  # ref is the Data part of a hyfo file, used as reference\n  # Further may be arranged into a seperate function\n  # the input reference will be put at first, then the rest \n  if (is.null(data)) return(NULL)\n  if (identical(ref, 'no')) {\n    # Default\n    refOrder <- c('lon', 'lat', 'time')\n  } else if (is.character(ref)) {\n    refOrder <- ref\n  } else {\n    # Get dimension from input\n    refOrder <- attributes(ref)$dimensions\n  }\n  \n  att <- attributes(data)$dimensions\n  if (is.null(att)) stop('No dimnames in the input data attributes, please use loadNcdf to load data.')\n  if (identical(att, refOrder)) return(data)\n  \n  dimIndex <- seq(1, length(att))\n  dimIndex1 <- grepAndMatch(refOrder, att)# match can apply to simple cases\n  \n  \n  # for array this works, or setdiff can be used here to find the nomatch element.\n  dimIndex2 <- dimIndex[-dimIndex1]# choose nomatch\n  \n  \n  data <- aperm(data, c(dimIndex1, dimIndex2))\n  attributes(data)$dimensions <- att[c(dimIndex1, dimIndex2)]\n  \n  return(data)\n}\n\n# Belong to checkDimLength\ncalcuDim <- function(data, dim) {\n  dimIndex <- grepAndMatch(dim, attributes(data)$dimensions)\n  dimLength <- dim(data)[dimIndex]\n  return(dimLength)\n}\n",
+    "created" : 1487525892454.000,
+    "dirty" : false,
+    "encoding" : "ASCII",
+    "folds" : "",
+    "hash" : "2303557273",
+    "id" : "47CB7F65",
+    "lastKnownWriteTime" : 1483875653,
+    "last_content_update" : 1483875653,
+    "path" : "~/GitHub/hyfo/R/array_dimension.R",
+    "project_path" : "R/array_dimension.R",
+    "properties" : {
+    },
+    "relative_order" : 19,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

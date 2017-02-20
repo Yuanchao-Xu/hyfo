@@ -415,6 +415,7 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, point = 
 #' 
 #' @export
 #' @import ggplot2 maps
+#' @importFrom data.table rbindlist
 #' @references 
 #' 
 #' \itemize{
@@ -425,11 +426,11 @@ getSpatialMap_comb <- function(..., list = NULL, nrow = 1, x = '', y = '', title
   
   
   if (!is.null(list)) {
-    data_ggplot <- do.call('rbind', list)
+    data_ggplot <- rbindlist(list)
   } else {
     maps <- list(...)
     checkBind(maps, 'rbind')
-    data_ggplot <- do.call('rbind', maps)
+    data_ggplot <- rbindlist(maps)
   }
   
   if (!class(data_ggplot) == 'data.frame') {

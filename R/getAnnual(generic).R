@@ -71,6 +71,7 @@ setMethod('getAnnual', signature('list'),
             return(result)
           })
 
+#' @importFrom data.table rbindlist
 getAnnual.TS <- function(dataframe) {
   Date <- as.POSIXlt(dataframe[, 1])
   # Calculate how many gauging stations.
@@ -82,7 +83,7 @@ getAnnual.TS <- function(dataframe) {
     getAnnual_dataframe(dataframe_new)
   })
   
-  data <- do.call('rbind', data)
+  data <- rbindlist(data)
   #  After rbind, factor level has to be reassigned in order to be well plotted.
   data$Year <- factor(data$Year, levels = sort(unique(data$Year)), ordered = TRUE)
   rownames(data) <- NULL
@@ -91,9 +92,10 @@ getAnnual.TS <- function(dataframe) {
 }
 
 
+#' @importFrom data.table rbindlist
 getAnnual.list <- function(datalist) {
   data <- lapply(datalist, FUN = getAnnual_dataframe)
-  data <- do.call('rbind', data)
+  data <- rbindlist(data)
   #  After rbind, factor level has to be reassigned in order to be well plotted.
   data$Year <- factor(data$Year, levels = sort(unique(data$Year)), ordered = TRUE)
   rownames(data) <- NULL
