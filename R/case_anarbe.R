@@ -12,14 +12,14 @@
 #' folder <- strsplit(file, '1999')[[1]][1]
 #' a <- collectData_csv_anarbe(folder)
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @references 
 #' 
 #' \itemize{
 #' \item http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
 #' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
-#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 #' }
 #' 
 #' @source http://meteo.navarra.es/estaciones/mapadeestaciones.cfm
@@ -260,14 +260,14 @@ collectData_excel_anarbe <- function(folderName, keyword = NULL, output = TRUE){
 #' }
 #'
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @references 
 #' 
 #' \itemize{
 #' \item http://www4.gipuzkoa.net/oohh/web/esp/02.asp
 #' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
-#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 #' }
 #' 
 #' 
@@ -353,7 +353,7 @@ anarbe_txt <- function(dataset, x1, x2){
 #' 
 #' \itemize{
 #' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
-#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 #' }
 #' 
 #' @importFrom utils read.fwf

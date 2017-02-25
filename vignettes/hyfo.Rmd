@@ -1,5 +1,5 @@
 ---
-title: '[hyfo Easy Start](http://yuanchao-xu.github.io/hyfo/)'
+title: '[hyfo Easy Start](https://yuanchao-xu.github.io/hyfo/)'
 author: '[Yuanchao Xu](https://dk.linkedin.com/in/xuyuanchao37)'
 date: '`r Sys.Date()`'
 output: 
@@ -16,7 +16,7 @@ vignette: >
 
 # Introduction
 
-**Official Website is [http://yuanchao-xu.github.io/hyfo](http://yuanchao-xu.github.io/hyfo), where manuals and more details can be found.**
+**Official Website is [https://yuanchao-xu.github.io/hyfo](http://yuanchao-xu.github.io/hyfo), where manuals and more details can be found.**
 
 hyfo is an R package, initially designed for the European Project EUPORIAS, and cooperated with DHI Denmark, which was then extended to other uses in hydrology, hydraulics and climate.
 
@@ -24,7 +24,7 @@ This package mainly focuses on data process and visulization in hydrology and cl
 
 **If you feel hyfo is of a little help, please cite it as following:**
 
-Xu, Yuanchao(2015). hyfo: Hydrology and Climate Forecasting R Package for Data Analysis and Visualization. Retrieved from http://yuanchao-xu.github.io/hyfo/
+Xu, Yuanchao(2015). hyfo: Hydrology and Climate Forecasting R Package for Data Analysis and Visualization. Retrieved from https://yuanchao-xu.github.io/hyfo/
 
 
 #### TIPS

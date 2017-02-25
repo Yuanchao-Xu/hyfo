@@ -16,7 +16,7 @@
 #' 
 #' a <- collectData(folder, fileType = 'csv', range = c(10, 20, 1,2))
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export
 #' @importFrom data.table rbindlist
@@ -96,7 +96,7 @@ readTxt <- function(fileName, range){
 #' @importFrom utils read.csv
 #' @references 
 #' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
-#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 readCsv <- function(fileName, range){
   
   data <- read.csv(fileName, skip = range[1] - 1, header = FALSE)

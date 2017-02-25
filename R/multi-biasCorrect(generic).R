@@ -147,7 +147,7 @@
 #'
 #'
 #'
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' 
 #' @references 
@@ -335,7 +335,7 @@ setMethod('getBiasFactor', signature('list', 'list'),
 #'
 #'
 #'
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' 
 #' @references 

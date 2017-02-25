@@ -45,14 +45,14 @@ nc <- loadNcdf(filePath, varname)
 
 writeNcdf(nc, 'test.nc')
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 }
 \references{
 \itemize{
 \item David Pierce (2015). ncdf4: Interface to Unidata netCDF (Version 4 or
 Earlier) Format Data Files. R package version 1.14.1.
-http://CRAN.R-project.org/package=ncdf4
+https://CRAN.R-project.org/package=ncdf4
 
 \item Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
 version 2.2-6. http://meteo.unican.es/ecoms-udg

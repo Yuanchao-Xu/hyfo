@@ -41,7 +41,7 @@ nc <- loadNcdf(filePath, varname)
 nc1 <- downscaleNcdf(nc, year = 2006, lon = c(-2, -0.5), lat = c(43.2, 43.7))
 nc2 <- downscaleNcdf(nc, year = 2005, month = 3:8, lon = c(-2, -0.5), lat = c(43.2, 43.7))
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 }
 \references{

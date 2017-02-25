@@ -76,14 +76,14 @@
 #' dataframe_new <- extractPeriod(dataframe, month = c(12,1,2), year = 1995)
 #' 
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @importFrom zoo as.Date
 #' @references 
 #' 
 #' \itemize{
 #' \item Achim Zeileis and Gabor Grothendieck (2005). zoo: S3 Infrastructure for Regular and Irregular Time
-#' Series. Journal of Statistical Software, 14(6), 1-27. URL http://www.jstatsoft.org/v14/i06/
+#' Series. Journal of Statistical Software, 14(6), 1-27. URL https://www.jstatsoft.org/v14/i06/
 #' }
 #'
 #' @export
@@ -224,7 +224,7 @@ extractPeriod_dataframe <- function(dataframe, startDate, endDate, year = NULL, 
 #' 
 #' \itemize{
 #' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
-#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 #' }
 #' 
 #' 

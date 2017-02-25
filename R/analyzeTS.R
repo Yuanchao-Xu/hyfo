@@ -41,7 +41,7 @@
 #' # and compare them using plotTS_comb. If all data are in one plot, there might be too messy.
 #' 
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @references 
 #' \itemize{
@@ -196,7 +196,7 @@ plotTS <- function(..., type = 'line', output = 'data', plot = 'norm', name = NU
 #' plotTS_comb(a1, a2)
 #' plotTS_comb(list = list(a1, a2), y = 'y axis', nrow = 2)
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @references 
 #' \itemize{
@@ -278,14 +278,14 @@ plotTS_comb <- function(..., nrow = 1, type = 'line', list = NULL, x = 'Date', y
 #' dis <- seq(1, 100)
 #' getLMom(dis)
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export
 #' @references 
 #' 
 #' \itemize{
 #' \item J. R. M. Hosking (2015). L-moments. R package, version 2.5. URL:
-#' http://CRAN.R-project.org/package=lmom.
+#' https://CRAN.R-project.org/package=lmom.
 #' }
 #' 
 #' 
@@ -312,17 +312,17 @@ getLMom <- function(dis){
 #' dis <- seq(1, 100)
 #' getMoment(dis)
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export
 #' @references 
 #' 
 #' \itemize{
 #' \item Lukasz Komsta and Frederick Novomestky (2015). moments: Moments, cumulants, skewness, kurtosis and
-#' related tests. R package version 0.14. http://CRAN.R-project.org/package=moments
+#' related tests. R package version 0.14. https://CRAN.R-project.org/package=moments
 #' 
 #' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
-#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 #' }
 #' 
 #' @importFrom moments skewness kurtosis

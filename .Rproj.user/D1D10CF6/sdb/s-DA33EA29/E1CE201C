@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "# hyfo\n[![Travis-CI Build Status](https://travis-ci.org/Yuanchao-Xu/hyfo.svg?branch=master)](https://travis-ci.org/Yuanchao-Xu/hyfo)\n[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/hyfo)](https://cran.r-project.org/package=hyfo)\n\n## Installation\n\nReleased version from CRAN, for beginners and normal users:\n\n```R\ninstall.packages(\"hyfo\")\n```\n\nDevelopment version from github, for experienced users and those who are interested in investigating:\n\n```R\ninstall.packages(\"devtools\")\n# You can ignore the line above, if you have already installed devtools\ndevtools::install_github(\"Yuanchao-Xu/hyfo\")\n```\n\n**Official Website is [https://yuanchao-xu.github.io/hyfo](http://yuanchao-xu.github.io/hyfo)**\n\nhyfo is an R package, initially designed for the European Project EUPORIAS, and cooperated with DHI Denmark, which was then extended to other uses in hydrology, hydraulics and climate.\n\nThis package mainly focuses on data process and visulization in hydrology and climate forecasting. Main function includes NetCDF file processing, data extraction, data downscaling, data resampling, gap filler of precipitation, bias correction of forecasting data, flexible time series plot, and spatial map generation. It is a good pre-processing and post-processing tool for hydrological and hydraulic modellers.\n\n**If you feel hyfo is of a little help, please cite it as following:**\n\nXu, Yuanchao(2015). hyfo: Hydrology and Climate Forecasting R Package for Data Analysis and Visualization. Retrieved from http://yuanchao-xu.github.io/hyfo/\n\n\n\n\n",
+    "created" : 1488018138822.000,
+    "dirty" : false,
+    "encoding" : "ASCII",
+    "folds" : "",
+    "hash" : "3806014512",
+    "id" : "E1CE201C",
+    "lastKnownWriteTime" : 1488018159,
+    "last_content_update" : 1488018159966,
+    "path" : "~/GitHub/hyfo/README.md",
+    "project_path" : "README.md",
+    "properties" : {
+    },
+    "relative_order" : 55,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "markdown"
+}

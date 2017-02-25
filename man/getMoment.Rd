@@ -19,16 +19,16 @@ get moment analysis of the input distribution
 dis <- seq(1, 100)
 getMoment(dis)
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 }
 \references{
 \itemize{
 \item Lukasz Komsta and Frederick Novomestky (2015). moments: Moments, cumulants, skewness, kurtosis and
-related tests. R package version 0.14. http://CRAN.R-project.org/package=moments
+related tests. R package version 0.14. https://CRAN.R-project.org/package=moments
 
 \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
-Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 }
 }
 

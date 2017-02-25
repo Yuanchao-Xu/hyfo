@@ -46,7 +46,7 @@ a2 <- plotTS(testdl[[2]], output = 'ggplot', name = 2)
 plotTS_comb(a1, a2)
 plotTS_comb(list = list(a1, a2), y = 'y axis', nrow = 2)
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 }
 \references{

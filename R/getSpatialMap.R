@@ -220,7 +220,7 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 #' }
 #' 
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export
 #' @import ggplot2 plyr maps maptools rgeos
@@ -230,7 +230,7 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 #' 
 #' \itemize{
 #' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
-#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 #' 
 #' \item Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software,
 #' 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
@@ -240,13 +240,13 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 #' 
 #' \item Original S code by Richard A. Becker and Allan R. Wilks. R version by Ray Brownrigg. Enhancements
 #' by Thomas P Minka <tpminka at media.mit.edu> (2015). maps: Draw Geographical Maps. R package version
-#' 2.3-11. http://CRAN.R-project.org/package=maps
+#' 2.3-11. https://CRAN.R-project.org/package=maps
 #' 
 #' \item Roger Bivand and Nicholas Lewin-Koh (2015). maptools: Tools for Reading and Handling Spatial
-#' Objects. R package version 0.8-36. http://CRAN.R-project.org/package=maptools
+#' Objects. R package version 0.8-36. https://CRAN.R-project.org/package=maptools
 #' 
 #' \item Roger Bivand and Colin Rundel (2015). rgeos: Interface to Geometry Engine - Open Source (GEOS). R
-#' package version 0.3-11. http://CRAN.R-project.org/package=rgeos
+#' package version 0.3-11. https://CRAN.R-project.org/package=rgeos
 #' 
 #' }
 #' 
@@ -405,7 +405,7 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, point = 
 #' 
 #' 
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @details
 #' For \code{getSpatialMap_comb}, the maps to be compared should be with same size and resolution, 

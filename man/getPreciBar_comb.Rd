@@ -47,7 +47,7 @@ b2 <- getPreciBar(tgridData, method = 3, output = 'ggplot', name = 'b2')
 
 getPreciBar_comb(b1, b2)
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 }
 \references{

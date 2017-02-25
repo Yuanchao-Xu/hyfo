@@ -2,7 +2,7 @@
 
 #' @importFrom utils packageDescription
 hyfoUpdates <- function(){
-  page <- readLines('http://yuanchao-xu.github.io/hyfo/')
+  page <- readLines('https://yuanchao-xu.github.io/hyfo/')
   updatesLine <- grep('id=\\"updates"', page)
   versionLine <- updatesLine + 2
   
@@ -27,7 +27,7 @@ hyfoUpdates <- function(){
       if (!is.na(info_line)) info_msg <- c(info_msg, info_line)
     }
     
-    install_msg <- 'More details on http://yuanchao-xu.github.io/hyfo/'
+    install_msg <- 'More details on https://yuanchao-xu.github.io/hyfo/'
     
     message_out <- paste(version_msg, paste(info_msg, collapse = '\n'), install_msg, sep = '\n')
   } else message_out <- NULL

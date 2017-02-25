@@ -61,7 +61,7 @@ a2 <- fillGap(a1)
 a3 <- fillGap(a1, corPeriod = 'monthly')
 
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 }
 \references{

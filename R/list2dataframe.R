@@ -16,7 +16,7 @@
 #' 
 #' dataframe <- list2Dataframe(datalist_new)
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export
 list2Dataframe <- function(datalist) {

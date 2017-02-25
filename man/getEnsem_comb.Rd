@@ -51,7 +51,7 @@ b2 <- getHisEnsem(a, example = c('1995-4-4', '1996-3-4'), plot = 'cum', output =
 getEnsem_comb(b1, b2)
 getEnsem_comb(list = list(b1, b2), nrow = 2)
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 
 }

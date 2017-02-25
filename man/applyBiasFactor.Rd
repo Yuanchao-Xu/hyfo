@@ -148,7 +148,7 @@ plotTS(list = TSlist, plot = 'cum')
 
 
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 
 }

@@ -87,7 +87,7 @@ a <- getPreciBar(TS, method = 'spring')
 a <- getPreciBar(TS, method = 'spring', info = TRUE)
 
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 }
 \references{
@@ -96,7 +96,7 @@ a <- getPreciBar(TS, method = 'spring', info = TRUE)
 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/.
 \item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
 \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
-Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 }
 }
 

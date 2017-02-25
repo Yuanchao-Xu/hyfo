@@ -76,7 +76,7 @@ a <- getFrcEnsem(nc, cell = c(6,2))
 b <- getFrcEnsem(nc, coord = c(-1.4, 43.2))
 
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 }
 \references{

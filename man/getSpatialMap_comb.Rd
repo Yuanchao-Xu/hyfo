@@ -52,7 +52,7 @@ getSpatialMap_comb(list = list(a1, a2), nrow = 2)
 
 
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 }
 \references{

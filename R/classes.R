@@ -111,7 +111,7 @@ setClass("biasFactor.hyfo", representation(lonLatDim = 'integer'), contains = 'b
 # #' @exportClass 
 # setClass("hyfo", representation(varName = "character", xyCoords = 'list', Dates = 'list',
 #                                 Data = 'array', Loaded = 'character'),
-#          prototype(Loaded = 'by hyfo package, http://yuanchao-xu.github.io/hyfo/'),
+#          prototype(Loaded = 'by hyfo package, https://yuanchao-xu.github.io/hyfo/'),
 #          validity = checkHyfo)
 # 
 # 

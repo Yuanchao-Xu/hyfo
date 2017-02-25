@@ -183,7 +183,7 @@
 #'
 #'
 #'
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' 
 #' @references 
@@ -213,7 +213,7 @@ setGeneric('biasCorrect', function(frc, hindcast, obs, method = 'scaling', scale
 })
 
 
-# Since in new version of roxygen2, describeIn was changed, http://stackoverflow.com/questions/24246594/automatically-document-all-methods-of-an-s4-generic-using-roxygen2
+# Since in new version of roxygen2, describeIn was changed, https://stackoverflow.com/questions/24246594/automatically-document-all-methods-of-an-s4-generic-using-roxygen2
 # so use rdname instead
 #' @rdname biasCorrect
 #' 

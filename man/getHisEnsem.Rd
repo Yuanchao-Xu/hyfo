@@ -113,7 +113,7 @@ b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210, plot = 
 b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210, buffer = 30)
 
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 
 }

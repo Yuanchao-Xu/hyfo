@@ -23,14 +23,14 @@ filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
 # Then if you don't know the variable name, you can use \\code{getNcdfVar} to get variable name
 varname <- getNcdfVar(filePath)
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 }
 \references{
 \itemize{
 \item David Pierce (2015). ncdf4: Interface to Unidata netCDF (Version 4 or
 Earlier) Format Data Files. R package version 1.14.1.
-http://CRAN.R-project.org/package=ncdf4
+https://CRAN.R-project.org/package=ncdf4
 }
 }
 

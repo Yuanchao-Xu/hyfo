@@ -32,7 +32,7 @@ folder <- file.path(path.package("hyfo"), 'extdata')
 
 a <- collectData(folder, fileType = 'csv', range = c(10, 20, 1,2))
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 }
 

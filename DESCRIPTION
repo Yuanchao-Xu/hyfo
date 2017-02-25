@@ -36,7 +36,7 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 LazyData: true
-URL: http://yuanchao-xu.github.io/hyfo/
+URL: https://yuanchao-xu.github.io/hyfo/
 BugReports: https://github.com/Yuanchao-Xu/hyfo/issues
 Repository: CRAN
 RoxygenNote: 5.0.1

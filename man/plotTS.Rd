@@ -65,7 +65,7 @@ plotTS(dataframe, dataframe1, plot = 'cum')
 # and compare them using plotTS_comb. If all data are in one plot, there might be too messy.
 
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 }
 \references{

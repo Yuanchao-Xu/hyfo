@@ -12,7 +12,7 @@
 #' # Then if you don't know the variable name, you can use \code{getNcdfVar} to get variable name
 #' varname <- getNcdfVar(filePath)
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @import ncdf4
 #' @references 
@@ -20,7 +20,7 @@
 #' \itemize{
 #' \item David Pierce (2015). ncdf4: Interface to Unidata netCDF (Version 4 or
 #' Earlier) Format Data Files. R package version 1.14.1.
-#' http://CRAN.R-project.org/package=ncdf4
+#' https://CRAN.R-project.org/package=ncdf4
 #' }
 #' 
 #' 
@@ -72,7 +72,7 @@ getNcdfVar <- function(filePath) {
 #' \itemize{
 #' \item David Pierce (2015). ncdf4: Interface to Unidata netCDF (Version 4 or
 #' Earlier) Format Data Files. R package version 1.14.1.
-#' http://CRAN.R-project.org/package=ncdf4
+#' https://CRAN.R-project.org/package=ncdf4
 #' 
 #' \item Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
 #' version 2.2-6. http://meteo.unican.es/ecoms-udg
@@ -148,7 +148,7 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
   
   if (!is.na(dimIndex[4])) gridData$Members <- var$dim[[dimIndex[4]]]$vals
   
-  gridData$Loaded <- 'by hyfo package, http://yuanchao-xu.github.io/hyfo/'
+  gridData$Loaded <- 'by hyfo package, https://yuanchao-xu.github.io/hyfo/'
   nc_close(nc)
   
   output <- downscaleNcdf(gridData, ...)
@@ -184,7 +184,7 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
 #' nc1 <- downscaleNcdf(nc, year = 2006, lon = c(-2, -0.5), lat = c(43.2, 43.7))
 #' nc2 <- downscaleNcdf(nc, year = 2005, month = 3:8, lon = c(-2, -0.5), lat = c(43.2, 43.7))
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export 
 #' @references 
@@ -340,7 +340,7 @@ downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat =
 #' 
 #' writeNcdf(nc, 'test.nc')
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export 
 #' @import ncdf4
@@ -349,7 +349,7 @@ downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat =
 #' \itemize{
 #' \item David Pierce (2015). ncdf4: Interface to Unidata netCDF (Version 4 or
 #' Earlier) Format Data Files. R package version 1.14.1.
-#' http://CRAN.R-project.org/package=ncdf4
+#' https://CRAN.R-project.org/package=ncdf4
 #' 
 #' \item Santander MetGroup (2015). ecomsUDG.Raccess: R interface to the ECOMS User Data Gateway. R package
 #' version 2.2-6. http://meteo.unican.es/ecoms-udg
@@ -433,7 +433,7 @@ writeNcdf <- function(gridData, filePath, missingValue = 1e20, tz = 'GMT', units
   
   # This part has to be put
   ncatt_put(nc, 0, "Conventions","CF-1.4")
-  ncatt_put(nc, 0, 'WrittenBy', 'hyfo(http://yuanchao-xu.github.io/hyfo/)')
+  ncatt_put(nc, 0, 'WrittenBy', 'hyfo(https://yuanchao-xu.github.io/hyfo/)')
   
   #data <- aperm(gridData$Data, dimIndex) no need to do this, in the process above
   # when you define the dimlist, the order of the dimension was fixed.
@@ -463,7 +463,7 @@ getTimeUnit <- function(dates) {
 #' @import ncdf4
 #' @references 
 #' David Pierce (2014). ncdf: Interface to Unidata netCDF data files. R package version 1.6.8.
-#' http://CRAN.R-project.org/package=ncdf
+#' https://CRAN.R-project.org/package=ncdf
 getExtralDim <- function(...) {
   dimList <- list(...)
   

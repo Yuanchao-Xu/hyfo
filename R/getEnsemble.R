@@ -98,7 +98,7 @@
 #' b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210, buffer = 30)
 #' 
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' 
 #' @importFrom reshape2 melt 
@@ -330,7 +330,7 @@ getHisEnsem <- function (TS, example, interval = 365, buffer = 0, plot = 'norm',
 #' b <- getFrcEnsem(nc, coord = c(-1.4, 43.2))
 #' 
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @return A ensemble time series extracted from forecating data.
 #' 
@@ -481,7 +481,7 @@ getFrcEnsem <- function(dataset, cell = 'mean', plot = 'norm', output = 'data', 
 #' getEnsem_comb(b1, b2)
 #' getEnsem_comb(list = list(b1, b2), nrow = 2)
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' 
 #' @export

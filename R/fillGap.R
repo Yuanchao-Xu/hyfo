@@ -47,7 +47,7 @@
 #' a3 <- fillGap(a1, corPeriod = 'monthly')
 #' 
 #' 
-#' # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+#' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @references
 #' Gap fiiling method based on correlation and linear regression.
@@ -135,7 +135,7 @@ fillGap_column <- function(i, data, corOrder, lmCoef) {
 #' 
 #' \itemize{
 #' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
-#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 #' }
 #' 
 #' 
@@ -174,7 +174,7 @@ fillGap_cor <- function(data, corPeriod = 'daily', Date) {
 #' @importFrom stats coef lm
 #' @references 
 #' R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
-#' Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+#' Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 #' 
 fillGap_lmCoef <- function(data, corOrder) {
   l <- dim(data)[2]

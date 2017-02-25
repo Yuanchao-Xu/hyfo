@@ -1,6 +1,6 @@
 # hyfo
 [![Travis-CI Build Status](https://travis-ci.org/Yuanchao-Xu/hyfo.svg?branch=master)](https://travis-ci.org/Yuanchao-Xu/hyfo)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/hyfo)](http://cran.r-project.org/package=hyfo)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/hyfo)](https://cran.r-project.org/package=hyfo)
 
 ## Installation
 
@@ -18,7 +18,7 @@ install.packages("devtools")
 devtools::install_github("Yuanchao-Xu/hyfo")
 ```
 
-**Official Website is [http://yuanchao-xu.github.io/hyfo](http://yuanchao-xu.github.io/hyfo)**
+**Official Website is [https://yuanchao-xu.github.io/hyfo](http://yuanchao-xu.github.io/hyfo)**
 
 hyfo is an R package, initially designed for the European Project EUPORIAS, and cooperated with DHI Denmark, which was then extended to other uses in hydrology, hydraulics and climate.
 

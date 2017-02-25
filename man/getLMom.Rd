@@ -19,13 +19,13 @@ get L moment analysis of the input distribution
 dis <- seq(1, 100)
 getLMom(dis)
 
-# More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
+# More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 }
 \references{
 \itemize{
 \item J. R. M. Hosking (2015). L-moments. R package, version 2.5. URL:
-http://CRAN.R-project.org/package=lmom.
+https://CRAN.R-project.org/package=lmom.
 }
 }
 
