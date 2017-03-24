@@ -36,4 +36,3 @@ Abstraction Library. R package version 1.0-4. https://CRAN.R-project.org/package
 Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 }
 }
-

@@ -45,4 +45,3 @@ a <- collectData_txt_anarbe(folder)
 Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 }
 }
-

@@ -19,4 +19,3 @@ A cell coordinate
 \description{
 Change lon lat coordinates to cell coordinates
 }
-

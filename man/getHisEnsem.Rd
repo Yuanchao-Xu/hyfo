@@ -124,4 +124,3 @@ b <- getHisEnsem(a, example = c('1994-2-4', '1996-1-4'), interval = 210, buffer 
 \item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
 }
 }
-

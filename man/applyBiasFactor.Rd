@@ -152,9 +152,6 @@ plotTS(list = TSlist, plot = 'cum')
 
 
 }
-\author{
-Yuanchao Xu \email{xuyuanchao37@gmail.com }
-}
 \references{
 Bias correction methods come from \code{biasCorrection} from \code{dowscaleR}
 
@@ -176,4 +173,6 @@ package version 0.6-0. https://github.com/SantanderMetGroup/downscaleR/wiki
 \code{\link{biasCorrect}} for method used in bias correction. 
 \code{\link{getBiasFactor}}, for the first part.
 }
-
+\author{
+Yuanchao Xu \email{xuyuanchao37@gmail.com }
+}

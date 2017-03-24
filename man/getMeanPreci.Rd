@@ -42,4 +42,3 @@ Month(number 1 to 12): month rainfall of each year is plotted, e.g. march rainfa
 Since "winter" is a crossing year, 12, 1, 2, 12 is in former year, and 1, 2 are in latter year.
 so winter belongs to the latter year.
 }
-

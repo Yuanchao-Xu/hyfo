@@ -31,4 +31,3 @@ related tests. R package version 0.14. https://CRAN.R-project.org/package=moment
 Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 }
 }
-

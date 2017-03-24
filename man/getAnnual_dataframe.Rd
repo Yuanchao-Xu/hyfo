@@ -16,4 +16,3 @@ The annual rainfall of each year of the input station.
 \description{
 Get annual rainfall of the input time series.
 }
-

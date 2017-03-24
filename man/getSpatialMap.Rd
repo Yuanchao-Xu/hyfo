@@ -54,4 +54,3 @@ getSpatialMap(tgridData, method = 'winter', catchment = testCat, point = point)
 # More examples can be found in the user manual on http://yuanchao-xu.github.io/hyfo/
 
 }
-

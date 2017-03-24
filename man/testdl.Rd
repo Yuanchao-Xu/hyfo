@@ -28,4 +28,3 @@ A list containing different precipitation time series.
 }
 }
 \keyword{datasets}
-

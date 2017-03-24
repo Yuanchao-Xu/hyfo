@@ -25,4 +25,3 @@ Collect data from different excel files
 Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
 }
 }
-

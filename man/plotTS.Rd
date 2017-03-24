@@ -73,4 +73,3 @@ plotTS(dataframe, dataframe1, plot = 'cum')
 \item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
 }
 }
-

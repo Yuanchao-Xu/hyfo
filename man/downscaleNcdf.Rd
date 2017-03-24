@@ -51,4 +51,3 @@ nc2 <- downscaleNcdf(nc, year = 2005, month = 3:8, lon = c(-2, -0.5), lat = c(43
 version 2.2-6. http://meteo.unican.es/ecoms-udg
 }
 }
-

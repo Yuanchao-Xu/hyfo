@@ -93,4 +93,3 @@ package version 0.3-11. https://CRAN.R-project.org/package=rgeos
 
 }
 }
-

@@ -28,4 +28,3 @@ getLMom(dis)
 https://CRAN.R-project.org/package=lmom.
 }
 }
-

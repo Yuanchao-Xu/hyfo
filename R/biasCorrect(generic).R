@@ -24,7 +24,9 @@
 #' @param preci If the precipitation is biascorrected, then you have to assign \code{preci = TRUE}. Since for
 #' precipitation, some biascorrect methods may not apply to, or some methods are specially for precipitation. 
 #' Default is FALSE, refer to details.
-#' @param prThreshold The minimum value that is considered as a non-zero precipitation. Default to 1 (assuming mm).
+#' @param prThreshold The minimum value that is considered as a non-zero precipitation. Default to 0 (assuming mm). If you want 
+#' to use precipitation biascorrect, you should consider carefully how to set this threshold, usually is 1. But you 
+#' can try with different numbers to see the results.
 #' @param extrapolate When use 'eqm' method, and 'no' is set, modified frc is bounded by the range of obs.
 #' If 'constant' is set, modified frc is not bounded by the range of obs. Default is 'no'.
 #' @details 

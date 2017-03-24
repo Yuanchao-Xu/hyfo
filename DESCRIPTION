@@ -39,4 +39,4 @@ LazyData: true
 URL: https://yuanchao-xu.github.io/hyfo/
 BugReports: https://github.com/Yuanchao-Xu/hyfo/issues
 Repository: CRAN
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

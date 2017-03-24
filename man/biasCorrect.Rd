@@ -39,7 +39,9 @@ details. Default scaleType is 'multi'.}
 precipitation, some biascorrect methods may not apply to, or some methods are specially for precipitation. 
 Default is FALSE, refer to details.}
 
-\item{prThreshold}{The minimum value that is considered as a non-zero precipitation. Default to 1 (assuming mm).}
+\item{prThreshold}{The minimum value that is considered as a non-zero precipitation. Default to 0 (assuming mm). If you want 
+to use precipitation biascorrect, you should consider carefully how to set this threshold, usually is 1. But you 
+can try with different numbers to see the results.}
 
 \item{extrapolate}{When use 'eqm' method, and 'no' is set, modified frc is bounded by the range of obs.
 If 'constant' is set, modified frc is not bounded by the range of obs. Default is 'no'.}
@@ -210,9 +212,6 @@ plotTS(list = TSlist, plot = 'cum')
 
 
 }
-\author{
-Yuanchao Xu \email{xuyuanchao37@gmail.com }
-}
 \references{
 Bias correction methods come from \code{biasCorrection} from \code{dowscaleR}
 
@@ -230,4 +229,6 @@ package version 0.6-0. https://github.com/SantanderMetGroup/downscaleR/wiki
 \item O. Gutjahr and G. Heinemann (2013) Comparing precipitation bias correction methods for high-resolution regional climate simulations using COSMO-CLM, Theoretical and Applied Climatology, 114, 511-529
 }
 }
-
+\author{
+Yuanchao Xu \email{xuyuanchao37@gmail.com }
+}

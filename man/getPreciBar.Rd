@@ -3,8 +3,8 @@
 \docType{methods}
 \name{getPreciBar}
 \alias{getPreciBar}
-\alias{getPreciBar,data.frame-method}
 \alias{getPreciBar,list-method}
+\alias{getPreciBar,data.frame-method}
 \title{get mean rainfall bar plot of the input dataset or time series.}
 \usage{
 getPreciBar(data, method, cell = "mean", output = "data", name = NULL,
@@ -99,4 +99,3 @@ a <- getPreciBar(TS, method = 'spring', info = TRUE)
 Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 }
 }
-

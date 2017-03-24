@@ -66,4 +66,3 @@ getAnnual(a3)
 Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 }
 }
-

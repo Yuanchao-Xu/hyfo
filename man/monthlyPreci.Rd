@@ -19,4 +19,3 @@ the monthly rainfall matrix of the rainfall time series.
 \description{
 Get monthly rainfall
 }
-

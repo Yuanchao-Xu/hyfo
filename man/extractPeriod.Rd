@@ -112,4 +112,3 @@ dataframe_new <- extractPeriod(dataframe, month = c(12,1,2), year = 1995)
 Series. Journal of Statistical Software, 14(6), 1-27. URL https://www.jstatsoft.org/v14/i06/
 }
 }
-

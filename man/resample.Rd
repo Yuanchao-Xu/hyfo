@@ -65,4 +65,3 @@ nc_new <- resample(nc, 'day2mon')
 Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 }
 }
-

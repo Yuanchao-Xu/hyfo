@@ -35,4 +35,3 @@ a <- collectData(folder, fileType = 'csv', range = c(10, 20, 1,2))
 # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 }
-

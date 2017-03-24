@@ -29,4 +29,3 @@ dataframe <- list2Dataframe(datalist_new)
 # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 
 }
-

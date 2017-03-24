@@ -60,4 +60,3 @@ getSpatialMap_comb(list = list(a1, a2), nrow = 2)
 \item H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.
 }
 }
-

@@ -89,4 +89,3 @@ statistical downscaling. R package version 0.6-0.
 https://github.com/SantanderMetGroup/downscaleR/wiki
 }
 }
-

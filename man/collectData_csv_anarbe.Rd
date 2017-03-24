@@ -37,4 +37,3 @@ a <- collectData_csv_anarbe(folder)
 Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 }
 }
-
