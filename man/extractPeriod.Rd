@@ -10,8 +10,8 @@
 extractPeriod(data, startDate = NULL, endDate = NULL,
   commonPeriod = FALSE, year = NULL, month = NULL)
 
-\S4method{extractPeriod}{data.frame}(data, startDate = NULL, endDate = NULL,
-  commonPeriod = FALSE, year = NULL, month = NULL)
+\S4method{extractPeriod}{data.frame}(data, startDate = NULL,
+  endDate = NULL, commonPeriod = FALSE, year = NULL, month = NULL)
 
 \S4method{extractPeriod}{list}(data, startDate = NULL, endDate = NULL,
   commonPeriod = FALSE, year = NULL, month = NULL)

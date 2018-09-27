@@ -4,8 +4,9 @@
 \alias{getMeanPreci}
 \title{Get mean rainfall data.}
 \usage{
-getMeanPreci(inputTS, method = NULL, yearIndex = NULL, monthIndex = NULL,
-  fullResults = FALSE, omitNA = TRUE, plot = FALSE, ...)
+getMeanPreci(inputTS, method = NULL, yearIndex = NULL,
+  monthIndex = NULL, fullResults = FALSE, omitNA = TRUE,
+  plot = FALSE, ...)
 }
 \arguments{
 \item{inputTS}{A time series with only data column (1 column).}

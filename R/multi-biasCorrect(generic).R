@@ -437,11 +437,14 @@ getBiasFactor.list <- function(hindcast, obs, method, scaleType, preci, prThresh
   
   
   # Now real bias correction is executed.
+  # for some forcasts, they have results from different models or scenarios, if so
+  # there will be a dimension called member
+  
   
   memberIndex <- grepAndMatch('member', attributes(hindcastData)$dimensions)
   
   # For dataset that has a member part 
-  if (!is.na(memberIndex)) {
+  if (length(memberIndex) != 0) {
     
     hindcastData <- adjustDim(hindcastData, ref = c('lon', 'lat', 'time', 'member'))
     
@@ -573,7 +576,7 @@ applyBiasFactor.list <- function(frc, biasFactor, obs) {
   memberIndex <- grepAndMatch('member', attributes(frcData)$dimensions)
   
   # For dataset that has a member part 
-  if (!is.na(memberIndex)) {
+  if (length(memberIndex) != 0) {
     # check if frcData and hindcastData has the same dimension and length.
     if (calcuDim(frcData, dim = 'member') != memberDim) {
       stop('frc data has different member number from hindcast.')

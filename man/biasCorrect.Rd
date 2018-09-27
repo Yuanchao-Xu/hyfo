@@ -7,16 +7,17 @@
 \alias{biasCorrect,list,list,list-method}
 \title{Biascorrect the input timeseries or hyfo dataset}
 \usage{
-biasCorrect(frc, hindcast, obs, method = "scaling", scaleType = "multi",
-  preci = FALSE, prThreshold = 0, extrapolate = "no")
-
-\S4method{biasCorrect}{data.frame,data.frame,data.frame}(frc, hindcast, obs,
-  method = "scaling", scaleType = "multi", preci = FALSE,
-  prThreshold = 0, extrapolate = "no")
-
-\S4method{biasCorrect}{list,list,list}(frc, hindcast, obs, method = "scaling",
+biasCorrect(frc, hindcast, obs, method = "scaling",
   scaleType = "multi", preci = FALSE, prThreshold = 0,
   extrapolate = "no")
+
+\S4method{biasCorrect}{data.frame,data.frame,data.frame}(frc, hindcast,
+  obs, method = "scaling", scaleType = "multi", preci = FALSE,
+  prThreshold = 0, extrapolate = "no")
+
+\S4method{biasCorrect}{list,list,list}(frc, hindcast, obs,
+  method = "scaling", scaleType = "multi", preci = FALSE,
+  prThreshold = 0, extrapolate = "no")
 }
 \arguments{
 \item{frc}{a hyfo grid data output or a dataframe (time series) consists of Date column and one or more value columns, 

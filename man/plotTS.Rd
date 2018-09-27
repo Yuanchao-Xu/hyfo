@@ -4,8 +4,9 @@
 \alias{plotTS}
 \title{plot time series, with marks on missing value.}
 \usage{
-plotTS(..., type = "line", output = "data", plot = "norm", name = NULL,
-  showNA = TRUE, x = NULL, y = NULL, title = NULL, list = NULL)
+plotTS(..., type = "line", output = "data", plot = "norm",
+  name = NULL, showNA = TRUE, x = NULL, y = NULL, title = NULL,
+  list = NULL)
 }
 \arguments{
 \item{...}{input time series.}

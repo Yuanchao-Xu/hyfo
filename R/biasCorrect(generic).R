@@ -286,6 +286,9 @@ biasCorrect.list <- function(frc, hindcast, obs, method, scaleType, preci, prThr
   
   # Now real bias correction is executed.
   
+  # for some forcasts, they have results from different models or scenarios, if so
+  # there will be a dimension called member
+  
   memberIndex <- grepAndMatch('member', attributes(frcData)$dimensions)
   
   # For dataset that has a member part 

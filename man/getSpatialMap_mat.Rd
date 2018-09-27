@@ -4,9 +4,9 @@
 \alias{getSpatialMap_mat}
 \title{Replot raster matrix}
 \usage{
-getSpatialMap_mat(matrix, title_d = NULL, catchment = NULL, point = NULL,
-  output = "data", name = NULL, info = FALSE, scale = "identity",
-  color = NULL, ...)
+getSpatialMap_mat(matrix, title_d = NULL, catchment = NULL,
+  point = NULL, output = "data", name = NULL, info = FALSE,
+  scale = "identity", color = NULL, ...)
 }
 \arguments{
 \item{matrix}{A matrix raster, should be the result of \code{getSpatialMap()}, output should be default

@@ -4,7 +4,8 @@
 \alias{collectData}
 \title{Collect data from different csv files.}
 \usage{
-collectData(folderName, fileType = NULL, range = NULL, sheetIndex = 1)
+collectData(folderName, fileType = NULL, range = NULL,
+  sheetIndex = 1)
 }
 \arguments{
 \item{folderName}{A string showing the path of the folder holding different csv files.}

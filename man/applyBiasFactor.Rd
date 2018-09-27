@@ -9,9 +9,11 @@
 \usage{
 applyBiasFactor(frc, biasFactor, obs = NULL)
 
-\S4method{applyBiasFactor}{data.frame,biasFactor}(frc, biasFactor, obs = NULL)
+\S4method{applyBiasFactor}{data.frame,biasFactor}(frc, biasFactor,
+  obs = NULL)
 
-\S4method{applyBiasFactor}{list,biasFactor.hyfo}(frc, biasFactor, obs = NULL)
+\S4method{applyBiasFactor}{list,biasFactor.hyfo}(frc, biasFactor,
+  obs = NULL)
 }
 \arguments{
 \item{frc}{a hyfo grid data output or a dataframe(time series) consists of Date column and one or more value columns, 

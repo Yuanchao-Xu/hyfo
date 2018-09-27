@@ -7,12 +7,13 @@
 \alias{getPreciBar,data.frame-method}
 \title{get mean rainfall bar plot of the input dataset or time series.}
 \usage{
-getPreciBar(data, method, cell = "mean", output = "data", name = NULL,
-  plotRange = TRUE, member = NULL, omitNA = TRUE, info = FALSE, ...)
-
-\S4method{getPreciBar}{list}(data, method, cell = "mean", output = "data",
+getPreciBar(data, method, cell = "mean", output = "data",
   name = NULL, plotRange = TRUE, member = NULL, omitNA = TRUE,
   info = FALSE, ...)
+
+\S4method{getPreciBar}{list}(data, method, cell = "mean",
+  output = "data", name = NULL, plotRange = TRUE, member = NULL,
+  omitNA = TRUE, info = FALSE, ...)
 
 \S4method{getPreciBar}{data.frame}(data, method, cell = "mean",
   output = "data", name = NULL, plotRange = TRUE, member = NULL,

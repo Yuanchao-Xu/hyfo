@@ -1,3 +1,11 @@
+hyfo 1.4.0
+==========
+Date: 2018-9-27
+
+- "memberIndex" length zero bug fixed in getBiasFactor
+
+
+
 hyfo 1.3.9
 ==========
 Date: 2017-2-20

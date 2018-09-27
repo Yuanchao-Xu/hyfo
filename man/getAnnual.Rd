@@ -9,10 +9,11 @@
 \usage{
 getAnnual(data, output = "series", minRecords = 355, ...)
 
-\S4method{getAnnual}{data.frame}(data, output = "series", minRecords = 355,
-  ...)
+\S4method{getAnnual}{data.frame}(data, output = "series",
+  minRecords = 355, ...)
 
-\S4method{getAnnual}{list}(data, output = "series", minRecords = 355, ...)
+\S4method{getAnnual}{list}(data, output = "series", minRecords = 355,
+  ...)
 }
 \arguments{
 \item{data}{A list containing different time series of different rainfall gauges. Or a dataframe with first column Date and the rest columns the value of different
