@@ -1,3 +1,11 @@
+hyfo 1.4.1
+==========
+Date: 2019-10-2
+
+- changes made to loadNcdf for different types of NCDF files with different dimension names
+
+
+
 hyfo 1.4.0
 ==========
 Date: 2018-9-27

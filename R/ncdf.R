@@ -94,6 +94,7 @@ loadNcdf <- function(filePath, varname, tz = 'GMT', ...) {
   
   # Only deals with the most common dimensions, futher dimensions will be added in future.
   dimIndex <- grepAndMatch(c('lon', 'lat', 'time', 'member'), dimNames)
+  if (length(dimIndex) < 3) dimIndex <- grepAndMatch(c('x', 'y', 'time', 'member'), dimNames)
   if (length(dimIndex) < 3) stop('Your file has less than 3 dimensions.')
   
   # First needs to identify the variable name, load the right data
