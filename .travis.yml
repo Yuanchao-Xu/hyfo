@@ -17,7 +17,7 @@ apt_packages:
   - udunits-bin
   - libudunits2-dev
   - netcdf-bin
-#  - libproj-dev
+  - libproj-dev
 #  - libcurl4-gnutls-dev
 #  - libdap-dev
 #  - libgdal-dev
@@ -26,7 +26,9 @@ apt_packages:
 #  - libhdf5-dev
 #  - libhdf5-serial-dev
 #  - libgdal-dev
-#  - libgdal1-dev
+  - libgdal1-dev
+  - libgeos-dev
+
 r_binary_packages:
   - rgdal
   - rgeos
