@@ -1,6 +1,8 @@
 # Sample .travis.yml for R projects
 
 language: r
+r:
+  - data.table
 warnings_are_errors: true
 sudo: required
 dist: precise
@@ -9,7 +11,11 @@ env:
   global:
     - NOT_CRAN = true
 before_install: 
-  echo "options(repos = c(CRAN='https://cran.rstudio.com'))" > ~/.Rprofile
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install llvm &&
+    export PATH="/usr/local/opt/llvm/bin:$PATH" &&
+    export LDFLAGS="-L/usr/local/opt/llvm/lib" &&
+    export CFLAGS="-I/usr/local/opt/llvm/include"; fi
+#  echo "options(repos = c(CRAN='https://cran.rstudio.com'))" > ~/.Rprofile
 #  - sudo apt-get autoclean
 #  - sudo aptitude install libgdal-dev
 apt_packages:
