@@ -33,7 +33,6 @@ apt_packages:
   - libgdal1-dev
   - libgeos-dev
   - libproj0
-  - r-cran-data.table
 
 #r_binary_packages:
 #  - rgdal
