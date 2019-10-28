@@ -13,6 +13,7 @@ before_install:
     export PATH="/usr/local/opt/llvm/bin:$PATH" &&
     export LDFLAGS="-L/usr/local/opt/llvm/lib" &&
     export CFLAGS="-I/usr/local/opt/llvm/include"; fi
+  - R -q -e 'remotes::install_github("Rdatatable/data.table")
 #  echo "options(repos = c(CRAN='https://cran.rstudio.com'))" > ~/.Rprofile
 #  - sudo apt-get autoclean
 #  - sudo aptitude install libgdal-dev
@@ -38,5 +39,5 @@ apt_packages:
 #  - rgdal
 #  - rgeos
 #  - data.table
-r_packages:
-  - data.table
+#r_packages:
+#  - data.table
