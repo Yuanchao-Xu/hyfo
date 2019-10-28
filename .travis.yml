@@ -30,6 +30,6 @@ apt_packages:
   - libgeos-dev
   - libproj0
 
-r_binary_packages:
-  - rgdal
-  - rgeos
+#r_binary_packages:
+#  - rgdal
+#  - rgeos
