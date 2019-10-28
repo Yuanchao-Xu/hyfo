@@ -17,7 +17,7 @@ apt_packages:
   - udunits-bin
   - libudunits2-dev
   - netcdf-bin
-  - libproj-dev
+#  - libproj-dev
 #  - libcurl4-gnutls-dev
 #  - libdap-dev
 #  - libgdal-dev
