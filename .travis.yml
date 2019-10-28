@@ -9,11 +9,11 @@ env:
   global:
     - NOT_CRAN = true
 before_install: 
+  - R -q -e 'remotes::install_github("Rdatatable/data.table")
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install llvm &&
     export PATH="/usr/local/opt/llvm/bin:$PATH" &&
     export LDFLAGS="-L/usr/local/opt/llvm/lib" &&
     export CFLAGS="-I/usr/local/opt/llvm/include"; fi
-  - R -q -e 'remotes::install_github("Rdatatable/data.table")
 #  echo "options(repos = c(CRAN='https://cran.rstudio.com'))" > ~/.Rprofile
 #  - sudo apt-get autoclean
 #  - sudo aptitude install libgdal-dev
