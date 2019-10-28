@@ -34,7 +34,9 @@ apt_packages:
   - libgeos-dev
   - libproj0
 
-r_binary_packages:
+#r_binary_packages:
 #  - rgdal
 #  - rgeos
+#  - data.table
+r_packages:
   - data.table
