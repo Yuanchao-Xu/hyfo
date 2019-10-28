@@ -1,8 +1,6 @@
 # Sample .travis.yml for R projects
 
 language: r
-r:
-  - data.table
 warnings_are_errors: true
 sudo: required
 dist: precise
