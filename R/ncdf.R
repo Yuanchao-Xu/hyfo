@@ -450,7 +450,9 @@ getTimeUnit <- function(dates) {
   output <- NULL
   for (unit in units) {
     time <- difftime(dates, dates[1], units = unit)
-    rem <- sapply(time, function(x) x%%1)
+    # previously it worked like below, then new version came
+    # rem <- sapply(time, function(x) x%%1)
+    rem <- as.numeric(time) %% 1
     if (!any(rem != 0)) {
       output <- unit
       break
