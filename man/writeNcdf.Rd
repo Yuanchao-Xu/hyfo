@@ -43,7 +43,10 @@ nc <- loadNcdf(filePath, varname)
 
 # Then write to your work directory
 
+\dontrun{
 writeNcdf(nc, 'test.nc')
+}
+
 
 # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 

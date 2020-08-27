@@ -339,7 +339,10 @@ downscaleNcdf <- function(gridData, year = NULL, month = NULL, lon = NULL, lat =
 #' 
 #' # Then write to your work directory
 #' 
+#' \dontrun{
 #' writeNcdf(nc, 'test.nc')
+#' }
+#' 
 #' 
 #' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
