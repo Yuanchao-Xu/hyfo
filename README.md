@@ -18,7 +18,7 @@ install.packages("devtools")
 devtools::install_github("Yuanchao-Xu/hyfo")
 ```
 
-**Official Website is [https://yuanchao-xu.github.io/hyfo/](http://yuanchao-xu.github.io/hyfo/)**
+**Official Website is [https://yuanchao-xu.github.io/hyfo/](https://yuanchao-xu.github.io/hyfo/)**
 
 hyfo is an R package, initially designed for the European Project EUPORIAS, and cooperated with DHI Denmark, which was then extended to other uses in hydrology, hydraulics and climate.
 
