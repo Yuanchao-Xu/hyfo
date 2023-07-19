@@ -4,8 +4,16 @@
 \alias{getFrcEnsem}
 \title{Extract time series from forecasting data.}
 \usage{
-getFrcEnsem(dataset, cell = "mean", plot = "norm", output = "data",
-  name = NULL, mv = 0, coord = NULL, ...)
+getFrcEnsem(
+  dataset,
+  cell = "mean",
+  plot = "norm",
+  output = "data",
+  name = NULL,
+  mv = 0,
+  coord = NULL,
+  ...
+)
 }
 \arguments{
 \item{dataset}{A list containing different information, should be the result of \code{\link{loadNcdf}}}
@@ -54,7 +62,7 @@ the system time will be selected as name column.
 \examples{
 
 filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
-# Then if you don't know the variable name, you can use \\code{getNcdfVar} to get variable name
+# Then if you don't know the variable name, you can use \code{getNcdfVar} to get variable name
 varname <- getNcdfVar(filePath)
 nc <- loadNcdf(filePath, varname)
 a <- getFrcEnsem(nc)

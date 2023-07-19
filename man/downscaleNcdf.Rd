@@ -4,8 +4,7 @@
 \alias{downscaleNcdf}
 \title{Downscale NetCDF file}
 \usage{
-downscaleNcdf(gridData, year = NULL, month = NULL, lon = NULL,
-  lat = NULL)
+downscaleNcdf(gridData, year = NULL, month = NULL, lon = NULL, lat = NULL)
 }
 \arguments{
 \item{gridData}{A hyfo list file from \code{\link{loadNcdf}}}
@@ -31,7 +30,7 @@ Downscale NetCDF file
 filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
 
 
-# Then if you don't know the variable name, you can use \\code{getNcdfVar} to get variable name
+# Then if you don't know the variable name, you can use \code{getNcdfVar} to get variable name
 varname <- getNcdfVar(filePath)
 
 nc <- loadNcdf(filePath, varname)

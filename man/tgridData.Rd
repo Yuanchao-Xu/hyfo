@@ -4,14 +4,16 @@
 \name{tgridData}
 \alias{tgridData}
 \title{tgridData}
-\format{A list containing different information.
+\format{
+A list containing different information.
 \describe{
   \item{Variables}{variable information. }
   \item{Data}{Data.}
   \item{xyCoords}{longitude and latitude of the data.}
   \item{Dates}{Date information.}
   ...
-}}
+}
+}
 \source{
 http://www.meteo.unican.es/datasets/spain02
 }

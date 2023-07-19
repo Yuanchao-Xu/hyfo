@@ -36,8 +36,7 @@ apt_packages:
   - libproj0
 
 #r_binary_packages:
-#  - rgdal
-#  - rgeos
+#  - sf
 #  - data.table
 #r_packages:
 #  - data.table

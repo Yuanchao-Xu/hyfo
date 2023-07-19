@@ -4,9 +4,18 @@
 \alias{getSpatialMap_mat}
 \title{Replot raster matrix}
 \usage{
-getSpatialMap_mat(matrix, title_d = NULL, catchment = NULL,
-  point = NULL, output = "data", name = NULL, info = FALSE,
-  scale = "identity", color = NULL, ...)
+getSpatialMap_mat(
+  matrix,
+  title_d = NULL,
+  catchment = NULL,
+  point = NULL,
+  output = "data",
+  name = NULL,
+  info = FALSE,
+  scale = "identity",
+  color = NULL,
+  ...
+)
 }
 \arguments{
 \item{matrix}{A matrix raster, should be the result of \code{getSpatialMap()}, output should be default
@@ -49,7 +58,7 @@ value.
 \examples{
 
 \dontrun{
-data(tgridData)# the result of \\code{loadNcdf}
+data(tgridData)# the result of \code{loadNcdf}
 #the output type of has to be default or 'data'.
 a1 <- getSpatialMap(tgridData, method = 'mean')
 a2 <- getSpatialMap(tgridData, method = 'max')
@@ -89,7 +98,7 @@ by Thomas P Minka <tpminka at media.mit.edu> (2015). maps: Draw Geographical Map
 Objects. R package version 0.8-36. https://CRAN.R-project.org/package=maptools
 
 \item Roger Bivand and Colin Rundel (2015). rgeos: Interface to Geometry Engine - Open Source (GEOS). R
-package version 0.3-11. https://CRAN.R-project.org/package=rgeos
+package version 0.3-11. https://CRAN.R-project.org/package=sf
 
 }
 }

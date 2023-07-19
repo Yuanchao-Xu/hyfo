@@ -4,8 +4,17 @@
 \alias{getHisEnsem}
 \title{Get ensemble forecast from historical data.}
 \usage{
-getHisEnsem(TS, example, interval = 365, buffer = 0, plot = "norm",
-  output = "data", name = NULL, mv = 0, ...)
+getHisEnsem(
+  TS,
+  example,
+  interval = 365,
+  buffer = 0,
+  plot = "norm",
+  output = "data",
+  name = NULL,
+  mv = 0,
+  ...
+)
 }
 \arguments{
 \item{TS}{A time series dataframe, with first column Date, and second column value.}

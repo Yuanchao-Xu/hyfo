@@ -16,7 +16,7 @@ A catchment object can be used in \code{getSpatialMap()}.
 Get a catchment object from selected shape file.
 }
 \details{
-This function is based on the package \code{rgdal} and \code{sp}, and the output comes from the package 
+This function is based on the package \code{sf} and \code{sp}, and the output comes from the package 
 \code{sp}
 }
 \examples{
@@ -30,7 +30,7 @@ catchment <- shp2cat(file)
 \references{
 \itemize{
 \item Roger Bivand, Tim Keitt and Barry Rowlingson (2015). rgdal: Bindings for the Geospatial Data
-Abstraction Library. R package version 1.0-4. https://CRAN.R-project.org/package=rgdal
+Abstraction Library. R package version 1.0-4. https://CRAN.R-project.org/package=sf
 
 \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.

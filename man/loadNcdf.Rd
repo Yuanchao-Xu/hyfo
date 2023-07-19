@@ -30,7 +30,7 @@ Load NetCDF file
 # First open the test NETcDF file.
 filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
 
-# Then if you don't know the variable name, you can use \\code{getNcdfVar} to get variable name
+# Then if you don't know the variable name, you can use \code{getNcdfVar} to get variable name
 varname <- getNcdfVar(filePath)
 
 nc <- loadNcdf(filePath, varname)

@@ -1,8 +1,8 @@
 Package: hyfo
 Type: Package
 Title: Hydrology and Climate Forecasting
-Version: 1.4.3
-Date: 2020-8-26
+Version: 1.4.4
+Date: 2023-7-12
 Authors@R: person("Yuanchao", "Xu", email = "xuyuanchao37@gmail.com",
   role = c("aut", "cre"))
 Description: Focuses on data processing and visualization in hydrology and
@@ -19,13 +19,12 @@ Imports:
     ggplot2 (>= 1.0.1),
     reshape2 (>= 1.4.1),
     zoo (>= 1.7-12),
-    rgdal (>= 0.8-16),
+    sf (>= 1.0-12),
     plyr (>= 1.8.3),
     moments (>= 0.14),
     lmom (>= 2.5),
     maps(>= 2.3-9),
     maptools (>= 0.8-36),
-    rgeos (>= 0.3-8),
     ncdf4 (>= 1.14.1),
     MASS (>= 7.3-39),
     methods,
@@ -39,4 +38,4 @@ LazyData: true
 URL: https://yuanchao-xu.github.io/hyfo/
 BugReports: https://github.com/Yuanchao-Xu/hyfo/issues
 Repository: CRAN
-RoxygenNote: 6.1.1
+RoxygenNote: 7.2.3

@@ -4,8 +4,14 @@
 \alias{writeNcdf}
 \title{Write to NetCDF file using hyfo list file}
 \usage{
-writeNcdf(gridData, filePath, missingValue = 1e+20, tz = "GMT",
-  units = NULL, version = 3)
+writeNcdf(
+  gridData,
+  filePath,
+  missingValue = 1e+20,
+  tz = "GMT",
+  units = NULL,
+  version = 3
+)
 }
 \arguments{
 \item{gridData}{A hyfo list file from \code{\link{loadNcdf}}}
@@ -36,7 +42,7 @@ Write to NetCDF file using hyfo list file
 filePath <- system.file("extdata", "tnc.nc", package = "hyfo")
 
 
-# Then if you don't know the variable name, you can use \\code{getNcdfVar} to get variable name
+# Then if you don't know the variable name, you can use \code{getNcdfVar} to get variable name
 varname <- getNcdfVar(filePath)
 
 nc <- loadNcdf(filePath, varname)

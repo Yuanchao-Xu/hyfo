@@ -69,6 +69,11 @@ Date: 2015-12-15
 NOTE:
 ====
 - for hyfo$Data part, when load and write using ncdf4, there will be very little differences compared to the original, which cannot be addressed. If you first load an ncdf file, then write it, then load it again. The data part may have very little difference, less than 10E-5.
+hyfo 1.4.4
+==========
+Date: 2023-07-12
+
+- change package from rgdal to sf due to retirement of rdgal
 
 
 

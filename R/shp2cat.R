@@ -2,7 +2,7 @@
 #' @param filePath A string representing the path of the shape file.
 #' @return A catchment object can be used in \code{getSpatialMap()}.
 #' @export
-#' @details This function is based on the package \code{rgdal} and \code{sp}, and the output comes from the package 
+#' @details This function is based on the package \code{sf} and \code{sp}, and the output comes from the package 
 #' \code{sp}
 #' @examples
 #' #open internal file
@@ -11,13 +11,13 @@
 #' 
 #' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
-#' @import rgdal
+#' @importFrom sf st_read
 #' @importFrom utils tail
 #' @references 
 #' 
 #' \itemize{
 #' \item Roger Bivand, Tim Keitt and Barry Rowlingson (2015). rgdal: Bindings for the Geospatial Data
-#' Abstraction Library. R package version 1.0-4. https://CRAN.R-project.org/package=rgdal
+#' Abstraction Library. R package version 1.0-4. https://CRAN.R-project.org/package=sf
 #' 
 #' \item R Core Team (2015). R: A language and environment for statistical computing. R Foundation for
 #' Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
@@ -46,6 +46,6 @@ shp2cat <- function(filePath) {
   }
   
   if (length(folderName) == 0) stop('No shape file found, make sure the shp file is selected.')
-  catchment <- readOGR(folderName, catName1)
+  catchment <- st_read(folderName, catName1)
   return(catchment)
 }

@@ -37,7 +37,7 @@ Month(number 1 to 12): MEAN month rainfall of each year is plotted, e.g. MEAN ma
 
 
 \dontrun{
-#gridData provided in the package is the result of \\code {loadNcdf}
+#gridData provided in the package is the result of \code {loadNcdf}
 data(tgridData)
 getSpatialMap(tgridData, method = 'meanAnnual')
 getSpatialMap(tgridData, method = 'winter')
