@@ -225,6 +225,7 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 #' @export
 #' @import ggplot2 plyr maps maptools sf
 #' @importFrom stats median
+#' @importFrom methods is
 #' @importFrom reshape2 melt
 #' @references 
 #' 
@@ -260,7 +261,7 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, point = 
   checkWord <- c('lon', 'lat', 'z', 'value')
   if (is.null(attributes(matrix)$dimnames)) {
     stop('Input matrix is incorrect, check help to know how to get the matrix.')
-  } else if (!is.null(catchment) & class(catchment) != "SpatialPolygonsDataFrame") {
+  } else if (!is.null(catchment) & is(catchment)[1] != "SpatialPolygonsDataFrame") {
     stop('Catchment format is incorrect, check help to get more details. ')
   } else if (!is.null(point) & any(is.na(match(checkWord, attributes(point)$names)))) {
     stop('point should be a dataframe with colnames "lon, lat, z, value".')
@@ -416,6 +417,7 @@ getSpatialMap_mat <- function(matrix, title_d = NULL, catchment = NULL, point = 
 #' @export
 #' @import ggplot2 maps
 #' @importFrom data.table rbindlist
+#' @importFrom methods is
 #' @references 
 #' 
 #' \itemize{
@@ -433,7 +435,7 @@ getSpatialMap_comb <- function(..., list = NULL, nrow = 1, x = '', y = '', title
     data_ggplot <- rbindlist(maps)
   }
   
-  if (!class(data_ggplot) == 'data.frame') {
+  if (!is(data_ggplot)[1] == 'data.frame') {
     warning('Your input is probably a list, but you forget to add "list = " before it.
             Try again, or check help for more information.')
   } else if (is.null(data_ggplot$Name)) {

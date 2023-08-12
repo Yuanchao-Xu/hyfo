@@ -1,3 +1,12 @@
+hyfo 1.4.5
+==========
+Date: 2023-8-11
+
+- update Rgdal dependencies
+- change class() to is() to avoid cran notes
+
+
+
 hyfo 1.4.3
 ==========
 Date: 2020-8-26

@@ -50,13 +50,14 @@
 #' 
 #' @import ggplot2
 #' @importFrom reshape2 melt
+#' @importFrom methods is
 #' @export
 plotTS <- function(..., type = 'line', output = 'data', plot = 'norm', name = NULL, showNA = TRUE, 
                    x = NULL, y = NULL, title = NULL, list = NULL) {
   ## arrange input TS or TS list.
   if (is.null(list)) {
     list <- list(...)
-    if (!class(list[[1]]) == 'data.frame') {
+    if (!is(list[[1]])[1] == 'data.frame') {
       warning('Your input is probably a list, but you forget to add "list = " before it.
               Try again, or check help for more information.')
     }
