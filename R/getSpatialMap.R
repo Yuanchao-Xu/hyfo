@@ -223,7 +223,7 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 #' # More examples can be found in the user manual on https://yuanchao-xu.github.io/hyfo/
 #' 
 #' @export
-#' @import ggplot2 plyr maps maptools sf
+#' @import ggplot2 plyr maps sp sf
 #' @importFrom stats median
 #' @importFrom methods is
 #' @importFrom reshape2 melt
@@ -243,8 +243,7 @@ getSpatialMap <- function(dataset, method = NULL, member = 'mean', ...) {
 #' by Thomas P Minka <tpminka at media.mit.edu> (2015). maps: Draw Geographical Maps. R package version
 #' 2.3-11. https://CRAN.R-project.org/package=maps
 #' 
-#' \item Roger Bivand and Nicholas Lewin-Koh (2015). maptools: Tools for Reading and Handling Spatial
-#' Objects. R package version 0.8-36. https://CRAN.R-project.org/package=maptools
+#' \item Pebesma, Edzer, and Roger Bivand. 2023a. Sp: Classes and Methods for Spatial Data. https://CRAN.R-project.org/package=sp.
 #' 
 #' \item Roger Bivand and Colin Rundel (2015). rgeos: Interface to Geometry Engine - Open Source (GEOS). R
 #' package version 0.3-11. https://CRAN.R-project.org/package=sf

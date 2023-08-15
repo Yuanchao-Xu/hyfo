@@ -94,8 +94,7 @@ Software, 40(1), 1-29. URL http://www.jstatsoft.org/v40/i01/.
 by Thomas P Minka <tpminka at media.mit.edu> (2015). maps: Draw Geographical Maps. R package version
 2.3-11. https://CRAN.R-project.org/package=maps
 
-\item Roger Bivand and Nicholas Lewin-Koh (2015). maptools: Tools for Reading and Handling Spatial
-Objects. R package version 0.8-36. https://CRAN.R-project.org/package=maptools
+\item Pebesma, Edzer, and Roger Bivand. 2023a. Sp: Classes and Methods for Spatial Data. https://CRAN.R-project.org/package=sp.
 
 \item Roger Bivand and Colin Rundel (2015). rgeos: Interface to Geometry Engine - Open Source (GEOS). R
 package version 0.3-11. https://CRAN.R-project.org/package=sf

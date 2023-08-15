@@ -1,8 +1,8 @@
 Package: hyfo
 Type: Package
 Title: Hydrology and Climate Forecasting
-Version: 1.4.5
-Date: 2023-8-11
+Version: 1.4.6
+Date: 2023-8-15
 Authors@R: person("Yuanchao", "Xu", email = "xuyuanchao37@gmail.com",
   role = c("aut", "cre"))
 Description: Focuses on data processing and visualization in hydrology and
@@ -24,7 +24,7 @@ Imports:
     moments (>= 0.14),
     lmom (>= 2.5),
     maps(>= 2.3-9),
-    maptools (>= 0.8-36),
+    sp (>= 2.0-0),
     ncdf4 (>= 1.14.1),
     MASS (>= 7.3-39),
     methods,
