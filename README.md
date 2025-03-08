@@ -26,7 +26,7 @@ This package mainly focuses on data process and visulization in hydrology and cl
 
 **If you feel hyfo is of a little help, please cite it as following:**
 
-Xu, Yuanchao(2020). hyfo: Hydrology and Climate Forecasting R Package for Data Analysis and Visualization. Retrieved from http://yuanchao-xu.github.io/hyfo/
+Xu, Yuanchao(2023). hyfo: Hydrology and Climate Forecasting R Package for Data Analysis and Visualization. Retrieved from http://yuanchao-xu.github.io/hyfo/
 
 
 
