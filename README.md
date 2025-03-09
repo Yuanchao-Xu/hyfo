@@ -1,6 +1,7 @@
 # hyfo
 <!-- [![Travis-CI Build Status](https://travis-ci.org/Yuanchao-Xu/hyfo.svg?branch=master)](https://travis-ci.org/Yuanchao-Xu/hyfo) -->
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/hyfo)](https://cran.r-project.org/package=hyfo)
+[![](https://cranlogs.r-pkg.org/badges/hyfo)](https://cran.r-project.org/package=hyfo)
 
 ## Installation
 
